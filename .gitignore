@@ -1,0 +1,6 @@
+.idea/
+run/Repos
+run/Apps
+run/.db
+_*/
+./dam
