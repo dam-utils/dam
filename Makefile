@@ -12,40 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-GO_VERSION := 1.13.4
-PWD=$(shell pwd)
-PROJECT=$(shell (basename ${PWD}))
+PROJECT_NAME := $(shell basename "$(shell pwd)")
 
-#if we have tty. then pseudo_tty="-t".
-pseudo_tty = $(shell (tty 2>&1 > /dev/null) && (echo "-t"))
+# Удалить за собой временные контейнеры docker
+CLEAR_BUILD_CONTAINER	:= true
+# Удалить за собой временные образы docker
+CLEAR_BUILD_IMAGE		:= false
+# true - кэширует промежуточные слои для образов docker
+NO_DOCKER_IMAGE_CACHE	:= false
+# Сохранять результат `go get` в кэше для ускорения сборки
+# (!) Предполагаю, что кэш go пакетов для разных архитектур одинаковый
+USE_GO_GET_CACHE		:= true
 
-all: test
-	build
+#preparing
+include src/make/Makefile.funcs
 
-build:
-	docker run 	-i \
-				$(pseudo_tty) \
-				--rm \
-				-v "${PWD}":/go/src/${PROJECT} \
-				-v "${PWD}/_build":/go/src \
-				-w /go/src/${PROJECT} \
-				golang:${GO_VERSION} /bin/bash -c "go get -d ./ && \
-					go build -o ${PROJECT} main.go"
+build:	build-windows build-linux
+
+build-windows:
+	$(call build_func,windows,amd64)
+
+build-linux:
+	$(call build_func,linux,amd64)
 
 test:
-	docker run 	-i \
-				$(pseudo_tty) \
-				--rm \
-				-v "${PWD}":/go/src/${PROJECT} \
-				-v "${PWD}/_build":/go/src \
-				-w /go/src/${PROJECT} \
-				golang:${GO_VERSION} /bin/bash -c "go get -d ./ && \
-					go test -v ${PROJECT}/run"
+	$(call test_func)
 
-clean:
-	docker run 	-i \
-    			$(pseudo_tty) \
-    			--rm \
-    			-v "${PWD}":/pwd \
-    			-w /pwd \
-    			golang:${GO_VERSION} /bin/bash -c "rm -rf ./_build ./${PROJECT}"
+lint:
+	$(call lint_func)
+
+clean: clean-docker
+	rm -rf _build || true
+
+clean-docker:
+	$(call clear_func,windows)
+	$(call clear_func,linux)

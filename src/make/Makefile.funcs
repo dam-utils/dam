@@ -1,0 +1,67 @@
+#  Copyright 2020 The Docker Applications Manager Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+NO_BUILD_CACHE := $([$NO_DOCKER_IMAGE_CACHE == true] && $(echo "--no-cache"))
+
+define build_func
+	# GOOS :=	$(1)
+	# GOARCH :=	$(2)
+	mkdir -p _build/$(1)
+	mkdir -p _build/goget_cache/github.com
+
+	docker build 	-t ${PROJECT_NAME}_$(1):develop \
+					${NO_BUILD_CACHE} \
+					--build-arg PROJECT_NAME=${PROJECT_NAME} \
+					--build-arg GOOS=$(1) \
+					--build-arg GOARCH=$(2) \
+					-f src/docker/build.Dockerfile .
+	docker create --name container-${PROJECT_NAME}-$(1) ${PROJECT_NAME}_$(1):develop
+    docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${PROJECT_NAME} _build/$(1)/
+
+	$(if $(filter $(USE_GO_GET_CACHE),true),rm -rf _build/goget_cache/github.com)
+    $(if $(filter $(USE_GO_GET_CACHE),true),docker cp container-${PROJECT_NAME}-$(1):/go/src/github.com _build/goget_cache/github.com)
+
+	$(if $(filter $(CLEAR_BUILD_CONTAINER),true), docker rm -f container-${PROJECT_NAME}-$(1))
+    $(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_$(1):develop)
+endef
+
+define test_func
+	@echo "run test_func"
+	mkdir -p _build/goget_cache/github.com
+	docker build 	-t ${PROJECT_NAME}_test:develop \
+    				${NO_BUILD_CACHE} \
+    				--build-arg PROJECT_NAME=${PROJECT_NAME} \
+    				-f src/docker/test.Dockerfile .
+	docker create --name container-${PROJECT_NAME}-test ${PROJECT_NAME}_test:develop
+
+	$(if $(filter $(USE_GO_GET_CACHE),true),rm -rf _build/goget_cache/github.com)
+	$(if $(filter $(USE_GO_GET_CACHE),true),docker cp container-${PROJECT_NAME}-test:/go/src/github.com _build/goget_cache/github.com)
+
+	$(if $(filter $(CLEAR_BUILD_CONTAINER),true),docker rm -f container-${PROJECT_NAME}-test)
+	$(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_test:develop)
+endef
+
+define lint_func
+	mkdir -p _build/goget_cache/github.com
+	docker build	-t ${PROJECT_NAME}_lint:develop \
+    				${NO_BUILD_CACHE} \
+					--build-arg PROJECT_NAME=${PROJECT_NAME} \
+					-f src/docker/linter.Dockerfile .
+	docker rmi -f ${PROJECT_NAME}_lint:develop
+endef
+
+define clear_func
+	docker rm -f container-${PROJECT_NAME}-$(1) container-${PROJECT_NAME}-test || true
+	docker rmi -f ${PROJECT_NAME}_lint:develop ${PROJECT_NAME}_test:develop ${PROJECT_NAME}_$(1):develop || true
+endef

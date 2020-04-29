@@ -4,3 +4,4 @@ run/Apps
 run/.db
 _*/
 ./dam
+_build/
