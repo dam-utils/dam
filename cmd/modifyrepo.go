@@ -44,6 +44,6 @@ func init() {
 	modifyRepoCmd.Flags().BoolVar(&run.ModifyRepoFlags.Default, "default", true, "Mark the registry as default.")
 	modifyRepoCmd.Flags().StringVar(&run.ModifyRepoFlags.Name, "name", "", "New name of the registry.")
 	modifyRepoCmd.Flags().StringVar(&run.ModifyRepoFlags.Server, "server", "", "New IP-address or new hostname of the registry.")
-	modifyRepoCmd.Flags().StringVar(&run.ModifyRepoFlags.Username, "username", "", "New username to log on the remote registry.")
-	modifyRepoCmd.Flags().StringVar(&run.ModifyRepoFlags.Password, "password", "", "New password to log on the remote registry.")
+	modifyRepoCmd.Flags().StringVar(&run.ModifyRepoFlags.Username, "username", "", "New username to logger on the remote registry.")
+	modifyRepoCmd.Flags().StringVar(&run.ModifyRepoFlags.Password, "password", "", "New password to logger on the remote registry.")
 }

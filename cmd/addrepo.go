@@ -33,6 +33,6 @@ func init() {
 	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Name, "name", "", "Repository name. Use only to manage this registry.")
 	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Server, "server", "", "IP-address or hostname of the remote registry.")
 	addRepoCmd.Flags().BoolVar(&run.AddRepoFlags.Default, "default", false, "Use this registry as default registry. It means that you can ommit registry name in an install command.")
-	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Username, "username", "", "Username to log on the remote registry.")
-	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Password, "password", "", "Password to log on the remote registry.")
+	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Username, "username", "", "Username to logger on the remote registry.")
+	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Password, "password", "", "Password to logger on the remote registry.")
 }

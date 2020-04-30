@@ -16,7 +16,7 @@ package registry_v2
 
 import (
 	"dam/config"
-	d_log "dam/decorate/log"
+	d_log "dam/driver/logger"
 	"dam/driver/storage"
 	"encoding/json"
 	"net/http"

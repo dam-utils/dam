@@ -16,8 +16,8 @@ package registry
 
 import (
 	"dam/config"
-	d_log "dam/decorate/log"
 	"dam/driver/docker"
+	d_log "dam/driver/logger"
 	registry_official "dam/driver/registry/official"
 	registry_v2 "dam/driver/registry/v2"
 	"dam/driver/storage"
@@ -33,7 +33,7 @@ func CheckRepository(repo *storage.Repo) {
 		err := registry_v2.CheckRepo(repo, protocol)
 		if err != nil {
 			// TODO create debug message
-			//log.Println("WARN: Cannot connect to default registry '" + repo.Name + "' for '" + protocol + "' protocol")
+			//logger.Println("WARN: Cannot connect to default registry '" + repo.Name + "' for '" + protocol + "' protocol")
 		} else {
 			return
 		}

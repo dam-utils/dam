@@ -16,8 +16,8 @@ package db
 
 import (
 	"dam/config"
-	d_log "dam/decorate/log"
 	filesDb "dam/driver/db/files"
+	d_log "dam/driver/logger"
 	"dam/driver/storage"
 )
 

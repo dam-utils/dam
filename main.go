@@ -16,8 +16,8 @@ package main
 
 import (
 	"dam/cmd"
-	d_log "dam/decorate/log"
 	"dam/driver/db"
+	d_log "dam/driver/logger"
 	"log"
 )
 

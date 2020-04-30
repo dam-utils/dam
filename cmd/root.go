@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"dam/config"
-	d_log "dam/decorate/log"
+	d_log "dam/driver/logger"
 	"github.com/spf13/cobra"
 )
 

@@ -16,7 +16,7 @@ package sort
 
 import (
 	"dam/config"
-	d_log "dam/decorate/log"
+	d_log "dam/driver/logger"
 )
 
 func SortAppNames(names *[]string) *[]string {

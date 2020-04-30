@@ -17,7 +17,7 @@ package filesdb
 import (
 	"bufio"
 	"dam/config"
-	d_log "dam/decorate/log"
+	d_log "dam/driver/logger"
 	"dam/driver/storage"
 	"dam/exam"
 	"encoding/base64"
