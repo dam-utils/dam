@@ -1,4 +1,4 @@
-package files_db
+package filesdb
 
 import (
 	"dam/driver/storage"

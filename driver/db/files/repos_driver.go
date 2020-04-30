@@ -12,7 +12,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package files_db
+package filesdb
 
 import (
 	"bufio"

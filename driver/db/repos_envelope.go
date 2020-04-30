@@ -17,7 +17,7 @@ package db
 import (
 	"dam/config"
 	d_log "dam/decorate/log"
-	files_db "dam/driver/db/files"
+	filesDb "dam/driver/db/files"
 	"dam/driver/storage"
 )
 
@@ -37,7 +37,7 @@ var Driver Provider
 func Init() {
 	switch config.DB_TYPE {
 	case "files":
-		Driver = files_db.NewProvider()
+		Driver = filesDb.NewProvider()
 	default:
 		dbConfigureIsBad()
 	}
