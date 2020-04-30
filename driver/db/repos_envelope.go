@@ -16,84 +16,33 @@ package db
 
 import (
 	"dam/config"
+	d_log "dam/decorate/log"
 	files_db "dam/driver/db/files"
 	"dam/driver/storage"
 )
 
-
-
-func GetRepos() *[]storage.Repo {
-	switch config.DB_TYPE {
-	case "files":
-		return files_db.GetRepos()
-	default:
-		dbConfigureIsBad()
-	}
-	return nil
+type Provider interface {
+	GetRepos() *[]storage.Repo
+	GetRepoById(id int) *storage.Repo
+	GetDefaultRepo() *storage.Repo
+	NewRepo(repo *storage.Repo)
+	ModifyRepo(repo *storage.Repo)
+	RemoveRepoById(id int)
+	GetRepoIdByName(name *string) int
+	ClearRepos()
 }
 
-func GetRepoById(id int) *storage.Repo {
-	switch config.DB_TYPE {
-	case "files":
-		return files_db.GetRepoById(id)
-	default:
-		dbConfigureIsBad()
-	}
-	return nil
-}
+var Driver Provider
 
-func GetDefaultRepo() *storage.Repo {
+func Init() {
 	switch config.DB_TYPE {
 	case "files":
-		return files_db.GetDefaultRepo()
-	default:
-		dbConfigureIsBad()
-	}
-	return nil
-}
-
-func NewRepo(repo *storage.Repo) {
-	switch config.DB_TYPE {
-	case "files":
-		files_db.NewRepo(repo)
+		Driver = files_db.NewProvider()
 	default:
 		dbConfigureIsBad()
 	}
 }
 
-func ModifyRepo(repo *storage.Repo) {
-	switch config.DB_TYPE {
-	case "files":
-		files_db.ModifyRepo(repo)
-	default:
-		dbConfigureIsBad()
-	}
-}
-
-func RemoveRepoById(id int) {
-	switch config.DB_TYPE {
-	case "files":
-		files_db.RemoveRepoById(id)
-	default:
-		dbConfigureIsBad()
-	}
-}
-
-func GetRepoIdByName(name *string) int {
-	switch config.DB_TYPE {
-	case "files":
-		return files_db.GetRepoIdByName(name)
-	default:
-		dbConfigureIsBad()
-	}
-	return 0
-}
-
-func ClearRepos() {
-	switch config.DB_TYPE {
-	case "files":
-		files_db.ClearRepos()
-	default:
-		dbConfigureIsBad()
-	}
+func dbConfigureIsBad() {
+	d_log.Fatal("Config option UTIL_NAME='" + config.UTIL_NAME + "' not valid. DB type is bad.")
 }

@@ -43,7 +43,7 @@ func AddRepo(){
 		repo.Name = AddRepoFlags.Name
 	}
 
-	repos :=  db.GetRepos()
+	repos :=  db.Driver.GetRepos()
 	for _, repoDB := range *repos {
 		if repoDB.Name == repo.Name {
 			d_log.Fatal("Repository name already exist in DB")
@@ -65,7 +65,7 @@ func AddRepo(){
 	repo.Username = AddRepoFlags.Username
 	repo.Password = AddRepoFlags.Password
 
-	db.NewRepo(repo)
+	db.Driver.NewRepo(repo)
 }
 
 

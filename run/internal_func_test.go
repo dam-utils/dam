@@ -16,6 +16,7 @@ package run_test
 
 import (
 	"dam/config"
+	"dam/driver/db"
 	"log"
 	"os"
 	"testing"
@@ -23,6 +24,7 @@ import (
 
 func init(){
 	log.SetFlags(0)
+	db.Init()
 }
 
 func setDefaultConfig() {

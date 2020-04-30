@@ -31,15 +31,15 @@ func RemoveRepo(arg string) {
 	repoId, err := strconv.Atoi(arg)
 	if err != nil {
 		// Maybe It is Name
-		repoId = db.GetRepoIdByName(&arg)
+		repoId = db.Driver.GetRepoIdByName(&arg)
 	}
 	if repoId == 1 {
 		d_log.Fatal("Command argument '"+arg+"' is not Id or Name of Repository")
 	}
 
-	defRepo := db.GetDefaultRepo()
+	defRepo := db.Driver.GetDefaultRepo()
 	if !RemoveRepoFlags.Force && repoId == defRepo.Id {
 		d_log.Fatal("Repository with Id '" + strconv.Itoa(repoId) + "' is default. Use '--skip' flag for removing.")
 	}
-	db.RemoveRepoById(repoId)
+	db.Driver.RemoveRepoById(repoId)
 }

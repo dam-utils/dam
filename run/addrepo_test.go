@@ -25,7 +25,7 @@ import (
 
 func TestAddRepoOneRepo(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.AddRepoFlags.Default = true
 	run.AddRepoFlags.Name = "test"
@@ -46,7 +46,7 @@ func TestAddRepoOneRepo(t *testing.T) {
 
 func TestAddRepoWithNotDefaultFlag(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.AddRepoFlags.Default = false
 	run.AddRepoFlags.Name = "test"
@@ -67,7 +67,7 @@ func TestAddRepoWithNotDefaultFlag(t *testing.T) {
 
 func TestAddRepoTwoRepo(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 
 	run.AddRepoFlags.Default = true

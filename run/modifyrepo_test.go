@@ -26,7 +26,7 @@ import (
 
 func TestModifyRepoNameAndServer(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.ModifyRepoFlags.Default = true
 	run.ModifyRepoFlags.Name = "NewName"
@@ -41,7 +41,7 @@ func TestModifyRepoNameAndServer(t *testing.T) {
 	stdout := `1||official|https://registry-1.docker.io/|
 2|*|NewName|localhost:5000|
 `
-	db.NewRepo(&storage.Repo{2, true, "test", "test.com", "", ""})
+	db.Driver.NewRepo(&storage.Repo{2, true, "test", "test.com", "", ""})
 	run.ModifyRepo("2")
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -53,7 +53,7 @@ func TestModifyRepoNameAndServer(t *testing.T) {
 
 func TestModifyRepoUsername(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.ModifyRepoFlags.Default = true
 	run.ModifyRepoFlags.Name = "NewName"
@@ -68,7 +68,7 @@ func TestModifyRepoUsername(t *testing.T) {
 	stdout := `1||official|https://registry-1.docker.io/|
 2|*|NewName|localhost:5000|user
 `
-	db.NewRepo(&storage.Repo{2, true, "test", "test.com", "", ""})
+	db.Driver.NewRepo(&storage.Repo{2, true, "test", "test.com", "", ""})
 	run.ModifyRepo("2")
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -80,7 +80,7 @@ func TestModifyRepoUsername(t *testing.T) {
 
 func TestModifyRepoOneRepoToNotDefault(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.ModifyRepoFlags.Default = false
 	run.ModifyRepoFlags.Name = ""
@@ -95,7 +95,7 @@ func TestModifyRepoOneRepoToNotDefault(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 2||test|localhost:5000|
 `
-	db.NewRepo(&storage.Repo{1, true, "test", "localhost:5000", "", ""})
+	db.Driver.NewRepo(&storage.Repo{1, true, "test", "localhost:5000", "", ""})
 	run.ModifyRepo("2")
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -107,11 +107,11 @@ func TestModifyRepoOneRepoToNotDefault(t *testing.T) {
 
 func TestModifyRepoSecondRepoToNotDefault(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 
-	db.NewRepo(&storage.Repo{1, false, "test", "localhost:5000", "", ""})
-	db.NewRepo(&storage.Repo{2, true, "test2", "localhost:5000", "", ""})
+	db.Driver.NewRepo(&storage.Repo{1, false, "test", "localhost:5000", "", ""})
+	db.Driver.NewRepo(&storage.Repo{2, true, "test2", "localhost:5000", "", ""})
 
 	run.ModifyRepo("2")
 
@@ -140,10 +140,10 @@ func TestModifyRepoSecondRepoToNotDefault(t *testing.T) {
 
 func TestModifyRepoOfficialRepoToNotDefault(t *testing.T) {
 	setDefaultConfig()
-	db.ClearRepos()
+	db.Driver.ClearRepos()
 	run.ListReposFlags.Raw = true
 
-	db.NewRepo(&storage.Repo{1, false, "test", "localhost:5000", "", ""})
+	db.Driver.NewRepo(&storage.Repo{1, false, "test", "localhost:5000", "", ""})
 
 	run.ModifyRepoFlags.Default = false
 	run.ModifyRepoFlags.Name = ""

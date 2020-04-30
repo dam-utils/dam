@@ -17,13 +17,18 @@ package main
 import (
 	"dam/cmd"
 	d_log "dam/decorate/log"
+	"dam/driver/db"
 	"log"
 )
 
 func main() {
 	log.SetFlags(0)
+
+	db.Init()
+
 	err := cmd.Execute()
 	if err != nil {
 		d_log.Fatal("Internal error")
 	}
 }
+
