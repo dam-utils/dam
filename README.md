@@ -3,7 +3,7 @@ Docker Applications Manager (DAM) allows the user to manage docker images on the
 as apt manages deb-packages in Ubuntu.
 
 At the moment, only one main function is implemented - 
-the search for docker images and their versions (branch 0.0.x).
+the search for docker images and their versions (branch 1.x.x).
 
 ## System requirements
 ### Building
