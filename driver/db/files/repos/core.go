@@ -12,7 +12,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package filesdb
+package repos
 
 import (
 	"bufio"
@@ -371,3 +371,6 @@ func internalValidatingReposDB(repos *[]storage.Repo) {
 	}
 }
 
+func moveFile(oldLocation, newLocation string) error {
+	return os.Rename(oldLocation, newLocation)
+}

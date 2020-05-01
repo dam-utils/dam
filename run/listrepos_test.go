@@ -26,7 +26,7 @@ import (
 
 func TestListReposWithEmptyDB(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	var buf bytes.Buffer
 
@@ -42,14 +42,14 @@ func TestListReposWithEmptyDB(t *testing.T) {
 
 func TestListReposWithOneLine(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	var buf bytes.Buffer
 
 	stdout := `1|*|official|https://registry-1.docker.io/|
 2||test1|test.com|
 `
-	db.Driver.NewRepo(&storage.Repo{2, false, "test1", "test.com", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{2, false, "test1", "test.com", "", ""})
 	log.SetOutput(&buf)
 	run.ListRepos()
 	log.SetOutput(os.Stdout)
@@ -60,7 +60,7 @@ func TestListReposWithOneLine(t *testing.T) {
 
 func TestListReposWithDefaultLastLine(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	var buf bytes.Buffer
 
@@ -69,9 +69,9 @@ func TestListReposWithDefaultLastLine(t *testing.T) {
 3||test2|test2.com|user
 4|*|test2|test2.com|user
 `
-	db.Driver.NewRepo(&storage.Repo{2, false, "test1", "test.com", "", ""})
-	db.Driver.NewRepo(&storage.Repo{5, false,"test2","test2.com","user","user"})
-	db.Driver.NewRepo(&storage.Repo{0, true,"test2","test2.com","user","user"})
+	db.RDriver.NewRepo(&storage.Repo{2, false, "test1", "test.com", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{5, false,"test2","test2.com","user","user"})
+	db.RDriver.NewRepo(&storage.Repo{0, true,"test2","test2.com","user","user"})
 	log.SetOutput(&buf)
 	run.ListRepos()
 	log.SetOutput(os.Stdout)

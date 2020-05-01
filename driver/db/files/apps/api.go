@@ -12,37 +12,18 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package cmd
+package apps
 
-import (
-	"dam/config"
-	d_log "dam/driver/logger"
-	"github.com/spf13/cobra"
-)
+import "dam/driver/storage"
 
-var (
-	rootCmd = &cobra.Command{
-		Use:   config.UTIL_NAME,
-		Short: "/--/",
-		Long:  `/--/`,
-	}
-)
-
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+type provider struct {
+	//GetApps() *[]storage.App
 }
 
-func init() {
-	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(listReposCmd)
-	rootCmd.AddCommand(addRepoCmd)
-	rootCmd.AddCommand(removeRepoCmd)
-	rootCmd.AddCommand(modifyRepoCmd)
-	rootCmd.AddCommand(searchCmd)
+func NewProvider() *provider {
+	return &provider{}
+}
 
-	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	if !config.DISABLE_DEBUG {
-		d_log.DebugMode = true
-	}
+func (p *provider) GetApps() *[]storage.App {
+	return GetApps()
 }

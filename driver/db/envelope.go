@@ -15,13 +15,10 @@
 package db
 
 import (
-	"dam/config"
-	filesDb "dam/driver/db/files"
-	d_log "dam/driver/logger"
 	"dam/driver/storage"
 )
 
-type Provider interface {
+type RProvider interface {
 	GetRepos() *[]storage.Repo
 	GetRepoById(id int) *storage.Repo
 	GetDefaultRepo() *storage.Repo
@@ -32,17 +29,6 @@ type Provider interface {
 	ClearRepos()
 }
 
-var Driver Provider
-
-func Init() {
-	switch config.DB_TYPE {
-	case "files":
-		Driver = filesDb.NewProvider()
-	default:
-		dbConfigureIsBad()
-	}
-}
-
-func dbConfigureIsBad() {
-	d_log.Fatal("Config option UTIL_NAME='" + config.UTIL_NAME + "' not valid. DB type is bad.")
+type AProvider interface {
+	GetApps() *[]storage.App
 }

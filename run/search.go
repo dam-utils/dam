@@ -24,7 +24,7 @@ import (
 )
 
 func Search(arg string) {
-	repo := db.Driver.GetDefaultRepo()
+	repo := db.RDriver.GetDefaultRepo()
 	registry.CheckRepository(repo)
 	appList := registry.GetAppNamesByMask(repo, arg)
 	d_log.Debug(fmt.Sprintf("run/search.go:appList: '%v'", appList))

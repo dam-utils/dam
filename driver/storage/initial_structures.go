@@ -35,3 +35,13 @@ func init(){
 	OfficialRepo.Username=""
 	OfficialRepo.Password=""
 }
+
+type App struct {
+	Id int
+	DockerID string
+	ImageName string
+	ImageVersion string
+	RepoID int
+	MultiVersion bool
+	Family string
+}

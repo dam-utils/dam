@@ -38,7 +38,7 @@ func ModifyRepo(arg string) {
 	if err != nil {
 		d_log.Fatal("Argument 'modifyrepo' is not ID. See 'help modifyrepo'")
 	}
-	repo := db.Driver.GetRepoById(ID)
+	repo := db.RDriver.GetRepoById(ID)
 	if ExistingMRFlags["--default"] && repo.Default != ModifyRepoFlags.Default {
 		repo.Default = ModifyRepoFlags.Default
 	}
@@ -64,5 +64,5 @@ func ModifyRepo(arg string) {
 		}
 	}
 	d_log.Debug(fmt.Sprintf("Repo for modify: '%v'", *repo))
-	db.Driver.ModifyRepo(repo)
+	db.RDriver.ModifyRepo(repo)
 }

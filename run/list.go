@@ -12,37 +12,23 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package cmd
+package run
 
 import (
-	"dam/config"
-	d_log "dam/driver/logger"
-	"github.com/spf13/cobra"
+	"dam/decorate"
 )
 
-var (
-	rootCmd = &cobra.Command{
-		Use:   config.UTIL_NAME,
-		Short: "/--/",
-		Long:  `/--/`,
-	}
-)
-
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+type ListSettings struct {
+	Raw    bool
+	//	Labels string
 }
 
-func init() {
-	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(listReposCmd)
-	rootCmd.AddCommand(addRepoCmd)
-	rootCmd.AddCommand(removeRepoCmd)
-	rootCmd.AddCommand(modifyRepoCmd)
-	rootCmd.AddCommand(searchCmd)
+var ListFlags = new(ListSettings)
 
-	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	if !config.DISABLE_DEBUG {
-		d_log.DebugMode = true
+func List() {
+	if ListFlags.Raw {
+		decorate.PrintRAWAppsList()
+	} else {
+		decorate.PrintAppsList()
 	}
 }

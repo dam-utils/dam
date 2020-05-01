@@ -23,7 +23,7 @@ import (
 )
 
 func PrintRAWReposList() {
-	repos := db.Driver.GetRepos()
+	repos := db.RDriver.GetRepos()
 	for _, repo := range *repos {
 		var def string
 		if repo.Default {
@@ -45,7 +45,7 @@ var defRepoColumnSize = map[string]int {
 }
 
 func PrintReposList(){
-	repos := db.Driver.GetRepos()
+	repos := db.RDriver.GetRepos()
 
 	fmt.Println()
 	fmt.Println("\tList repositories:")

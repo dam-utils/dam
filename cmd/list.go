@@ -15,34 +15,21 @@
 package cmd
 
 import (
-	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/run"
 	"github.com/spf13/cobra"
 )
 
-var (
-	rootCmd = &cobra.Command{
-		Use:   config.UTIL_NAME,
-		Short: "/--/",
-		Long:  `/--/`,
-	}
-)
-
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+var listCmd = &cobra.Command{
+	Use:   "list [options]",
+	Short: "List all installed your applications.",
+	Long:  ``,
+	Args:  cobra.NoArgs,
+	Run: func(cmd *cobra.Command, args []string) {
+		run.List()
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(listReposCmd)
-	rootCmd.AddCommand(addRepoCmd)
-	rootCmd.AddCommand(removeRepoCmd)
-	rootCmd.AddCommand(modifyRepoCmd)
-	rootCmd.AddCommand(searchCmd)
-
-	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	if !config.DISABLE_DEBUG {
-		d_log.DebugMode = true
-	}
+	listCmd.Flags().BoolVar(&run.ListFlags.Raw, "raw", false, "List all installed your applications in RAW format")
+	//	listCmd.Flags().StringVar(&run.ListFlags.Labels, "labels", "", "List all installed applications with labels.")
 }

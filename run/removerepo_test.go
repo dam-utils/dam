@@ -26,7 +26,7 @@ import (
 
 func TestRemoveRepoWithOneLineByName(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.RemoveRepoFlags.Force = true
 	var buf bytes.Buffer
@@ -34,7 +34,7 @@ func TestRemoveRepoWithOneLineByName(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 `
 	repoName := "test1"
-	db.Driver.NewRepo(&storage.Repo{2, false, repoName, "localhost:5000", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{2, false, repoName, "localhost:5000", "", ""})
 	run.RemoveRepo(repoName)
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -46,7 +46,7 @@ func TestRemoveRepoWithOneLineByName(t *testing.T) {
 
 func TestRemoveRepoWithOneLineById(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.RemoveRepoFlags.Force = true
 	var buf bytes.Buffer
@@ -54,7 +54,7 @@ func TestRemoveRepoWithOneLineById(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 `
 	repoId := "2"
-	db.Driver.NewRepo(&storage.Repo{0, false, "repoName", "localhost:5000", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{0, false, "repoName", "localhost:5000", "", ""})
 	run.RemoveRepo(repoId)
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -66,7 +66,7 @@ func TestRemoveRepoWithOneLineById(t *testing.T) {
 
 func TestRemoveRepoWithDefaultFlag(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.RemoveRepoFlags.Force = true
 	var buf bytes.Buffer
@@ -75,8 +75,8 @@ func TestRemoveRepoWithDefaultFlag(t *testing.T) {
 2||repoName|localhost:5000|
 `
 	repoId := "3"
-	db.Driver.NewRepo(&storage.Repo{1, false, "repoName", "localhost:5000", "", ""})
-	db.Driver.NewRepo(&storage.Repo{2, true, "repoName2", "localhost:5000", "test", ""})
+	db.RDriver.NewRepo(&storage.Repo{1, false, "repoName", "localhost:5000", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{2, true, "repoName2", "localhost:5000", "test", ""})
 	run.RemoveRepo(repoId)
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -88,7 +88,7 @@ func TestRemoveRepoWithDefaultFlag(t *testing.T) {
 
 func TestRemoveRepoDefaultRepo(t *testing.T) {
 	setDefaultConfig()
-	db.Driver.ClearRepos()
+	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 	run.RemoveRepoFlags.Force = true
 	var buf bytes.Buffer
@@ -97,8 +97,8 @@ func TestRemoveRepoDefaultRepo(t *testing.T) {
 3||repoName2|localhost:5000|test
 `
 	repoId := "2"
-	db.Driver.NewRepo(&storage.Repo{1, true, "repoName", "localhost:5000", "", ""})
-	db.Driver.NewRepo(&storage.Repo{2, false, "repoName2", "localhost:5000", "test", ""})
+	db.RDriver.NewRepo(&storage.Repo{1, true, "repoName", "localhost:5000", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{2, false, "repoName2", "localhost:5000", "test", ""})
 	run.RemoveRepo(repoId)
 	log.SetOutput(&buf)
 	run.ListRepos()

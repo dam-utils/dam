@@ -12,12 +12,30 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package filesdb
+package db
 
 import (
-	"os"
+	"dam/config"
+	"dam/driver/db/files/apps"
+	"dam/driver/db/files/repos"
+	d_log "dam/driver/logger"
 )
 
-func moveFile(oldLocation, newLocation string) error {
-	return os.Rename(oldLocation, newLocation)
+var (
+	RDriver RProvider
+	ADriver AProvider
+)
+
+func Init() {
+	switch config.DB_TYPE {
+	case "files":
+		RDriver = repos.NewProvider()
+		ADriver = apps.NewProvider()
+	default:
+		dbConfigureIsBad()
+	}
+}
+
+func dbConfigureIsBad() {
+	d_log.Fatal("Config option UTIL_NAME='" + config.UTIL_NAME + "' not valid. DB type is bad.")
 }
