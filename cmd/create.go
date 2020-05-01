@@ -15,35 +15,22 @@
 package cmd
 
 import (
-	"dam/config"
-	"dam/driver/logger"
+	"dam/run"
 	"github.com/spf13/cobra"
 )
 
-var (
-	rootCmd = &cobra.Command{
-		Use:   config.UTIL_NAME,
-		Short: "/--/",
-		Long:  `/--/`,
-	}
-)
-
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+var createAppCmd = &cobra.Command{
+	Use:   "create (ce) [project directory] [--meta <meta directory path>] [--dockerfile <dockerfile path>] [--env <env file path>]",
+	Short: "Create docker application.",
+	Long:  ``,
+	Args:  cobra.RangeArgs(0, 1),
+	Run: func(cmd *cobra.Command, args []string) {
+		run.CreateApp()
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(createAppCmd)
-	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(listReposCmd)
-	rootCmd.AddCommand(addRepoCmd)
-	rootCmd.AddCommand(removeRepoCmd)
-	rootCmd.AddCommand(modifyRepoCmd)
-	rootCmd.AddCommand(searchCmd)
-
-	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	if !config.DISABLE_DEBUG {
-		logger.DebugMode = true
-	}
+	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Name, "meta", "", "Path for the 'meta' project directory.")
+	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Server, "dockerfile", "", "Path for Dockerfile of the project.")
+	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Username, "env", "", "Path for the 'ENVIRONMENT' project file.")
 }

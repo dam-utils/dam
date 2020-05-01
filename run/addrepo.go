@@ -67,6 +67,3 @@ func AddRepo(){
 
 	db.RDriver.NewRepo(repo)
 }
-
-
-
