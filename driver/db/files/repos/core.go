@@ -17,7 +17,7 @@ package repos
 import (
 	"bufio"
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"dam/driver/storage"
 	"dam/exam"
 	"encoding/base64"
@@ -90,7 +90,7 @@ func ModifyRepo(mRepo *storage.Repo) {
 	}
 
 	prepNewRepos := prepareClearRepos(&newRepos)
-	d_log.Debug(fmt.Sprintf("ModifyRepo():prepareClearRepos(&newRepos): '%v'", prepNewRepos))
+	logger.Debug(fmt.Sprintf("ModifyRepo():prepareClearRepos(&newRepos): '%v'", prepNewRepos))
 	saveRepos(prepNewRepos)
 }
 
@@ -145,7 +145,7 @@ func saveRepos(repos *[]storage.Repo) {
 
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	defer f.Close()
 
@@ -153,47 +153,47 @@ func saveRepos(repos *[]storage.Repo) {
 		newLine := repo2str(&repo)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			d_log.Fatal(err.Error())
+			logger.Fatal(err.Error())
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	err = f.Close()
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	err = moveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 }
 
 func ClearRepos() {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	defer f.Close()
 	_, err = f.WriteString("")
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	err = f.Sync()
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	err = f.Close()
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	err = moveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 }
 
@@ -202,12 +202,12 @@ func GetRepos() *[]storage.Repo {
 	var Repos []storage.Repo
 	fileHandle, err := os.Open(config.FILES_DB_REPOS)
 	if err != nil {
-		d_log.Fatal("Cannot open file '"+config.FILES_DB_REPOS+"'"  )
+		logger.Fatal("Cannot open file '"+config.FILES_DB_REPOS+"'"  )
 	}
 	defer func (){
 		err := fileHandle.Close()
 		if err != nil {
-			d_log.Fatal(fmt.Sprintf("Cannot close file '%v'",config.FILES_DB_REPOS))
+			logger.Fatal(fmt.Sprintf("Cannot close file '%v'",config.FILES_DB_REPOS))
 		}
 	}()
 
@@ -250,7 +250,7 @@ func GetDefaultRepo() *storage.Repo {
 
 func RemoveRepoById(id int) {
 	if id == 1 {
-		d_log.Fatal("Cannot remove official Repository. This is base repository in DB")
+		logger.Fatal("Cannot remove official Repository. This is base repository in DB")
 	}
 
 	NewRepos := new([]storage.Repo)
@@ -264,7 +264,7 @@ func RemoveRepoById(id int) {
 		preparedRepos := prepareDefaultInRepos(*NewRepos)
 		saveRepos(preparedRepos)
 	} else {
-		d_log.Fatal("Not found Id or Name of Repository")
+		logger.Fatal("Not found Id or Name of Repository")
 	}
 }
 
@@ -322,7 +322,7 @@ func str2Repo(repo string) *storage.Repo {
 	var err error
 	Repo.Password, err = base64ToStr(ParseRepo[5])
 	if err != nil {
-		d_log.Fatal("Cannot read the password of user '"+Repo.Username+"'")
+		logger.Fatal("Cannot read the password of user '"+Repo.Username+"'")
 	}
 	return Repo
 }
@@ -351,23 +351,23 @@ func internalValidatingReposDB(repos *[]storage.Repo) {
 	for _, repo := range *repos{
 		if repo.Default {
 			if defRepo {
-				d_log.Fatal("Internal error. Found many default repositories in DB. Default repository must be only one")
+				logger.Fatal("Internal error. Found many default repositories in DB. Default repository must be only one")
 			} else {
 				defRepo = true
 			}
 		}
 		if exam.CheckRepoName(repo.Name) != nil {
-			d_log.Fatal("Internal error. Repo name '"+repo.Name+"' is invalid in DB")
+			logger.Fatal("Internal error. Repo name '"+repo.Name+"' is invalid in DB")
 		}
 		if exam.CheckLogin(repo.Username) != nil {
-			d_log.Fatal("Internal error. Repo login '"+repo.Username+"' is invalid in DB")
+			logger.Fatal("Internal error. Repo login '"+repo.Username+"' is invalid in DB")
 		}
 		if exam.CheckServer(repo.Server) != nil {
-			d_log.Fatal("Internal error. Repo server '"+repo.Server+"' is invalid in DB")
+			logger.Fatal("Internal error. Repo server '"+repo.Server+"' is invalid in DB")
 		}
 	}
 	if !defRepo {
-		d_log.Fatal("Internal error. Not found default repository in DB")
+		logger.Fatal("Internal error. Not found default repository in DB")
 	}
 }
 

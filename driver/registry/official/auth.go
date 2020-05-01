@@ -16,7 +16,7 @@ package registry_official
 
 import (
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -27,8 +27,8 @@ func GetBearerToken(app string) string {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Println()
-		d_log.Debug(err.Error())
-		d_log.Fatal("Cannot get token from URL: '" + url + "'")
+		logger.Debug(err.Error())
+		logger.Fatal("Cannot get token from URL: '" + url + "'")
 	}
 	defer resp.Body.Close()
 
@@ -40,8 +40,8 @@ func GetBearerToken(app string) string {
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
 		log.Println()
-		d_log.Debug(err.Error())
-		d_log.Fatal("Cannot parse token in the body from URL: '" + url + "'. Err: "+err.Error())
+		logger.Debug(err.Error())
+		logger.Fatal("Cannot parse token in the body from URL: '" + url + "'. Err: "+err.Error())
 	}
 	return body.AccessToken
 }

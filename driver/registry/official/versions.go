@@ -16,7 +16,7 @@ package registry_official
 
 import (
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -35,7 +35,7 @@ func GetAppVersions(app string) *[]string {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Println()
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	token := GetBearerToken(app)
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -43,7 +43,7 @@ func GetAppVersions(app string) *[]string {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println()
-		d_log.Fatal("Cannot send request to URL: '" + url + "'")
+		logger.Fatal("Cannot send request to URL: '" + url + "'")
 	}
 	defer resp.Body.Close()
 
@@ -54,8 +54,8 @@ func GetAppVersions(app string) *[]string {
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
 		log.Println()
-		d_log.Debug(err.Error())
-		d_log.Fatal("Cannot parse app versions in the body from URL: '" + url + "'")
+		logger.Debug(err.Error())
+		logger.Fatal("Cannot parse app versions in the body from URL: '" + url + "'")
 	}
 	vers := body.Tags
 	return &vers

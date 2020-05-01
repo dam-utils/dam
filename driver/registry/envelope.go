@@ -17,7 +17,7 @@ package registry
 import (
 	"dam/config"
 	"dam/driver/docker"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	registry_official "dam/driver/registry/official"
 	registry_v2 "dam/driver/registry/v2"
 	"dam/driver/storage"
@@ -38,7 +38,7 @@ func CheckRepository(repo *storage.Repo) {
 			return
 		}
 	}
-	d_log.Fatal("Cannot connect to default registry '" + repo.Name + "'")
+	logger.Fatal("Cannot connect to default registry '" + repo.Name + "'")
 }
 
 func GetAppNamesByMask(repo *storage.Repo, mask string) *[]string {

@@ -16,7 +16,7 @@ package registry_v2
 
 import (
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"dam/driver/storage"
 	"encoding/json"
 	"net/http"
@@ -33,7 +33,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 	url := SessionURL + "v2/" + appName + "/tags/list"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		d_log.Fatal("Cannot create new request for get URL: '"+url+"'")
+		logger.Fatal("Cannot create new request for get URL: '"+url+"'")
 	}
 	if repo.Username != "" {
 		req.SetBasicAuth(repo.Username, repo.Password)
@@ -41,7 +41,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		d_log.Fatal("Cannot get response from URL: '"+url+"'")
+		logger.Fatal("Cannot get response from URL: '"+url+"'")
 	}
 	defer resp.Body.Close()
 
@@ -52,7 +52,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		d_log.Fatal("Cannot parse app versions in the body from URL: '" + url + "'")
+		logger.Fatal("Cannot parse app versions in the body from URL: '" + url + "'")
 	}
 	vers := body.Tags
 	return &vers

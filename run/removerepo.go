@@ -16,7 +16,7 @@ package run
 
 import (
 	"dam/driver/db"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"strconv"
 )
 
@@ -34,12 +34,12 @@ func RemoveRepo(arg string) {
 		repoId = db.RDriver.GetRepoIdByName(&arg)
 	}
 	if repoId == 1 {
-		d_log.Fatal("Command argument '"+arg+"' is not Id or Name of Repository")
+		logger.Fatal("Command argument '"+arg+"' is not Id or Name of Repository")
 	}
 
 	defRepo := db.RDriver.GetDefaultRepo()
 	if !RemoveRepoFlags.Force && repoId == defRepo.Id {
-		d_log.Fatal("Repository with Id '" + strconv.Itoa(repoId) + "' is default. Use '--skip' flag for removing.")
+		logger.Fatal("Repository with Id '" + strconv.Itoa(repoId) + "' is default. Use '--skip' flag for removing.")
 	}
 	db.RDriver.RemoveRepoById(repoId)
 }

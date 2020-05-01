@@ -17,7 +17,7 @@ package main
 import (
 	"dam/cmd"
 	"dam/driver/db"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"log"
 )
 
@@ -28,7 +28,7 @@ func main() {
 
 	err := cmd.Execute()
 	if err != nil {
-		d_log.Fatal("Internal error")
+		logger.Fatal("Internal error")
 	}
 }
 

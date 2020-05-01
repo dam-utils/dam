@@ -16,7 +16,7 @@ package run
 
 import (
 	"dam/driver/db"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"dam/driver/storage"
 	"dam/exam"
 )
@@ -38,7 +38,7 @@ func AddRepo(){
 
 	err := exam.CheckRepoName(AddRepoFlags.Name,)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	} else {
 		repo.Name = AddRepoFlags.Name
 	}
@@ -46,19 +46,19 @@ func AddRepo(){
 	repos :=  db.RDriver.GetRepos()
 	for _, repoDB := range *repos {
 		if repoDB.Name == repo.Name {
-			d_log.Fatal("Repository name already exist in DB")
+			logger.Fatal("Repository name already exist in DB")
 		}
 	}
 
 	err = exam.CheckServer(AddRepoFlags.Server)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	} else {
 		repo.Server = AddRepoFlags.Server
 	}
 	err = exam.CheckLogin(AddRepoFlags.Username)
 	if err != nil {
-		d_log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	} else {
 		repo.Username = AddRepoFlags.Username
 	}

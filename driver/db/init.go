@@ -18,7 +18,7 @@ import (
 	"dam/config"
 	"dam/driver/db/files/apps"
 	"dam/driver/db/files/repos"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 )
 
 var (
@@ -37,5 +37,5 @@ func Init() {
 }
 
 func dbConfigureIsBad() {
-	d_log.Fatal("Config option UTIL_NAME='" + config.UTIL_NAME + "' not valid. DB type is bad.")
+	logger.Fatal("Config option UTIL_NAME='" + config.UTIL_NAME + "' not valid. DB type is bad.")
 }

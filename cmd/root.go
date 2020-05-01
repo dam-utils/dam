@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -43,6 +43,6 @@ func init() {
 
 	//if pFlagDebug && config.DISABLE_DEBUG == false {
 	if !config.DISABLE_DEBUG {
-		d_log.DebugMode = true
+		logger.DebugMode = true
 	}
 }

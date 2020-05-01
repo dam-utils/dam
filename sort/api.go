@@ -16,7 +16,7 @@ package sort
 
 import (
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 )
 
 func SortAppNames(names *[]string) *[]string {
@@ -24,7 +24,7 @@ func SortAppNames(names *[]string) *[]string {
 	case "alphabetic":
 		return AlphabeticSort(names)
 	default:
-		d_log.Fatal("Config option SORT_APP_TYPE='"+config.SORT_APP_TYPE+"' not valid. Sorting type is bad." )
+		logger.Fatal("Config option SORT_APP_TYPE='"+config.SORT_APP_TYPE+"' not valid. Sorting type is bad." )
 	}
 	return nil
 }
@@ -34,7 +34,7 @@ func SortVersions(vers *[]string) *[]string {
 	case "semantic_version":
 		return SemanticVersionSort(vers)
 	default:
-		d_log.Fatal("Config option SORT_VERSION_TYPE='"+config.SORT_VERSION_TYPE+"' not valid. Sorting type is bad." )
+		logger.Fatal("Config option SORT_VERSION_TYPE='"+config.SORT_VERSION_TYPE+"' not valid. Sorting type is bad." )
 	}
 	return nil
 }

@@ -16,7 +16,7 @@ package registry_v2
 
 import (
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"dam/driver/storage"
 	"encoding/json"
 	"net/http"
@@ -38,7 +38,7 @@ func GetAppNames(repo *storage.Repo) *[]string {
 	url := SessionURL + "v2/_catalog?n="+strconv.Itoa(config.INTERNAL_REPO_SEARCH_APPS_LIMIT)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		d_log.Fatal("Cannot create new request for get URL: '"+url+"'")
+		logger.Fatal("Cannot create new request for get URL: '"+url+"'")
 	}
 	if repo.Username != "" {
 		req.SetBasicAuth(repo.Username, repo.Password)
@@ -46,14 +46,14 @@ func GetAppNames(repo *storage.Repo) *[]string {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		d_log.Fatal("Cannot get response from URL: '"+url+"'")
+		logger.Fatal("Cannot get response from URL: '"+url+"'")
 	}
 	defer resp.Body.Close()
 
 	var body ResponseGetAppNames
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		d_log.Fatal("Cannot parse response from URL: '"+url+"'")
+		logger.Fatal("Cannot parse response from URL: '"+url+"'")
 	}
 	return &body.Repositories
 }

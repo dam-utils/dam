@@ -17,7 +17,7 @@ package docker
 import (
 	"context"
 	"dam/config"
-	d_log "dam/driver/logger"
+	"dam/driver/logger"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/client"
@@ -25,12 +25,12 @@ import (
 
 func SearchAppNames(mask string) *[]string {
 	if len(mask) <2 || len(mask)> 100 {
-		d_log.Fatal("Search mask for official registry not valid. It must be 2-24 symbols")
+		logger.Fatal("Search mask for official registry not valid. It must be 2-24 symbols")
 	}
 
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	if err != nil {
-		d_log.Fatal("Cannot create new docker client")
+		logger.Fatal("Cannot create new docker client")
 	}
 
 	searchOpts := types.ImageSearchOptions {}
@@ -38,7 +38,7 @@ func SearchAppNames(mask string) *[]string {
 	var results []registry.SearchResult
 	results, err = cli.ImageSearch(context.Background(), mask,  searchOpts)
 	if err != nil {
-		d_log.Fatal("Cannot results of docker search. " + err.Error())
+		logger.Fatal("Cannot results of docker search. " + err.Error())
 	}
 
 	var appNames []string
