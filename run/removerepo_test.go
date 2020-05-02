@@ -34,7 +34,7 @@ func TestRemoveRepoWithOneLineByName(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 `
 	repoName := "test1"
-	db.RDriver.NewRepo(&storage.Repo{2, false, repoName, "localhost:5000", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{Id: 2, Name: repoName, Server: "localhost:5000"})
 	run.RemoveRepo(repoName)
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -54,7 +54,7 @@ func TestRemoveRepoWithOneLineById(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 `
 	repoId := "2"
-	db.RDriver.NewRepo(&storage.Repo{0, false, "repoName", "localhost:5000", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{Name: "repoName", Server: "localhost:5000"})
 	run.RemoveRepo(repoId)
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -75,8 +75,8 @@ func TestRemoveRepoWithDefaultFlag(t *testing.T) {
 2||repoName|localhost:5000|
 `
 	repoId := "3"
-	db.RDriver.NewRepo(&storage.Repo{1, false, "repoName", "localhost:5000", "", ""})
-	db.RDriver.NewRepo(&storage.Repo{2, true, "repoName2", "localhost:5000", "test", ""})
+	db.RDriver.NewRepo(&storage.Repo{Id: 1, Name: "repoName", Server: "localhost:5000"})
+	db.RDriver.NewRepo(&storage.Repo{Id: 2, Default: true, Name: "repoName2", Server: "localhost:5000", Username: "test"})
 	run.RemoveRepo(repoId)
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -97,8 +97,8 @@ func TestRemoveRepoDefaultRepo(t *testing.T) {
 3||repoName2|localhost:5000|test
 `
 	repoId := "2"
-	db.RDriver.NewRepo(&storage.Repo{1, true, "repoName", "localhost:5000", "", ""})
-	db.RDriver.NewRepo(&storage.Repo{2, false, "repoName2", "localhost:5000", "test", ""})
+	db.RDriver.NewRepo(&storage.Repo{Id: 1, Default: true, Name: "repoName", Server: "localhost:5000"})
+	db.RDriver.NewRepo(&storage.Repo{Id: 2, Name: "repoName2", Server: "localhost:5000", Username: "test"})
 	run.RemoveRepo(repoId)
 	log.SetOutput(&buf)
 	run.ListRepos()

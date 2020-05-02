@@ -49,7 +49,7 @@ func TestListReposWithOneLine(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 2||test1|test.com|
 `
-	db.RDriver.NewRepo(&storage.Repo{2, false, "test1", "test.com", "", ""})
+	db.RDriver.NewRepo(&storage.Repo{Id: 2, Name: "test1", Server: "test.com"})
 	log.SetOutput(&buf)
 	run.ListRepos()
 	log.SetOutput(os.Stdout)
@@ -69,9 +69,9 @@ func TestListReposWithDefaultLastLine(t *testing.T) {
 3||test2|test2.com|user
 4|*|test2|test2.com|user
 `
-	db.RDriver.NewRepo(&storage.Repo{2, false, "test1", "test.com", "", ""})
-	db.RDriver.NewRepo(&storage.Repo{5, false,"test2","test2.com","user","user"})
-	db.RDriver.NewRepo(&storage.Repo{0, true,"test2","test2.com","user","user"})
+	db.RDriver.NewRepo(&storage.Repo{Id: 2, Name: "test1", Server: "test.com"})
+	db.RDriver.NewRepo(&storage.Repo{Id: 5, Name: "test2", Server: "test2.com", Username: "user", Password: "user"})
+	db.RDriver.NewRepo(&storage.Repo{Default: true, Name: "test2", Server: "test2.com", Username: "user", Password: "user"})
 	log.SetOutput(&buf)
 	run.ListRepos()
 	log.SetOutput(os.Stdout)
