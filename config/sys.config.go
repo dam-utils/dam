@@ -45,4 +45,15 @@ var (
 	//Sorting
 	SORT_APP_TYPE="alphabetic" // TODO create new sorting
 	SORT_VERSION_TYPE="semantic_version" // TODO create new sorting
+	//Creating
+	META_DIR_NAME="meta"
+	DOCKERFILE_NAME="Dockerfile"
+	ENV_FILE_NAME="ENVIRONMENT"
+	OS_ENV_PREFIX="DAM_"
+	EXPAND_META_FILE=".exp"
+	//Reserved ENVs
+	APP_NAME_ENV="DAM_APP_NAME"
+	DEF_APP_NAME="unknown"
+	APP_VERS_ENV="DAM_APP_VERSION"
+	DEF_APP_VERS="SNAPSHOT"
 )

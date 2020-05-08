@@ -14,6 +14,17 @@
 //
 package run
 
+import (
+	"dam/config"
+	"dam/driver/db"
+	"dam/driver/docker"
+	fs "dam/driver/filesystem"
+	"dam/driver/filesystem/dockerfile"
+	"dam/driver/filesystem/env"
+	"dam/driver/filesystem/meta"
+	"dam/driver/logger"
+)
+
 type CreateAppSettings struct {
 	MetaPath       string
 	DockerFilePath string
@@ -22,21 +33,51 @@ type CreateAppSettings struct {
 
 var CreateAppFlags = new(CreateAppSettings)
 
-func CreateApp(){
-	//app := new(storage.App)
-	//
-	//pwd := getCurrentDir()
-	//// Validate filesystem
-	//metaDir := checkMeta(CreateAppFlags.MetaPath, pwd)
-	//dockerFile := checkDockerfile(CreateAppFlags.DockerFilePath, pwd)
-	//
-	//// Create environment map
-	//envs := checkEnvironment(metaDir, CreateAppFlags.EnvFilePath)
-	//
-	//// Пока не знаю заменять ли текущую мета или генерировать новую и добавлять в Dockerfile
-	//releaseMetaPath := createMeta(metaDir, envs)
-	//
-	//app = createApp(releaseMetaPath, dockerFile, envs)
-	//
-	//// Написать, что приложение успешно создано
+func CreateApp() {
+	pwd := fs.GetCurrentDir()
+	// Validate filesystem
+	metaDir := meta.GetPath(CreateAppFlags.MetaPath, pwd)
+	dockerFile := dockerfile.GetPath(CreateAppFlags.DockerFilePath, pwd)
+
+	// Create environment map
+	envFile := env.GetPath(metaDir, CreateAppFlags.EnvFilePath)
+	envs := combineEnvs(envFile, dockerFile)
+	preparedEnvs := env.PrepareAppVers(env.PrepareAppName(envs))
+
+	meta.PrepareExpFiles(metaDir, preparedEnvs)
+	tag := getImageTag(preparedEnvs)
+	buildImage(dockerFile, metaDir, getImageTag(preparedEnvs))
+
+	logger.Info("App "+tag+" was created.")
+}
+
+func buildImage(dockerFile, meta, imageTag string) {
+	tmpFile := fs.GenerateTmpFilePath() + ".Dockerfile"
+
+	fs.CopyFile(dockerFile, tmpFile)
+	defer fs.RemoveFile(tmpFile)
+
+	dockerfile.PrepareCopyMeta(tmpFile, meta, CreateAppFlags.MetaPath)
+	docker.Build(imageTag, tmpFile)
+}
+
+func getImageTag(envs map[string]string) string {
+	r := db.RDriver.GetDefaultRepo()
+	return r.Name+"/"+envs[config.DEF_APP_NAME]+":"+envs[config.DEF_APP_VERS]
+}
+
+// Приоритеты замещения переменных по убыванию:
+//- файл ENVIRONMENT
+//- Dockerfile
+//- переменных окружения, начинающихся с config.OS_ENV_PREFIX
+func combineEnvs(envFile string, dockerFile string) map[string]string {
+	dfEnv := env.GetDockerFileEnv(dockerFile)
+	osEnv := env.GetOSEnv(config.OS_ENV_PREFIX)
+
+	if envFile == "" {
+		return env.MergeEnvs(osEnv, dfEnv)
+	}
+
+	fEnv := env.GetFileEnv(envFile)
+	return env.MergeEnvs(env.MergeEnvs(osEnv, dfEnv), fEnv)
 }

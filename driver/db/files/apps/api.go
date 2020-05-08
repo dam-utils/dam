@@ -27,3 +27,7 @@ func NewProvider() *provider {
 func (p *provider) GetApps() *[]storage.App {
 	return GetApps()
 }
+
+func (p *provider) NewApp(app *storage.App) {
+	NewApp(app)
+}

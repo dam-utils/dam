@@ -22,16 +22,21 @@ import (
 var DebugMode bool
 
 func Fatal(err string) {
-	log.Printf("ERROR: "+err)
+	log.Println("ERROR: "+err)
 	os.Exit(1)
 }
 
 func Debug(str string) {
 	if DebugMode {
-		log.Printf("DEBUG: "+str)
+		log.Println("DEBUG: "+str)
 	}
 }
 
 func Warn(str string) {
-	log.Printf("WARN: "+str)
+	log.Println("WARN: "+str)
 }
+
+func Info(str string) {
+	log.Println(str)
+}
+

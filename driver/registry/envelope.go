@@ -15,13 +15,14 @@
 package registry
 
 import (
+	"strings"
+
 	"dam/config"
 	"dam/driver/docker"
 	"dam/driver/logger"
 	registry_official "dam/driver/registry/official"
 	registry_v2 "dam/driver/registry/v2"
 	"dam/driver/storage"
-	"strings"
 )
 
 func CheckRepository(repo *storage.Repo) {

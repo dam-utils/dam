@@ -16,11 +16,14 @@ package apps
 
 import (
 	"bufio"
-	"dam/config"
-	"dam/driver/storage"
 	"os"
 	"strconv"
 	"strings"
+
+	"dam/config"
+	fs "dam/driver/filesystem"
+	"dam/driver/logger"
+	"dam/driver/storage"
 )
 
 
@@ -56,3 +59,83 @@ func str2app(app string) *storage.App {
 	App.Family = ParseApp[6]
 	return App
 }
+
+func NewApp(app *storage.App) {
+	repos := GetApps()
+	//preparedRepo := preparePassword(repo)
+	app.Id = getNewAppID(repos)
+
+	var preparedApps []storage.App
+	newApps := append(preparedApps, *app)
+	saveApps(&newApps)
+}
+
+func getNewAppID(apps *[]storage.App) int {
+	res := 0
+
+	if len(*apps) == 0 {
+		return 0
+	}
+	for _, app := range *apps {
+		if app.Id >= res {
+			res = app.Id
+		}
+	}
+	return res + 1
+}
+
+func saveApps(apps *[]storage.App) {
+	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+	defer f.Close()
+
+	for _, app := range *apps {
+		newLine := app2str(&app)
+		_, err := f.WriteString(*newLine)
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+	}
+	err = f.Sync()
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+	err = f.Close()
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_APPS)
+}
+
+func app2str(app *storage.App) *string {
+	var repoStr string
+	sep := config.FILES_DB_SEPARATOR
+
+	multiVers := ""
+	if app.MultiVersion {
+		multiVers = config.DECORATE_BOOL_FLAG
+	}
+
+	fields := []string{
+		strconv.Itoa(app.Id),
+		app.DockerID, app.ImageName,
+		app.ImageVersion,
+		strconv.Itoa(app.RepoID),
+		multiVers,
+		app.Family,
+	}
+	lenF := len(fields)
+	for i, field := range fields {
+		if i == lenF - 1 {
+			repoStr = repoStr + field + "\n"
+		} else {
+			repoStr = repoStr + field + sep
+		}
+	}
+	return &repoStr
+}
+
+

@@ -76,7 +76,7 @@ Use "dam [command] --help" for more information about a command.
 ```
 
 ## Подробнее для разработки
-См. [DEVELOPMENT_ru.md](DEVELOPMENT_ru.md)
+См. [DEVELOPMENT_ru.md](docs/DEVELOPMENT_ru.md)
 
 ## License
 DAM is under the Apache 2.0 license. See the LICENSE file for details.

@@ -16,15 +16,17 @@ package repos
 
 import (
 	"bufio"
-	"dam/config"
-	"dam/driver/logger"
-	"dam/driver/storage"
-	"dam/exam"
 	"encoding/base64"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"dam/config"
+	fs "dam/driver/filesystem"
+	"dam/driver/logger"
+	"dam/driver/storage"
+	"dam/exam"
 )
 
 
@@ -165,10 +167,7 @@ func saveRepos(repos *[]storage.Repo) {
 		logger.Fatal(err.Error())
 	}
 
-	err = moveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
+	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 }
 
 func ClearRepos() {
@@ -371,6 +370,3 @@ func internalValidatingReposDB(repos *[]storage.Repo) {
 	}
 }
 
-func moveFile(oldLocation, newLocation string) error {
-	return os.Rename(oldLocation, newLocation)
-}

@@ -1,0 +1,13 @@
+FROM scratch:1.0
+
+ARG test
+ENV TEST
+ENV TEST=test
+ENV TEST=test?
+ENV TEST2 = test2
+ENV TEST3=test3=test3
+#ENV TEST4=test4
+ENV TEST5 test5
+ENV TEST6 test6
+ENV TEST6 test?
+ENV TEST7 test7 test8
