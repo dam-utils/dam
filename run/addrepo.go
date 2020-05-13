@@ -18,7 +18,7 @@ import (
 	"dam/driver/db"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/exam"
+	"dam/validate"
 )
 
 type AddRepoSettings struct {
@@ -36,7 +36,7 @@ func AddRepo(){
 	repo  := new(storage.Repo)
 	repo.Default = AddRepoFlags.Default
 
-	err := exam.CheckRepoName(AddRepoFlags.Name,)
+	err := validate.CheckRepoName(AddRepoFlags.Name,)
 	if err != nil {
 		logger.Fatal(err.Error())
 	} else {
@@ -50,13 +50,13 @@ func AddRepo(){
 		}
 	}
 
-	err = exam.CheckServer(AddRepoFlags.Server)
+	err = validate.CheckServer(AddRepoFlags.Server)
 	if err != nil {
 		logger.Fatal(err.Error())
 	} else {
 		repo.Server = AddRepoFlags.Server
 	}
-	err = exam.CheckLogin(AddRepoFlags.Username)
+	err = validate.CheckLogin(AddRepoFlags.Username)
 	if err != nil {
 		logger.Fatal(err.Error())
 	} else {

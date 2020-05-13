@@ -26,7 +26,7 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/exam"
+	"dam/validate"
 )
 
 
@@ -190,10 +190,7 @@ func ClearRepos() {
 		logger.Fatal(err.Error())
 	}
 
-	err = moveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
+	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 }
 
 func GetRepos() *[]storage.Repo {
@@ -355,13 +352,13 @@ func internalValidatingReposDB(repos *[]storage.Repo) {
 				defRepo = true
 			}
 		}
-		if exam.CheckRepoName(repo.Name) != nil {
+		if validate.CheckRepoName(repo.Name) != nil {
 			logger.Fatal("Internal error. Repo name '"+repo.Name+"' is invalid in DB")
 		}
-		if exam.CheckLogin(repo.Username) != nil {
+		if validate.CheckLogin(repo.Username) != nil {
 			logger.Fatal("Internal error. Repo login '"+repo.Username+"' is invalid in DB")
 		}
-		if exam.CheckServer(repo.Server) != nil {
+		if validate.CheckServer(repo.Server) != nil {
 			logger.Fatal("Internal error. Repo server '"+repo.Server+"' is invalid in DB")
 		}
 	}

@@ -21,4 +21,4 @@ COPY . .
 
 RUN mv /go/src/${PROJECT_NAME}/_build/goget_cache/github.com /go/src/github.com
 RUN go get -d ./
-RUN go test -v ${PROJECT_NAME}/run
+RUN go test -v ./...

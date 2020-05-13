@@ -23,9 +23,9 @@ var createAppCmd = &cobra.Command{
 	Use:   "create (ce) [project directory] [--meta <meta directory path>] [--dockerfile <dockerfile path>] [--env <env file path>]",
 	Short: "Create docker application.",
 	Long:  ``,
-	Args:  cobra.RangeArgs(0, 1),
+	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		run.CreateApp()
+		run.CreateApp(args[0])
 	},
 }
 

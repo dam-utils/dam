@@ -27,25 +27,26 @@ func PrepareExpString(s string, envs map[string]string) string {
 	return newString
 }
 
-func PrepareAppName(envs map[string]string) map[string]string {
-	//TODO validate app name
-
+func PrepareProjectEnvs(envs map[string]string) map[string]string {
+	// app name
 	val, ok := envs[config.APP_NAME_ENV]
 	if !ok || val == "" {
 		val = config.DEF_APP_NAME
 	}
 	envs[config.APP_NAME_ENV]=val
-	return envs
-}
 
-func PrepareAppVers(envs map[string]string) map[string]string {
-	//TODO validate app version
-
-	val, ok := envs[config.APP_VERS_ENV]
+	//app vers
+	val, ok = envs[config.APP_VERS_ENV]
 	if !ok || val == "" {
 		val = config.DEF_APP_VERS
 	}
 	envs[config.APP_VERS_ENV]=val
+
+	//app family
+	val, ok = envs[config.APP_FAMILY]
+	if !ok || val == "" {
+		val = envs[config.APP_NAME_ENV]
+	}
+	envs[config.APP_FAMILY]=val
 	return envs
 }
-

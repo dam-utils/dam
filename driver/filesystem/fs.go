@@ -30,7 +30,7 @@ func GetCurrentDir() string {
 	return dir
 }
 
-func DirIsExist(path string) bool {
+func IsExistDir(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
 		logger.Fatal("Cannot check directory "+path+" with error: "+ err.Error())
@@ -38,7 +38,7 @@ func DirIsExist(path string) bool {
 	return info.IsDir()
 }
 
-func FileIsExist(path string) bool {
+func IsExistFile(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
 		logger.Fatal("Cannot check file "+path+" with error: "+ err.Error())
@@ -51,7 +51,7 @@ func GetBaseName(path string) string {
 }
 
 func GetFileList(path string, agg *[]string) *[]string {
-	if DirIsExist(path) {
+	if IsExistDir(path) {
 		for _, p := range Ls(path) {
 			GetFileList(p, agg)
 		}
@@ -108,4 +108,14 @@ func CopyFile(sourceFile, destFile string) {
 	if err != nil {
 		logger.Fatal("Cannot write to tmp file '"+destFile+"' with error: "+ err.Error())
 	}
+}
+
+func GetAbsolutePath(path string) string {
+	p, err := filepath.Abs(path)
+	{
+		if err != nil {
+			logger.Fatal("Cannot get absolute path for '"+path+"' with error: "+ err.Error())
+		}
+	}
+	return p
 }

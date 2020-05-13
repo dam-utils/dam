@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp dam /usr/local/bin/dam

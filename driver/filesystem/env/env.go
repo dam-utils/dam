@@ -16,36 +16,18 @@ package env
 
 import (
 	"bufio"
-	"dam/config"
-	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"os"
 	"strings"
 )
-
-func GetPath(metaDir string, envPath string) string {
-	if envPath != envPath {
-		if fs.FileIsExist(envPath) {
-			if fs.GetBaseName(envPath) == config.ENV_FILE_NAME {
-				return envPath
-			}
-		}
-		if fs.FileIsExist(envPath + "/" + config.ENV_FILE_NAME) {
-			return envPath + "/" + config.ENV_FILE_NAME
-		}
-	}
-	if fs.FileIsExist(metaDir+"/"+config.ENV_FILE_NAME){
-		return metaDir+"/"+config.ENV_FILE_NAME
-	}
-	return ""
-}
 
 func GetFileEnv(file string) map[string]string {
 	var envMap = make(map[string]string)
 
 	f, err := os.Open(file)
 	if err != nil {
-		logger.Fatal("Cannot open env file: " + err.Error())
+		logger.Warn("Cannot open env file: " + err.Error())
+		return envMap
 	}
 	defer f.Close()
 

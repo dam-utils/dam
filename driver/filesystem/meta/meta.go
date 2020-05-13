@@ -24,29 +24,6 @@ import (
 	"strings"
 )
 
-// проверить, существует ли мета по флагу
-// проверить, существует ли path по флагу + "meta"
-// проверить, существует ли мета в текущем каталоге
-func GetPath(metaPath string, pwd string) string {
-	if metaPath != "" {
-		if fs.DirIsExist(metaPath) {
-			if fs.GetBaseName(metaPath) == config.META_DIR_NAME {
-				return metaPath
-			}
-		}
-		if fs.DirIsExist(metaPath + "/" + config.META_DIR_NAME) {
-			return metaPath + "/" + config.META_DIR_NAME
-		}
-	}
-	if fs.DirIsExist(pwd+"/"+config.META_DIR_NAME) {
-		return pwd+"/"+config.META_DIR_NAME
-	}
-	logger.Fatal("Cannot found 'meta' directory path in command")
-	// Never gonna happen
-	return ""
-}
-
-
 func PrepareExpFiles(metaDir string, envs map[string]string) {
 	files := fs.GetFileList(metaDir, &[]string{})
 	for _, file := range *files {

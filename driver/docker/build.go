@@ -16,21 +16,32 @@ package docker
 
 import (
 	"context"
+	"os"
+
 	"dam/config"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/archive"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/term"
 )
 
-func Build(imageTag, dFile string) {
-	opts := types.ImageBuildOptions {
+func Build(imageTag, projectDir string) {
+	buildCtx, err := archive.TarWithOptions(projectDir, &archive.TarOptions{})
+	if err != nil {
+		logger.Fatal("Cannot create docker context (project files directory) with error: " + err.Error())
+	}
+	opts := types.ImageBuildOptions{
 		Tags: []string{imageTag},
-		//PullParent: true, надо ли?
-		Dockerfile: dFile,
-		//BuildArgs: map[string]*string TODO
-		//Labels: map[string]string //может пригодиться
-		//Platform: string //может пригодиться
+		Context : buildCtx,
+
+		//может пригодиться
+		//PullParent: true,
+		//BuildArgs: map[string]*string,
+		//Labels: map[string]string,
+		//Platform: string,
 	}
 
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
@@ -38,8 +49,15 @@ func Build(imageTag, dFile string) {
 		logger.Fatal("Cannot create new docker client")
 	}
 
-	_, err = cli.ImageBuild(context.Background(), nil, opts)
+	resp, err := cli.ImageBuild(context.Background(), buildCtx, opts)
 	if err != nil {
 		logger.Fatal("Cannot build docker image with error: " + err.Error())
+	}
+	defer resp.Body.Close()
+
+	termFd, isTerm := term.GetFdInfo(os.Stderr)
+	err = jsonmessage.DisplayJSONMessagesStream(resp.Body, os.Stderr, termFd, isTerm, nil)
+	if err != nil {
+		logger.Fatal("Cannot get output json for building image with error: " + err.Error())
 	}
 }

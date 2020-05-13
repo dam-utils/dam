@@ -19,51 +19,38 @@ import (
 	"dam/driver/db"
 	"dam/driver/docker"
 	fs "dam/driver/filesystem"
-	"dam/driver/filesystem/dockerfile"
 	"dam/driver/filesystem/env"
 	"dam/driver/filesystem/meta"
+	"dam/driver/filesystem/project"
 	"dam/driver/logger"
 )
 
 type CreateAppSettings struct {
-	MetaPath       string
-	DockerFilePath string
-	EnvFilePath    string
+
 }
 
 var CreateAppFlags = new(CreateAppSettings)
 
-func CreateApp() {
-	pwd := fs.GetCurrentDir()
-	// Validate filesystem
-	metaDir := meta.GetPath(CreateAppFlags.MetaPath, pwd)
-	dockerFile := dockerfile.GetPath(CreateAppFlags.DockerFilePath, pwd)
+func CreateApp(path string) {
+	projectDir := fs.GetAbsolutePath(path)
+	metaDir, dockerFile, envFile := project.Prepare(projectDir)
 
 	// Create environment map
-	envFile := env.GetPath(metaDir, CreateAppFlags.EnvFilePath)
 	envs := combineEnvs(envFile, dockerFile)
-	preparedEnvs := env.PrepareAppVers(env.PrepareAppName(envs))
+	preparedEnvs := env.PrepareProjectEnvs(envs)
 
 	meta.PrepareExpFiles(metaDir, preparedEnvs)
+
 	tag := getImageTag(preparedEnvs)
-	buildImage(dockerFile, metaDir, getImageTag(preparedEnvs))
+	project.ValidateTag(tag)
 
+	docker.Build(getImageTag(preparedEnvs), projectDir)
 	logger.Info("App "+tag+" was created.")
-}
-
-func buildImage(dockerFile, meta, imageTag string) {
-	tmpFile := fs.GenerateTmpFilePath() + ".Dockerfile"
-
-	fs.CopyFile(dockerFile, tmpFile)
-	defer fs.RemoveFile(tmpFile)
-
-	dockerfile.PrepareCopyMeta(tmpFile, meta, CreateAppFlags.MetaPath)
-	docker.Build(imageTag, tmpFile)
 }
 
 func getImageTag(envs map[string]string) string {
 	r := db.RDriver.GetDefaultRepo()
-	return r.Name+"/"+envs[config.DEF_APP_NAME]+":"+envs[config.DEF_APP_VERS]
+	return r.Name+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
 }
 
 // Приоритеты замещения переменных по убыванию:
