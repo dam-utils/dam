@@ -34,14 +34,14 @@ func Prepare(path string)(string, string, string){
 		logger.Fatal("Cannot found 'meta' for path: "+dockerFile)
 	}
 
-	install := path+string(os.PathSeparator)+config.INSTALL_FILE_NAME
+	install := meta+string(os.PathSeparator)+config.INSTALL_FILE_NAME
 	if !fs.IsExistFile(install) {
 		if !fs.IsExistFile(install+config.EXPAND_META_FILE) {
 			logger.Fatal("Cannot found '" + install + "' or " + install + config.EXPAND_META_FILE + " files in meta directory")
 		}
 	}
 
-	uninstall := path+string(os.PathSeparator)+config.UNINSTALL_FILE_NAME
+	uninstall := meta+string(os.PathSeparator)+config.UNINSTALL_FILE_NAME
 	if !fs.IsExistFile(uninstall) {
 		if !fs.IsExistFile(uninstall+config.EXPAND_META_FILE) {
 			logger.Fatal("Cannot found '" + uninstall + "' or " + uninstall + config.EXPAND_META_FILE + " files in meta directory")

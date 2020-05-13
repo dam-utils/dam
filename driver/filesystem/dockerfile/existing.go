@@ -32,19 +32,21 @@ func IsCopyMeta(path string) bool {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-			line := scanner.Text()
-			matchCopy, err := regexp.MatchString("^COPY .* /meta$", line)
-			if err != nil {
-				if matchCopy {
-					return true
-				}
-			}
-			matchAdd, err := regexp.MatchString("^ADD .* /meta$", line)
-			if err != nil{
-				if matchAdd {
-					return true
-				}
-			}
+		line := scanner.Text()
+		matchCopy, err := regexp.MatchString("COPY .* /meta", line)
+		if err != nil {
+			continue
+		}
+		if matchCopy {
+			return true
+		}
+		matchAdd, err := regexp.MatchString("ADD .* /meta", line)
+		if err != nil {
+			continue
+		}
+		if matchAdd {
+			return true
+		}
 	}
 	return false
 }
@@ -59,7 +61,7 @@ func IsFamily (path string) bool {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
-		matchFamily, err := regexp.MatchString("^LABEL "+config.APP_FAMILY+"$", line)
+		matchFamily, err := regexp.MatchString("LABEL "+config.APP_FAMILY+"=.* ", line)
 		if err != nil {
 			if matchFamily {
 				return true
