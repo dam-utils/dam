@@ -42,8 +42,13 @@ lint:
 	$(call lint_func)
 
 clean: clean-docker
-	rm -rf _build || true
+	rm -rf _build src/build/dam/linux/dam || true
 
 clean-docker:
 	$(call clear_func,windows)
 	$(call clear_func,linux)
+
+app-linux:
+	$(call build_func,linux,amd64)
+	cp -f _build/linux/${PROJECT_NAME} src/build/dam-linux/${PROJECT_NAME}
+	src/build/dam-linux/${PROJECT_NAME} create src/build/dam-linux/
