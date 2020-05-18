@@ -17,7 +17,6 @@ package repos
 import (
 	"bufio"
 	"encoding/base64"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -92,7 +91,7 @@ func ModifyRepo(mRepo *storage.Repo) {
 	}
 
 	prepNewRepos := prepareClearRepos(&newRepos)
-	logger.Debug(fmt.Sprintf("ModifyRepo():prepareClearRepos(&newRepos): '%v'", prepNewRepos))
+	logger.Debug("ModifyRepo():prepareClearRepos(&newRepos): '%v'", prepNewRepos)
 	saveRepos(prepNewRepos)
 }
 
@@ -198,12 +197,12 @@ func GetRepos() *[]storage.Repo {
 	var Repos []storage.Repo
 	fileHandle, err := os.Open(config.FILES_DB_REPOS)
 	if err != nil {
-		logger.Fatal("Cannot open file '"+config.FILES_DB_REPOS+"'"  )
+		logger.Fatal("Cannot open file '%s'", config.FILES_DB_REPOS)
 	}
 	defer func (){
 		err := fileHandle.Close()
 		if err != nil {
-			logger.Fatal(fmt.Sprintf("Cannot close file '%v'",config.FILES_DB_REPOS))
+			logger.Fatal("Cannot close file '%s'", config.FILES_DB_REPOS)
 		}
 	}()
 
@@ -318,7 +317,7 @@ func str2Repo(repo string) *storage.Repo {
 	var err error
 	Repo.Password, err = base64ToStr(ParseRepo[5])
 	if err != nil {
-		logger.Fatal("Cannot read the password of user '"+Repo.Username+"'")
+		logger.Fatal("Cannot read the password of user '%s'", Repo.Username)
 	}
 	return Repo
 }
@@ -353,13 +352,13 @@ func internalValidatingReposDB(repos *[]storage.Repo) {
 			}
 		}
 		if validate.CheckRepoName(repo.Name) != nil {
-			logger.Fatal("Internal error. Repo name '"+repo.Name+"' is invalid in DB")
+			logger.Fatal("Internal error. Repo name '%s' is invalid in DB", repo.Name)
 		}
 		if validate.CheckLogin(repo.Username) != nil {
-			logger.Fatal("Internal error. Repo login '"+repo.Username+"' is invalid in DB")
+			logger.Fatal("Internal error. Repo login '%s' is invalid in DB", repo.Username)
 		}
 		if validate.CheckServer(repo.Server) != nil {
-			logger.Fatal("Internal error. Repo server '"+repo.Server+"' is invalid in DB")
+			logger.Fatal("Internal error. Repo server '%s' is invalid in DB", repo.Server)
 		}
 	}
 	if !defRepo {

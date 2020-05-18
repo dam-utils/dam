@@ -19,6 +19,7 @@ var (
 	UTIL_NAME="dam"
 	DISABLE_DEBUG=true //	It is recommended to enable this option in a production. Debug messages may contain passwords
 	//Decorating options
+	COLLOR_ON=true
 	DECORATE_MAX_DISPLAY_WIDTH =100
 	DECORATE_RAW_SEPARATOR     ="|"
 	DECORATE_BOOL_FLAG         ="*"

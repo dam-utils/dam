@@ -46,7 +46,7 @@ func CreateApp(path string) {
 	project.ValidateTag(tag)
 
 	docker.Build(getImageTag(preparedEnvs), projectDir)
-	logger.Info("App '"+tag+"' was created.")
+	logger.Success("App '%s' was created.", tag)
 }
 
 func getImageTag(envs map[string]string) string {

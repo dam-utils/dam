@@ -16,12 +16,13 @@ package meta
 
 import (
 	"bufio"
+	"os"
+	"strings"
+
 	"dam/config"
 	fs "dam/driver/filesystem"
 	"dam/driver/filesystem/env"
 	"dam/driver/logger"
-	"os"
-	"strings"
 )
 
 func PrepareExpFiles(metaDir string, envs map[string]string) {
@@ -38,14 +39,14 @@ func prepareExpFile(path string, envs map[string]string) {
 
 	f, err := os.Open(path)
 	if err != nil {
-		logger.Fatal("Cannot open file '"+path+"' with error: " + err.Error())
+		logger.Fatal("Cannot open file '%s' with error: %s", path, err.Error())
 	}
 	defer f.Close()
 
 	newf, err := os.Create(newPath)
 	if err != nil {
 		newf.Close()
-		logger.Fatal("Cannot create file '"+newPath+"' with error: " + err.Error())
+		logger.Fatal("Cannot create file '%s' with error: %s", newPath, err.Error())
 	}
 
 	scanner := bufio.NewScanner(f)
@@ -54,17 +55,17 @@ func prepareExpFile(path string, envs map[string]string) {
 		_, err = f.WriteString(newString)
 		if err != nil {
 			newf.Close()
-			logger.Fatal("Cannot write string to file '"+newPath+"' with error: " + err.Error())
+			logger.Fatal("Cannot write string to file '%s' with error: %s", newPath, err.Error())
 		}
 	}
 
 	err = newf.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync of writable file '"+newPath+"' with error: " + err.Error())
+		logger.Fatal("Cannot sync of writable file '%s' with error: %s", newPath, err.Error())
 	}
 
 	err = newf.Close()
 	if err != nil {
-		logger.Fatal("Cannot close of writable file '"+newPath+"' with error: " + err.Error())
+		logger.Fatal("Cannot close of writable file '%s' with error: %s", newPath, err.Error())
 	}
 }

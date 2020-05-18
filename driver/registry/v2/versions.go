@@ -15,12 +15,13 @@
 package registry_v2
 
 import (
-	"dam/config"
-	"dam/driver/logger"
-	"dam/driver/storage"
 	"encoding/json"
 	"net/http"
 	"time"
+
+	"dam/config"
+	"dam/driver/logger"
+	"dam/driver/storage"
 )
 
 func GetAppVersions(repo *storage.Repo, appName string) *[]string {
@@ -33,7 +34,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 	url := SessionURL + "v2/" + appName + "/tags/list"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		logger.Fatal("Cannot create new request for get URL: '"+url+"'")
+		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err.Error())
 	}
 	if repo.Username != "" {
 		req.SetBasicAuth(repo.Username, repo.Password)
@@ -41,7 +42,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		logger.Fatal("Cannot get response from URL: '"+url+"'")
+		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err.Error())
 	}
 	defer resp.Body.Close()
 
@@ -52,7 +53,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		logger.Fatal("Cannot parse app versions in the body from URL: '" + url + "'")
+		logger.Fatal("Cannot parse app versions in the body from URL '%s' with error: %s", url, err.Error())
 	}
 	vers := body.Tags
 	return &vers

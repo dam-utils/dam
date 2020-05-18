@@ -93,7 +93,7 @@ func saveAppToDB(tag string){
 func getInstall(meta string) string {
 	inst := filepath.Join(meta, config.INSTALL_FILE_NAME)
 	if !fs.IsExistFile(inst) {
-		logger.Fatal("Not found "+config.INSTALL_FILE_NAME+" file in "+config.META_DIR_NAME)
+		logger.Fatal("Not found '%s' file in meta '%s'", config.INSTALL_FILE_NAME, config.META_DIR_NAME)
 	}
 	return inst
 }
@@ -101,7 +101,7 @@ func getInstall(meta string) string {
 func checkUninstall(meta string){
 	uninst := filepath.Join(meta, config.UNINSTALL_FILE_NAME)
 	if !fs.IsExistFile(uninst) {
-		logger.Fatal("Not found "+config.UNINSTALL_FILE_NAME+" file in "+config.META_DIR_NAME)
+		logger.Fatal("Not found '%s' file in '%s'", config.UNINSTALL_FILE_NAME, config.META_DIR_NAME)
 	}
 }
 
@@ -116,7 +116,7 @@ func runInstall(installFile string) {
 	c.Stdout = &out
 	err := c.Run()
 	if err != nil {
-		logger.Fatal("Cannot execute file '"+installFile+"' with error: "+err.Error())
+		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
 	}
 
 	logger.Info(out.String())

@@ -52,13 +52,13 @@ func Pull(tag string, repo *storage.Repo) {
 	}
 	out, err := cli.ImagePull(context.Background(), tag, pullOpts)
 	if err != nil {
-		logger.Warn("Cannot pull docker image with error: "+err.Error())
+		logger.Warn("Cannot pull docker image with error: %s", err.Error())
 	}
 
 	defer out.Close()
 	_, err = io.Copy(os.Stdout, out)
 	if err != nil {
-		logger.Fatal("Cannot print docker stdout with error: "+err.Error())
+		logger.Fatal("Cannot print docker stdout with error: %s", err.Error())
 	}
 }
 
@@ -82,7 +82,7 @@ func GetImageID(tag string) string {
 			}
 		}
 	}
-	logger.Fatal("Cannot found images tag '"+tag+"' in images list")
+	logger.Fatal("Cannot found images tag '%s' in images list", tag)
 	return ""
 }
 
@@ -107,11 +107,11 @@ func GetImageLabel(tag, labelName string) string {
 						return value
 					}
 				}
-				logger.Warn("Cannot found image label '"+labelName+"'")
+				logger.Warn("Cannot found image label '%s'", labelName)
 				return ""
 			}
 		}
 	}
-	logger.Warn("Cannot found image label '"+labelName+"'")
+	logger.Warn("Cannot found image label '%s'", labelName)
 	return ""
 }

@@ -15,9 +15,10 @@
 package run
 
 import (
+	"strconv"
+
 	"dam/driver/db"
 	"dam/driver/logger"
-	"strconv"
 )
 
 type RemoveRepoSettings struct {
@@ -34,12 +35,12 @@ func RemoveRepo(arg string) {
 		repoId = db.RDriver.GetRepoIdByName(&arg)
 	}
 	if repoId == 1 {
-		logger.Fatal("Command argument '"+arg+"' is not Id or Name of Repository")
+		logger.Fatal("Command argument '%s' is not Id or Name of Repository", arg)
 	}
 
 	defRepo := db.RDriver.GetDefaultRepo()
 	if !RemoveRepoFlags.Force && repoId == defRepo.Id {
-		logger.Fatal("Repository with Id '" + strconv.Itoa(repoId) + "' is default. Use '--skip' flag for removing.")
+		logger.Fatal("Repository with Id '%v' is default. Use '--skip' flag for removing", repoId)
 	}
 	db.RDriver.RemoveRepoById(repoId)
 }

@@ -16,8 +16,10 @@ package docker
 
 import (
 	"context"
+
 	"dam/config"
 	"dam/driver/logger"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/client"
@@ -39,7 +41,7 @@ func SearchAppNames(mask string) *[]string {
 	var results []registry.SearchResult
 	results, err = cli.ImageSearch(context.Background(), mask,  searchOpts)
 	if err != nil {
-		logger.Fatal("Cannot results of docker search. " + err.Error())
+		logger.Fatal("Cannot get results of docker search with error: %s", err.Error())
 	}
 
 	var appNames []string

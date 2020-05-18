@@ -24,7 +24,7 @@ func SortAppNames(names *[]string) *[]string {
 	case "alphabetic":
 		return AlphabeticSort(names)
 	default:
-		logger.Fatal("Config option SORT_APP_TYPE='"+config.SORT_APP_TYPE+"' not valid. Sorting type is bad." )
+		logger.Fatal("Config option SORT_APP_TYPE='%s' not valid. Sorting type is bad", config.SORT_APP_TYPE)
 	}
 	return nil
 }
@@ -34,7 +34,7 @@ func SortVersions(vers *[]string) *[]string {
 	case "semantic_version":
 		return SemanticVersionSort(vers)
 	default:
-		logger.Fatal("Config option SORT_VERSION_TYPE='"+config.SORT_VERSION_TYPE+"' not valid. Sorting type is bad." )
+		logger.Fatal("Config option SORT_VERSION_TYPE='%s' not valid. Sorting type is bad", config.SORT_VERSION_TYPE)
 	}
 	return nil
 }

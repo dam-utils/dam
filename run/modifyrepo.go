@@ -17,7 +17,6 @@ package run
 import (
 	"dam/driver/db"
 	"dam/driver/logger"
-	"fmt"
 	"strconv"
 )
 
@@ -36,7 +35,7 @@ var ExistingMRFlags = make(map[string]bool)
 func ModifyRepo(arg string) {
 	ID, err := strconv.Atoi(arg)
 	if err != nil {
-		logger.Fatal("Argument 'modifyrepo' is not ID. See 'help modifyrepo'")
+		logger.Fatal("Command argument is not ID. See 'help modifyrepo'")
 	}
 	repo := db.RDriver.GetRepoById(ID)
 	if ExistingMRFlags["--default"] && repo.Default != ModifyRepoFlags.Default {
@@ -59,10 +58,10 @@ func ModifyRepo(arg string) {
 		noModifyOfficialRepoFlags := []string{"--name", "--server", "--username", "--password"}
 		for _, noModFlag := range noModifyOfficialRepoFlags {
 			if ExistingMRFlags[noModFlag] {
-				logger.Fatal("Cannot use flag '"+noModFlag+"'for official repository. Except flag '--default'")
+				logger.Fatal("Cannot use flag '%s'for official repository. Except flag '--default'", noModFlag)
 			}
 		}
 	}
-	logger.Debug(fmt.Sprintf("Repo for modify: '%v'", *repo))
+	logger.Debug("Repo for modify: '%v'", *repo)
 	db.RDriver.ModifyRepo(repo)
 }

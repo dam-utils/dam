@@ -15,12 +15,13 @@
 package registry_official
 
 import (
-	"dam/config"
-	"dam/driver/logger"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
+
+	"dam/config"
+	"dam/driver/logger"
 )
 
 func GetAppVersions(app string) *[]string {
@@ -42,8 +43,7 @@ func GetAppVersions(app string) *[]string {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println()
-		logger.Fatal("Cannot send request to URL: '" + url + "'")
+		logger.Fatal("Cannot send request to URL '%s'", url)
 	}
 	defer resp.Body.Close()
 
@@ -53,9 +53,7 @@ func GetAppVersions(app string) *[]string {
 	var body AppVersionsResponse
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		log.Println()
-		logger.Debug(err.Error())
-		logger.Fatal("Cannot parse app versions in the body from URL: '" + url + "'")
+		logger.Fatal("Cannot parse app versions in the body from URL '%s' with error: %s", url)
 	}
 	vers := body.Tags
 	return &vers

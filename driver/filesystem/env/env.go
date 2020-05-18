@@ -26,7 +26,7 @@ func GetFileEnv(file string) map[string]string {
 
 	f, err := os.Open(file)
 	if err != nil {
-		logger.Warn("Cannot open env file: " + err.Error())
+		logger.Warn("Cannot open env file with error: %s", err.Error())
 		return envMap
 	}
 	defer f.Close()
@@ -46,7 +46,7 @@ func GetDockerFileEnv(file string) map[string]string {
 
 	f, err := os.Open(file)
 	if err != nil {
-		logger.Fatal("Cannot open docker file: " + err.Error())
+		logger.Fatal("Cannot open docker file with error: %s", err.Error())
 	}
 	defer f.Close()
 

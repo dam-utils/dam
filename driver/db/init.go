@@ -37,5 +37,5 @@ func Init() {
 }
 
 func dbConfigureIsBad() {
-	logger.Fatal("Config option UTIL_NAME='" + config.UTIL_NAME + "' not valid. DB type is bad.")
+	logger.Fatal("Config option UTIL_NAME='%s' not valid. DB type is bad", config.UTIL_NAME)
 }

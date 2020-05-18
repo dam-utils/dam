@@ -18,13 +18,17 @@ import (
 	"log"
 	"os"
 
+	"dam/config"
 	"dam/driver/logger/color"
 )
 
 var DebugMode bool
 
-func Fatal(err string, args ...interface{}) {
-	message := color.Red+"ERROR: "+err+color.Reset
+func Fatal(message string, args ...interface{}) {
+	message = "ERROR: " + message
+	if config.COLLOR_ON == true {
+		message = color.Red + message + color.Reset
+	}
 
 	if len(args) == 0 {
 		log.Println(message)
@@ -34,8 +38,8 @@ func Fatal(err string, args ...interface{}) {
 	os.Exit(1)
 }
 
-func Debug(str string, args ...interface{}) {
-	message := "DEBUG: "+str
+func Debug(message string, args ...interface{}) {
+	message = "DEBUG: "+message
 
 	if DebugMode {
 		if len(args) == 0 {
@@ -46,8 +50,11 @@ func Debug(str string, args ...interface{}) {
 	}
 }
 
-func Warn(str string, args ...interface{}) {
-	message := color.Yellow+"WARN: "+str+color.Reset
+func Warn(message string, args ...interface{}) {
+	message = "WARN: "+message
+	if config.COLLOR_ON == true {
+		message = color.Yellow + message + color.Reset
+	}
 
 	if len(args) == 0 {
 		log.Println(message)
@@ -56,8 +63,10 @@ func Warn(str string, args ...interface{}) {
 	}
 }
 
-func Info(str string, args ...interface{}) {
-	message := color.White+str+color.Reset
+func Info(message string, args ...interface{}) {
+	if config.COLLOR_ON == true {
+		message = color.White + message + color.Reset
+	}
 
 	if len(args) == 0 {
 		log.Println(message)
@@ -66,3 +75,14 @@ func Info(str string, args ...interface{}) {
 	}
 }
 
+func Success(message string, args ...interface{}) {
+	if config.COLLOR_ON == true {
+		message = color.Green + message + color.Reset
+	}
+
+	if len(args) == 0 {
+		log.Println(message)
+	} else {
+		log.Printf(message, args...)
+	}
+}

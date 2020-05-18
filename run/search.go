@@ -20,14 +20,13 @@ import (
 	"dam/driver/logger"
 	"dam/driver/registry"
 	"dam/sort"
-	"fmt"
 )
 
 func Search(arg string) {
 	repo := db.RDriver.GetDefaultRepo()
 	registry.CheckRepository(repo)
 	appList := registry.GetAppNamesByMask(repo, arg)
-	logger.Debug(fmt.Sprintf("run/search.go:appList: '%v'", appList))
+	logger.Debug("run/search.go:appList: '%v'", appList)
 	appSortedList := sort.SortAppNames(appList)
 	for _, app := range *appSortedList {
 		decorate.PrintSearchedApp(app)

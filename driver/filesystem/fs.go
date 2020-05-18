@@ -15,16 +15,17 @@
 package filesystem
 
 import (
-	"dam/driver/logger"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"dam/driver/logger"
 )
 
 func GetCurrentDir() string {
 	dir, err := os.Getwd()
 	if err != nil {
-		logger.Fatal("Cannot get current dir with error: "+ err.Error())
+		logger.Fatal("Cannot get current dir with error: %s", err.Error())
 	}
 	return dir
 }
@@ -32,7 +33,7 @@ func GetCurrentDir() string {
 func IsExistDir(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot check directory '"+path+"' with error: "+ err.Error())
+		logger.Fatal("Cannot check directory '%s' with error: %s", path, err.Error())
 	}
 	return info.IsDir()
 }
@@ -40,7 +41,7 @@ func IsExistDir(path string) bool {
 func IsExistFile(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot check file '"+path+"' with error: "+ err.Error())
+		logger.Fatal("Cannot check file '%s' with error: %s", path, err.Error())
 	}
 	return !info.IsDir()
 }
@@ -64,7 +65,7 @@ func GetFileList(path string, agg *[]string) *[]string {
 func Ls(dir string) []string {
 	files, err := filepath.Glob("dir/*")
 	if err != nil {
-		logger.Fatal("Cannot check files in path '"+dir+"/' with error: "+ err.Error())
+		logger.Fatal("Cannot check files in path '%s/' with error: %s", dir, err.Error())
 	}
 	return files
 }
@@ -72,12 +73,12 @@ func Ls(dir string) []string {
 func Remove(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		logger.Warn("Cannot check path '"+path+"' with error: "+ err.Error())
+		logger.Warn("Cannot check path '%s' with error: %s", path, err.Error())
 	}
 
 	err = os.Remove(path)
 	if err != nil {
-		logger.Warn("Cannot remove path '"+path+"' with error: "+ err.Error())
+		logger.Warn("Cannot remove path '%s' with error: %s", path, err.Error())
 	}
 	return false
 }
@@ -85,19 +86,19 @@ func Remove(path string) bool {
 func MoveFile(oldLocation, newLocation string) {
 	err := os.Rename(oldLocation, newLocation)
 	if err != nil {
-		logger.Fatal("Cannot move file '"+oldLocation+"' to '"+newLocation+"' with error: "+ err.Error())
+		logger.Fatal("Cannot move file '%s' to '%s' with error: %s", oldLocation, newLocation, err.Error())
 	}
 }
 
 func CopyFile(sourceFile, destFile string) {
 	input, err := ioutil.ReadFile(sourceFile)
 	if err != nil {
-		logger.Fatal("Cannot read file '"+sourceFile+"' with error: "+ err.Error())
+		logger.Fatal("Cannot read file '%s' with error: %s", sourceFile, err.Error())
 	}
 
 	err = ioutil.WriteFile(destFile, input, 0644)
 	if err != nil {
-		logger.Fatal("Cannot write to tmp file '"+destFile+"' with error: "+ err.Error())
+		logger.Fatal("Cannot write to tmp file '%s' with error: %s", destFile, err.Error())
 	}
 }
 
@@ -105,7 +106,7 @@ func GetAbsolutePath(path string) string {
 	p, err := filepath.Abs(path)
 	{
 		if err != nil {
-			logger.Fatal("Cannot get absolute path for '"+path+"' with error: "+ err.Error())
+			logger.Fatal("Cannot get absolute path for '%s' with error: %s", path, err.Error())
 		}
 	}
 	return p

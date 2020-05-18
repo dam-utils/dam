@@ -15,20 +15,18 @@
 package registry_official
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"dam/config"
 	"dam/driver/logger"
-	"encoding/json"
-	"log"
-	"net/http"
 )
 
 func GetBearerToken(app string) string {
 	url := config.OFFICIAL_REGISTRY_AUTH_URL+ "&scope=repository:"+app+":pull"
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Println()
-		logger.Debug(err.Error())
-		logger.Fatal("Cannot get token from URL: '" + url + "'")
+		logger.Fatal("Cannot get token from URL '%s' with error: %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -39,9 +37,7 @@ func GetBearerToken(app string) string {
 
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		log.Println()
-		logger.Debug(err.Error())
-		logger.Fatal("Cannot parse token in the body from URL: '" + url + "'. Err: "+err.Error())
+		logger.Fatal("Cannot parse token in the body from URL '%s' with error: %s", url, err.Error())
 	}
 	return body.AccessToken
 }

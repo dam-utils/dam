@@ -33,13 +33,12 @@ func CheckRepository(repo *storage.Repo) {
 	for _, protocol := range config.SEARCH_PROTOCOL_STRATEGY {
 		err := registry_v2.CheckRepo(repo, protocol)
 		if err != nil {
-			// TODO create debug message
-			//logger.Println("WARN: Cannot connect to default registry '" + repo.Name + "' for '" + protocol + "' protocol")
+			logger.Debug("Cannot connect to default registry '%s' for '%s' protocol with error: %s", repo.Name, protocol, err.Error())
 		} else {
 			return
 		}
 	}
-	logger.Fatal("Cannot connect to default registry '" + repo.Name + "'")
+	logger.Fatal("Cannot connect to default registry '%s'", repo.Name)
 }
 
 func GetAppNamesByMask(repo *storage.Repo, mask string) *[]string {
