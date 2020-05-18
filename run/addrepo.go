@@ -18,7 +18,7 @@ import (
 	"dam/driver/db"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/validate"
+	"dam/driver/storage/validate"
 )
 
 type AddRepoSettings struct {

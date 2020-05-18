@@ -17,26 +17,52 @@ package logger
 import (
 	"log"
 	"os"
+
+	"dam/driver/logger/color"
 )
 
 var DebugMode bool
 
-func Fatal(err string) {
-	log.Println("ERROR: "+err)
+func Fatal(err string, args ...interface{}) {
+	message := color.Red+"ERROR: "+err+color.Reset
+
+	if len(args) == 0 {
+		log.Println(message)
+	} else {
+		log.Printf(message, args...)
+	}
 	os.Exit(1)
 }
 
-func Debug(str string) {
+func Debug(str string, args ...interface{}) {
+	message := "DEBUG: "+str
+
 	if DebugMode {
-		log.Println("DEBUG: "+str)
+		if len(args) == 0 {
+			log.Println(message)
+		} else {
+			log.Printf(message, args...)
+		}
 	}
 }
 
-func Warn(str string) {
-	log.Println("WARN: "+str)
+func Warn(str string, args ...interface{}) {
+	message := color.Yellow+"WARN: "+str+color.Reset
+
+	if len(args) == 0 {
+		log.Println(message)
+	} else {
+		log.Printf(message, args...)
+	}
 }
 
-func Info(str string) {
-	log.Println(str)
+func Info(str string, args ...interface{}) {
+	message := color.White+str+color.Reset
+
+	if len(args) == 0 {
+		log.Println(message)
+	} else {
+		log.Printf(message, args...)
+	}
 }
 

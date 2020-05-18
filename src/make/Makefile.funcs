@@ -25,7 +25,7 @@ define build_func
 					--build-arg PROJECT_NAME=${PROJECT_NAME} \
 					--build-arg GOOS=$(1) \
 					--build-arg GOARCH=$(2) \
-					-f src/docker/build.Dockerfile .
+					-f src/make/docker/build.Dockerfile .
 	docker create --name container-${PROJECT_NAME}-$(1) ${PROJECT_NAME}_$(1):develop
     docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${PROJECT_NAME} _build/$(1)/
 
@@ -42,7 +42,7 @@ define test_func
 	docker build 	-t ${PROJECT_NAME}_test:develop \
     				${NO_BUILD_CACHE} \
     				--build-arg PROJECT_NAME=${PROJECT_NAME} \
-    				-f src/docker/test.Dockerfile .
+    				-f src/make/docker/test.Dockerfile .
 	docker create --name container-${PROJECT_NAME}-test ${PROJECT_NAME}_test:develop
 
 	$(if $(filter $(USE_GO_GET_CACHE),true),rm -rf _build/goget_cache/github.com)
@@ -57,7 +57,7 @@ define lint_func
 	docker build	-t ${PROJECT_NAME}_lint:develop \
     				${NO_BUILD_CACHE} \
 					--build-arg PROJECT_NAME=${PROJECT_NAME} \
-					-f src/docker/linter.Dockerfile .
+					-f src/make/docker/linter.Dockerfile .
 	docker rmi -f ${PROJECT_NAME}_lint:develop
 endef
 

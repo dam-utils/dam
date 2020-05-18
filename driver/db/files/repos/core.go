@@ -26,7 +26,7 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/validate"
+	"dam/driver/storage/validate"
 )
 
 
