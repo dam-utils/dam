@@ -17,7 +17,6 @@ package filesystem
 import (
 	"dam/driver/logger"
 	"io/ioutil"
-	"math/rand"
 	"os"
 	"path/filepath"
 )
@@ -33,7 +32,7 @@ func GetCurrentDir() string {
 func IsExistDir(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot check directory "+path+" with error: "+ err.Error())
+		logger.Fatal("Cannot check directory '"+path+"' with error: "+ err.Error())
 	}
 	return info.IsDir()
 }
@@ -41,7 +40,7 @@ func IsExistDir(path string) bool {
 func IsExistFile(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot check file "+path+" with error: "+ err.Error())
+		logger.Fatal("Cannot check file '"+path+"' with error: "+ err.Error())
 	}
 	return !info.IsDir()
 }
@@ -65,16 +64,22 @@ func GetFileList(path string, agg *[]string) *[]string {
 func Ls(dir string) []string {
 	files, err := filepath.Glob("dir/*")
 	if err != nil {
-		logger.Fatal("Cannot check files in path:"+dir+"/ with error: "+ err.Error())
+		logger.Fatal("Cannot check files in path '"+dir+"/' with error: "+ err.Error())
 	}
 	return files
 }
 
-func RemoveFile(path string) {
-	err := os.Remove(path)
+func Remove(path string) bool {
+	_, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot remove file in path:"+path+" with error: "+ err.Error())
+		logger.Warn("Cannot check path '"+path+"' with error: "+ err.Error())
 	}
+
+	err = os.Remove(path)
+	if err != nil {
+		logger.Warn("Cannot remove path '"+path+"' with error: "+ err.Error())
+	}
+	return false
 }
 
 func MoveFile(oldLocation, newLocation string) {
@@ -82,20 +87,6 @@ func MoveFile(oldLocation, newLocation string) {
 	if err != nil {
 		logger.Fatal("Cannot move file '"+oldLocation+"' to '"+newLocation+"' with error: "+ err.Error())
 	}
-}
-
-func GenerateTmpFilePath() string {
-	return GetCurrentDir() + ".tmp."+randSeq(6)
-}
-
-func randSeq(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyz1234567890")
-
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
 }
 
 func CopyFile(sourceFile, destFile string) {

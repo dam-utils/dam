@@ -12,22 +12,22 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package apps
+package cmd
 
-import "dam/driver/storage"
+import (
+	"dam/run"
 
-type provider struct {
-	//GetApps() *[]storage.App
+	"github.com/spf13/cobra"
+)
+
+var installAppCmd = &cobra.Command{
+	Use:   "install (in) <app>:<version>",
+	Short: "Install docker application from a docker registry.",
+	Long:  ``,
+	Args:  cobra.RangeArgs(1, 1),
+	Run: func(cmd *cobra.Command, args []string) {
+		run.InstallApp(args[0])
+	},
 }
 
-func NewProvider() *provider {
-	return &provider{}
-}
 
-func (p *provider) GetApps() *[]storage.App {
-	return GetApps()
-}
-
-func (p *provider) NewApp(app *storage.App) {
-	NewApp(app)
-}

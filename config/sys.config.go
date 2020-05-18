@@ -15,31 +15,32 @@
 package config
 
 var (
-	// Global options // TODO fix it
+	//Global options // TODO fix it
 	UTIL_NAME="dam"
 	DISABLE_DEBUG=true //	It is recommended to enable this option in a production. Debug messages may contain passwords
-	// Decorating options
+	//Decorating options
 	DECORATE_MAX_DISPLAY_WIDTH =100
 	DECORATE_RAW_SEPARATOR     ="|"
 	DECORATE_BOOL_FLAG         ="*"
-	DECORATE_MAX_SEARCHED_VERSIONS = 8
-	// DB types
+	//DB types
 	DB_TYPE            ="files" // TODO create new dbs
-	// FILES DB options
+	//FILES DB options
 	FILES_DB_VALIDATE  =true
 	FILES_DB_SEPARATOR ="|"
 	FILES_DB_BOOL_FLAG ="*"
 	FILES_DB_REPOS     ="src/examples/db/files/Repos"
 	FILES_DB_APPS      ="src/examples/db/files/Apps"
 	FILES_DB_TMP       ="src/examples/db/files/.db"
-	// Repositories
+	//Repositories
 	SEARCH_PROTOCOL_STRATEGY=[]string{"https","http"} // The order of the protocols is important.
 	SEARCH_MAX_CONNECTS=1
 	SEARCH_TIMEOUT_MS=1000
 	OFFICIAL_REGISTRY_AUTH_URL="https://auth.docker.io/token?service=registry.docker.io"
 	OFFICIAL_REGISTRY_URL="https://registry-1.docker.io/"
+	OFFICIAL_REGISTRY_NAME="official" // TODO delete hardcode in tests
 	//Docker
 	DOCKER_API_VERSION="1.40"
+	//Search
 	OFFICIAL_REPO_SEARCH_APPS_LIMIT=100  // [1,100]
 	INTERNAL_REPO_SEARCH_APPS_LIMIT=999
 	//Sorting
@@ -60,4 +61,6 @@ var (
 	APP_VERS_ENV="DAM_APP_VERSION"
 	DEF_APP_VERS="SNAPSHOT"
 	APP_FAMILY="DAM_APP_FAMILY"
+	//Install app
+	TMP_META_PATH="./.tmp.meta"
 )

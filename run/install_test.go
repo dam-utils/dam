@@ -12,22 +12,25 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package apps
+package run
 
-import "dam/driver/storage"
+import "testing"
 
-type provider struct {
-	//GetApps() *[]storage.App
-}
+func Test_splitTag(t *testing.T) {
+	var testTags = []string{
+		"server/name:version",
+		"docker.io/library/ubuntu:14.04",
+		"ubuntu:16.04",
+		"localhost:5000/ubuntu:18.04",
+	}
 
-func NewProvider() *provider {
-	return &provider{}
-}
-
-func (p *provider) GetApps() *[]storage.App {
-	return GetApps()
-}
-
-func (p *provider) NewApp(app *storage.App) {
-	NewApp(app)
+	for _, tag := range testTags {
+		s, n, v := splitTag(tag)
+		if s != "" {
+			s = s+"/"
+		}
+		if tag != s+n+":"+v {
+			t.Fatalf("Not equal split tag '%v': '%v', '%v', '%v'",tag, s, n, v)
+		}
+	}
 }

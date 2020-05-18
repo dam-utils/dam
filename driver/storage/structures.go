@@ -29,7 +29,7 @@ var OfficialRepo Repo
 
 func init(){
 	OfficialRepo.Id = 1
-	OfficialRepo.Name = "official"
+	OfficialRepo.Name = config.OFFICIAL_REGISTRY_NAME
 	OfficialRepo.Default = true
 	OfficialRepo.Server=config.OFFICIAL_REGISTRY_URL
 	OfficialRepo.Username=""

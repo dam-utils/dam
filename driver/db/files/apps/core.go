@@ -61,9 +61,9 @@ func str2app(app string) *storage.App {
 }
 
 func NewApp(app *storage.App) {
-	repos := GetApps()
+	apps := GetApps()
 	//preparedRepo := preparePassword(repo)
-	app.Id = getNewAppID(repos)
+	app.Id = getNewAppID(apps)
 
 	var preparedApps []storage.App
 	newApps := append(preparedApps, *app)

@@ -23,6 +23,7 @@ import (
 	"dam/driver/filesystem/meta"
 	"dam/driver/filesystem/project"
 	"dam/driver/logger"
+	"dam/driver/storage"
 )
 
 type CreateAppSettings struct {
@@ -45,12 +46,19 @@ func CreateApp(path string) {
 	project.ValidateTag(tag)
 
 	docker.Build(getImageTag(preparedEnvs), projectDir)
-	logger.Info("App "+tag+" was created.")
+	logger.Info("App '"+tag+"' was created.")
 }
 
 func getImageTag(envs map[string]string) string {
+	var tag string
+
 	r := db.RDriver.GetDefaultRepo()
-	return r.Name+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
+	if r.Id == storage.OfficialRepo.Id {
+		tag = envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
+	} else {
+		tag = r.Name+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
+	}
+	return tag
 }
 
 // Приоритеты замещения переменных по убыванию:

@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"dam/run"
+
 	"github.com/spf13/cobra"
 )
 
@@ -27,10 +28,4 @@ var createAppCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		run.CreateApp(args[0])
 	},
-}
-
-func init() {
-	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Name, "meta", "", "Path for the 'meta' project directory.")
-	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Server, "dockerfile", "", "Path for Dockerfile of the project.")
-	addRepoCmd.Flags().StringVar(&run.AddRepoFlags.Username, "env", "", "Path for the 'ENVIRONMENT' project file.")
 }

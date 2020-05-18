@@ -48,6 +48,7 @@ func Build(imageTag, projectDir string) {
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
+	defer cli.Close()
 
 	resp, err := cli.ImageBuild(context.Background(), buildCtx, opts)
 	if err != nil {

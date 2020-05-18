@@ -60,5 +60,6 @@ func Prepare(path string)(string, string, string){
 }
 
 func ValidateTag(tag string) {
-
+	// TODO
 }
+

@@ -31,4 +31,5 @@ type RProvider interface {
 
 type AProvider interface {
 	GetApps() *[]storage.App
+	NewApp(app *storage.App)
 }
