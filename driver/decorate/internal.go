@@ -15,10 +15,11 @@
 package decorate
 
 import (
-	"dam/config"
 	"fmt"
 	"log"
 	"strconv"
+
+	"dam/config"
 )
 
 const (

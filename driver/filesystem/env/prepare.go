@@ -15,8 +15,9 @@
 package env
 
 import (
-	"dam/config"
 	"strings"
+
+	"dam/config"
 )
 
 func PrepareExpString(s string, envs map[string]string) string {

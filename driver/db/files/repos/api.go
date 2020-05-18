@@ -14,9 +14,7 @@
 //
 package repos
 
-import (
-	"dam/driver/storage"
-)
+import "dam/driver/storage"
 
 type provider struct {
 	//GetRepos() *[]storage.Repo

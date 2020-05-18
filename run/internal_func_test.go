@@ -15,11 +15,12 @@
 package run_test
 
 import (
-	"dam/config"
-	"dam/driver/db"
 	"log"
 	"os"
 	"testing"
+
+	"dam/config"
+	"dam/driver/db"
 )
 
 func init(){

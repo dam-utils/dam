@@ -15,8 +15,9 @@
 package sort
 
 import (
-	"github.com/Masterminds/semver"
 	"sort"
+
+	"github.com/Masterminds/semver"
 )
 
 func SemanticVersionSort(vers *[]string) *[]string {

@@ -14,9 +14,7 @@
 //
 package db
 
-import (
-	"dam/driver/storage"
-)
+import "dam/driver/storage"
 
 type RProvider interface {
 	GetRepos() *[]storage.Repo

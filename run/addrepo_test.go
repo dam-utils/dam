@@ -16,11 +16,12 @@ package run_test
 
 import (
 	"bytes"
-	"dam/driver/db"
-	"dam/run"
 	"log"
 	"os"
 	"testing"
+
+	"dam/driver/db"
+	"dam/run"
 )
 
 func TestAddRepoOneRepo(t *testing.T) {

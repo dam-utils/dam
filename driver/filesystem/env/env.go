@@ -16,9 +16,10 @@ package env
 
 import (
 	"bufio"
-	"dam/driver/logger"
 	"os"
 	"strings"
+
+	"dam/driver/logger"
 )
 
 func GetFileEnv(file string) map[string]string {

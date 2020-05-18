@@ -15,13 +15,14 @@
 package registry_v2
 
 import (
-	"dam/config"
-	"dam/driver/logger"
-	"dam/driver/storage"
 	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
+
+	"dam/config"
+	"dam/driver/logger"
+	"dam/driver/storage"
 )
 
 type ResponseGetAppNames struct {

@@ -15,10 +15,11 @@
 package registry_v2
 
 import (
-	"dam/config"
-	"dam/driver/storage"
 	"net/http"
 	"time"
+
+	"dam/config"
+	"dam/driver/storage"
 )
 
 var SessionURL string

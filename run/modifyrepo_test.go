@@ -16,12 +16,13 @@ package run_test
 
 import (
 	"bytes"
-	"dam/driver/db"
-	"dam/driver/storage"
-	"dam/run"
 	"log"
 	"os"
 	"testing"
+
+	"dam/driver/db"
+	"dam/driver/storage"
+	"dam/run"
 )
 
 func TestModifyRepoNameAndServer(t *testing.T) {
