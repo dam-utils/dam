@@ -15,7 +15,7 @@
 package run
 
 import (
-	"dam/decorate"
+	"dam/driver/decorate"
 )
 
 type ListSettings struct {
