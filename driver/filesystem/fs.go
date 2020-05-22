@@ -118,3 +118,10 @@ func Chmod777(path string) {
 		logger.Fatal("Cannot chmod 777 '%s' with error: %s", path, err.Error())
 	}
 }
+
+func Chdir(path string) {
+	err := os.Chdir(path)
+	if err != nil {
+		logger.Fatal("Cannot change home dir to '%s' with error: %s", path, err.Error())
+	}
+}
