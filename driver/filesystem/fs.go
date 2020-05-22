@@ -15,8 +15,10 @@
 package filesystem
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"dam/driver/logger"
@@ -124,4 +126,28 @@ func Chdir(path string) {
 	if err != nil {
 		logger.Fatal("Cannot change home dir to '%s' with error: %s", path, err.Error())
 	}
+}
+
+// https://stackoverflow.com/questions/40670228/how-to-run-binary-files-inside-golang-program
+func RunFile(installFile string) {
+	pwd := GetCurrentDir()
+	defer Chdir(pwd)
+
+	homeDir := filepath.Dir(installFile)
+	Chdir(homeDir)
+
+	c := exec.Command(installFile)
+	c.Dir = homeDir   //TODO delete?
+	// set var to get the output
+	var outb, errb bytes.Buffer
+
+	// set the output to our variable
+	c.Stdout = &outb
+	c.Stderr = &errb
+	err := c.Run()
+	if err != nil {
+		logger.Warn(errb.String())
+		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
+	}
+	logger.Info(outb.String())
 }

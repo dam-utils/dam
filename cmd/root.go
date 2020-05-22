@@ -35,6 +35,7 @@ func Execute() error {
 }
 
 func init() {
+	rootCmd.AddCommand(removeAppCmd)
 	rootCmd.AddCommand(installAppCmd)
 	rootCmd.AddCommand(createAppCmd)
 	rootCmd.AddCommand(listCmd)

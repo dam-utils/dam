@@ -31,3 +31,7 @@ func (p *provider) GetApps() *[]storage.App {
 func (p *provider) NewApp(app *storage.App) {
 	NewApp(app)
 }
+
+func (p *provider) GetAppById(id int) *storage.App {
+	return GetAppById(id)
+}

@@ -15,11 +15,10 @@
 package run
 
 import (
-	"bytes"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
+
 
 	"dam/config"
 	"dam/driver/db"
@@ -27,19 +26,14 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
+	"dam/run/internal"
 )
 
-type InstallAppSettings struct {
-
-}
-
-var InstallAppFlags = new(InstallAppSettings)
-
 func InstallApp(appCurrentName string) {
-	logger.Success("Start '%s' installation.", appCurrentName)
+	logger.Success("Start '%s' installing to the system.", appCurrentName)
 
 	tag := dockerPull(appCurrentName)
-	tmpMeta := prepareTmpMetaPath(config.TMP_META_PATH)
+	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 	logger.Debug("tag: '%v', tmpMeta: '%v'", tag, tmpMeta)
 	containerId := docker.ContainerCreate(tag, "")
 
@@ -49,7 +43,7 @@ func InstallApp(appCurrentName string) {
 	installMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
 	install := getInstall(installMeta)
 
-	runInstall(install)
+	fs.RunFile(install)
 	fs.Remove(tmpMeta)
 
 	saveInstallAppToDB(tag)
@@ -75,12 +69,6 @@ func dockerPull(app string) string {
 	return tag
 }
 
-func prepareTmpMetaPath(meta string) string {
-	path := fs.GetAbsolutePath(meta)
-	fs.Remove(path)
-	return path
-}
-
 func saveInstallAppToDB(tag string){
 	repo := db.RDriver.GetDefaultRepo()
 	_, imageName, imageVersion := splitTag(tag)
@@ -101,30 +89,6 @@ func getInstall(meta string) string {
 		logger.Fatal("Not found '%s' file in meta '%s'", config.INSTALL_FILE_NAME, config.META_DIR_NAME)
 	}
 	return inst
-}
-
-// https://stackoverflow.com/questions/40670228/how-to-run-binary-files-inside-golang-program
-func runInstall(installFile string) {
-	pwd := fs.GetCurrentDir()
-	defer fs.Chdir(pwd)
-
-	homeDir := filepath.Dir(installFile)
-	fs.Chdir(homeDir)
-
-	c := exec.Command(installFile)
-	c.Dir = homeDir   //TODO delete?
-	// set var to get the output
-	var outb, errb bytes.Buffer
-
-	// set the output to our variable
-	c.Stdout = &outb
-	c.Stderr = &errb
-	err := c.Run()
-	if err != nil {
-		logger.Warn(errb.String())
-		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
-	}
-	logger.Info(outb.String())
 }
 
 func splitTag(tag string) (string, string, string) {

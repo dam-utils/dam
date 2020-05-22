@@ -41,6 +41,16 @@ func GetApps() *[]storage.App {
 	return &apps
 }
 
+func GetAppById(id int) *storage.App {
+	apps := GetApps()
+	for _, app := range *apps {
+		if app.Id == id {
+			return &app
+		}
+	}
+	return nil
+}
+
 func str2app(app string) *storage.App {
 	// Ex: 1|fd78216a9d61|test_image|2.4.7_18|0||test_image
 	App := new(storage.App)

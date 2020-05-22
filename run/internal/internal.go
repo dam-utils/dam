@@ -12,23 +12,13 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package db
+package internal
 
-import "dam/driver/storage"
+import fs "dam/driver/filesystem"
 
-type RProvider interface {
-	GetRepos() *[]storage.Repo
-	GetRepoById(id int) *storage.Repo
-	GetDefaultRepo() *storage.Repo
-	NewRepo(repo *storage.Repo)
-	ModifyRepo(repo *storage.Repo)
-	RemoveRepoById(id int)
-	GetRepoIdByName(name *string) int
-	ClearRepos()
+func PrepareTmpMetaPath(meta string) string {
+	path := fs.GetAbsolutePath(meta)
+	fs.Remove(path)
+	return path
 }
 
-type AProvider interface {
-	GetApps() *[]storage.App
-	NewApp(app *storage.App)
-	GetAppById(id int) *storage.App
-}
