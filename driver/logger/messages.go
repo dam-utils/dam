@@ -40,6 +40,9 @@ func Fatal(message string, args ...interface{}) {
 
 func Debug(message string, args ...interface{}) {
 	message = "DEBUG: "+message
+	if config.COLLOR_ON == true {
+		message = color.White + message + color.Reset
+	}
 
 	if DebugMode {
 		if len(args) == 0 {
@@ -64,10 +67,6 @@ func Warn(message string, args ...interface{}) {
 }
 
 func Info(message string, args ...interface{}) {
-	if config.COLLOR_ON == true {
-		message = color.White + message + color.Reset
-	}
-
 	if len(args) == 0 {
 		log.Println(message)
 	} else {

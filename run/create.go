@@ -41,6 +41,7 @@ func CreateApp(path string) {
 	preparedEnvs := env.PrepareProjectEnvs(envs)
 
 	meta.PrepareExpFiles(metaDir, preparedEnvs)
+	meta.PrepareExecFiles(metaDir)
 
 	tag := getImageTag(preparedEnvs)
 	project.ValidateTag(tag)

@@ -62,11 +62,9 @@ func str2app(app string) *storage.App {
 
 func NewApp(app *storage.App) {
 	apps := GetApps()
-	//preparedRepo := preparePassword(repo)
 	app.Id = getNewAppID(apps)
 
-	var preparedApps []storage.App
-	newApps := append(preparedApps, *app)
+	newApps := append(*apps, *app)
 	saveApps(&newApps)
 }
 
@@ -107,11 +105,12 @@ func saveApps(apps *[]storage.App) {
 		logger.Fatal(err.Error())
 	}
 
+	logger.Debug("Move '%s' to '%s'", config.FILES_DB_TMP, config.FILES_DB_APPS)
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_APPS)
 }
 
 func app2str(app *storage.App) *string {
-	var repoStr string
+	var appStr string
 	sep := config.FILES_DB_SEPARATOR
 
 	multiVers := ""
@@ -130,12 +129,12 @@ func app2str(app *storage.App) *string {
 	lenF := len(fields)
 	for i, field := range fields {
 		if i == lenF - 1 {
-			repoStr = repoStr + field + "\n"
+			appStr = appStr + field + "\n"
 		} else {
-			repoStr = repoStr + field + sep
+			appStr = appStr + field + sep
 		}
 	}
-	return &repoStr
+	return &appStr
 }
 
 

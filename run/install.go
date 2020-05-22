@@ -16,6 +16,7 @@ package run
 
 import (
 	"bytes"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -35,20 +36,24 @@ type InstallAppSettings struct {
 var InstallAppFlags = new(InstallAppSettings)
 
 func InstallApp(appCurrentName string) {
+	logger.Success("Start '%s' installation.", appCurrentName)
+
 	tag := dockerPull(appCurrentName)
 	tmpMeta := prepareTmpMetaPath(config.TMP_META_PATH)
+	logger.Debug("tag: '%v', tmpMeta: '%v'", tag, tmpMeta)
 	containerId := docker.ContainerCreate(tag, "")
 
-	docker.CopyFromContainer(containerId, "/"+config.META_DIR_NAME, tmpMeta)
+	docker.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
 	docker.ContainerRemove(containerId)
 
-	install := getInstall(tmpMeta)
-	checkUninstall(tmpMeta)
+	installMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
+	install := getInstall(installMeta)
 
 	runInstall(install)
 	fs.Remove(tmpMeta)
 
-	saveAppToDB(tag)
+	saveInstallAppToDB(tag)
+	logger.Success("App '%s' was installed.", appCurrentName)
 }
 
 func dockerPull(app string) string {
@@ -76,7 +81,7 @@ func prepareTmpMetaPath(meta string) string {
 	return path
 }
 
-func saveAppToDB(tag string){
+func saveInstallAppToDB(tag string){
 	repo := db.RDriver.GetDefaultRepo()
 	_, imageName, imageVersion := splitTag(tag)
 
@@ -98,28 +103,28 @@ func getInstall(meta string) string {
 	return inst
 }
 
-func checkUninstall(meta string){
-	uninst := filepath.Join(meta, config.UNINSTALL_FILE_NAME)
-	if !fs.IsExistFile(uninst) {
-		logger.Fatal("Not found '%s' file in '%s'", config.UNINSTALL_FILE_NAME, config.META_DIR_NAME)
-	}
-}
-
 // https://stackoverflow.com/questions/40670228/how-to-run-binary-files-inside-golang-program
 func runInstall(installFile string) {
-	c := exec.Command(installFile)
-
-	// set var to get the output
-	var out bytes.Buffer
-
-	// set the output to our variable
-	c.Stdout = &out
-	err := c.Run()
+	homeDir := filepath.Dir(installFile)
+	err := os.Chdir(homeDir)
 	if err != nil {
-		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
+		logger.Fatal("Cannot change home dir to '%s' with error: %s", homeDir, err.Error())
 	}
 
-	logger.Info(out.String())
+	c := exec.Command(installFile)
+	c.Dir = homeDir
+	// set var to get the output
+	var outb, errb bytes.Buffer
+
+	// set the output to our variable
+	c.Stdout = &outb
+	c.Stderr = &errb
+	err = c.Run()
+	if err != nil {
+		logger.Warn(errb.String())
+		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
+	}
+	logger.Info(outb.String())
 }
 
 func splitTag(tag string) (string, string, string) {

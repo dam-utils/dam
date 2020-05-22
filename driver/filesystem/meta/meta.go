@@ -17,6 +17,7 @@ package meta
 import (
 	"bufio"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"dam/config"
@@ -68,4 +69,9 @@ func prepareExpFile(path string, envs map[string]string) {
 	if err != nil {
 		logger.Fatal("Cannot close of writable file '%s' with error: %s", newPath, err.Error())
 	}
+}
+
+func PrepareExecFiles(meta string) {
+	fs.Chmod777(filepath.Join(meta, config.INSTALL_FILE_NAME))
+	fs.Chmod777(filepath.Join(meta, config.UNINSTALL_FILE_NAME))
 }

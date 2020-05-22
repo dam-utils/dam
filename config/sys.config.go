@@ -17,7 +17,7 @@ package config
 var (
 	//Global options // TODO fix it
 	UTIL_NAME="dam"
-	DISABLE_DEBUG=true //	It is recommended to enable this option in a production. Debug messages may contain passwords
+	DISABLE_DEBUG=true //	It is recommended to enable this option in a production. Debug messages may be contain passwords
 	//Decorating options
 	COLLOR_ON=true
 	DECORATE_MAX_DISPLAY_WIDTH =100

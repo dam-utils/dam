@@ -53,9 +53,10 @@ func Pull(tag string, repo *storage.Repo) {
 	out, err := cli.ImagePull(context.Background(), tag, pullOpts)
 	if err != nil {
 		logger.Warn("Cannot pull docker image with error: %s", err.Error())
+		return
 	}
-
 	defer out.Close()
+
 	_, err = io.Copy(os.Stdout, out)
 	if err != nil {
 		logger.Fatal("Cannot print docker stdout with error: %s", err.Error())

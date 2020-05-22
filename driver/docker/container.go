@@ -46,7 +46,8 @@ func ContainerCreate(image string, name string) string {
 		logger.Fatal("Cannot build docker image with error: %s", err.Error())
 	}
 
-	return resp.ID
+	logger.Debug("Response: %v", resp)
+	return (resp.ID)[:12]
 }
 
 func CopyFromContainer(containerID, sourcePath, destPath string) {
@@ -129,7 +130,6 @@ func ContainerRemove(id string) {
 
 	var opts = types.ContainerRemoveOptions{
 		RemoveVolumes: true,
-		RemoveLinks:   true,
 		Force:         true,
 	}
 	err = cli.ContainerRemove(context.Background(), id, opts)

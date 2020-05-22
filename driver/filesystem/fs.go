@@ -76,7 +76,7 @@ func Remove(path string) bool {
 		logger.Warn("Cannot check path '%s' with error: %s", path, err.Error())
 	}
 
-	err = os.Remove(path)
+	err = os.RemoveAll(path)
 	if err != nil {
 		logger.Warn("Cannot remove path '%s' with error: %s", path, err.Error())
 	}
@@ -110,4 +110,11 @@ func GetAbsolutePath(path string) string {
 		}
 	}
 	return p
+}
+
+// TODO заменить на ChmodPlusX()
+func Chmod777(path string) {
+	if err := os.Chmod(path, 0777); err != nil {
+		logger.Fatal("Cannot chmod 777 '%s' with error: %s", path, err.Error())
+	}
 }
