@@ -35,7 +35,8 @@ func GetCurrentDir() string {
 func IsExistDir(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot check directory '%s' with error: %s", path, err.Error())
+		logger.Debug("Cannot check directory '%s' with error: %s", path, err.Error())
+		return false
 	}
 	return info.IsDir()
 }
@@ -43,7 +44,8 @@ func IsExistDir(path string) bool {
 func IsExistFile(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Fatal("Cannot check file '%s' with error: %s", path, err.Error())
+		logger.Debug("Cannot check file '%s' with error: %s", path, err.Error())
+		return false
 	}
 	return !info.IsDir()
 }
@@ -150,4 +152,14 @@ func RunFile(installFile string) {
 		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
 	}
 	logger.Info(outb.String())
+}
+
+func Touch(file string) {
+	if !IsExistFile(file) {
+		emptyFile, err := os.Create(file)
+		if err != nil {
+			logger.Fatal("Cannot create file '%s' with error: %s", file, err.Error())
+		}
+		emptyFile.Close()
+	}
 }

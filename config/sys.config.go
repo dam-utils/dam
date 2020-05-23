@@ -18,6 +18,7 @@ var (
 	//Global options // TODO fix it
 	UTIL_NAME="dam"
 	DISABLE_DEBUG=true //	It is recommended to enable this option in a production. Debug messages may be contain passwords
+
 	//Decorating options
 	COLLOR_ON=true
 	DECORATE_MAX_DISPLAY_WIDTH =100
@@ -25,13 +26,12 @@ var (
 	DECORATE_BOOL_FLAG         ="*"
 	//DB types
 	DB_TYPE            ="files" // TODO create new dbs
-	//FILES DB options
-	FILES_DB_VALIDATE  =true
-	FILES_DB_SEPARATOR ="|"
-	FILES_DB_BOOL_FLAG ="*"
-	FILES_DB_REPOS     ="src/examples/db/files/Repos"
-	FILES_DB_APPS      ="src/examples/db/files/Apps"
-	FILES_DB_TMP       ="src/examples/db/files/.db"
+	//FILES DB options. Type: "files"
+	FILES_DB_SEPARATOR         = "|"
+	FILES_DB_BOOL_FLAG         = "*"
+	FILES_DB_REPOS             = "/tmp/Repos"
+	FILES_DB_APPS              = "/tmp/Apps"
+	FILES_DB_TMP               = "/tmp/.db"
 	//Repositories
 	SEARCH_PROTOCOL_STRATEGY=[]string{"https","http"} // The order of the protocols is important.
 	SEARCH_MAX_CONNECTS=1

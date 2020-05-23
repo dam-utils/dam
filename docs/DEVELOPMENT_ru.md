@@ -131,3 +131,19 @@
 ## Термины
 - repos - репозиторий приложений DAM ( ~ соответствует префиксу тэга docker до символа "/")
 - app - приложение DAM, специальным образом подготовленный docker image для работы с dam
+
+## Пример files_db
+
+Файл Repos:
+
+`1|*|official|registry.docker.local||
+2||local|localhost:5000||
+`
+
+Файл Apps:
+
+`1|fd78216a9d61|go-installer|2.4.7_18|2||go-installer
+2|sd78216a9d61|mongodb|3.4.2_1|1||mongodb
+3|1d78216a9d61|influxdb|last|1||influxdb-local
+`
+

@@ -30,8 +30,11 @@ var (
 )
 
 // Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+func Execute() {
+	err := rootCmd.Execute()
+	if err != nil {
+		logger.Fatal("Internal error. Cannot execute root command")
+	}
 }
 
 func init() {

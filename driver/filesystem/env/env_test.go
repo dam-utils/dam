@@ -20,7 +20,7 @@ import (
 )
 
 func TestGetFileEnv(t *testing.T) {
-	const EnvFile = "../../../src/examples/env/ENVIRONMENT.example"
+	const EnvFile = "../../../examples/env/ENVIRONMENT.example"
 	var want = map[string]string {
 		"TEST" : "test?",
 		"TEST2 " : " test2",
@@ -32,7 +32,7 @@ func TestGetFileEnv(t *testing.T) {
 }
 
 func TestGetDockerFileEnv(t *testing.T) {
-	const DockerFile = "../../../src/examples/env/Dockerfile.example"
+	const DockerFile = "../../../examples/env/Dockerfile.example"
 	var want = map[string]string {
 		"TEST" : "test?",
 		"TEST2 " : " test2",

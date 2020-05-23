@@ -15,14 +15,16 @@
 package logger
 
 import (
-	"log"
-	"os"
-
 	"dam/config"
 	"dam/driver/logger/color"
+	"log"
 )
 
 var DebugMode bool
+
+func init(){
+	log.SetFlags(0)
+}
 
 func Fatal(message string, args ...interface{}) {
 	message = "ERROR: " + message
@@ -35,7 +37,8 @@ func Fatal(message string, args ...interface{}) {
 	} else {
 		log.Printf(message, args...)
 	}
-	os.Exit(1)
+	panic(nil)
+	//os.Exit(1)
 }
 
 func Debug(message string, args ...interface{}) {

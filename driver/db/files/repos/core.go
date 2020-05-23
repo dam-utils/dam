@@ -219,9 +219,8 @@ func GetRepos() []*storage.Repo {
 		saveRepos(repos)
 	}
 
-	if config.FILES_DB_VALIDATE {
-		internalValidatingReposDB(repos)
-	}
+	internalValidatingReposDB(repos)
+
 	return repos
 }
 

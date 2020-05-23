@@ -37,13 +37,9 @@ func setDefaultConfig() {
 		config.FILES_DB_APPS = "Apps"
 		config.FILES_DB_TMP = ".db"
 	default:
-		dbConfigureIsBad()
+		logger.Fatal("Cannot supported db '%s'", config.DB_TYPE)
 	}
 	config.OFFICIAL_REGISTRY_URL = "https://registry-1.docker.io/"
-}
-
-func dbConfigureIsBad() {
-	logger.Fatal("Cannot supported db '%s'", config.DB_TYPE)
 }
 
 func dropTestDB(t *testing.T) {
