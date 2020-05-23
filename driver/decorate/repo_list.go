@@ -25,7 +25,7 @@ import (
 
 func PrintRAWReposList() {
 	repos := db.RDriver.GetRepos()
-	for _, repo := range *repos {
+	for _, repo := range repos {
 		var def string
 		if repo.Default {
 			def = config.DECORATE_BOOL_FLAG
@@ -55,18 +55,18 @@ func PrintReposList(){
 	prepareReposColumnSize(repos)
 	// general field size
 	fieldSize := (config.DECORATE_MAX_DISPLAY_WIDTH - len(ColumnSeparator)*(len(defRepoColumnSize)-1))/len(defRepoColumnSize)
-	if len(*repos) != 0 {
+	if len(repos) != 0 {
 		printReposTitle(fieldSize)
 		printReposLineSeparator(fieldSize)
-		for _, repo := range *repos {
-			printRepo(&repo, fieldSize)
+		for _, repo := range repos {
+			printRepo(repo, fieldSize)
 		}
 		fmt.Println()
 	}
 }
 
-func prepareReposColumnSize(repos *[]storage.Repo){
-	for _, repo := range *repos {
+func prepareReposColumnSize(repos []*storage.Repo){
+	for _, repo := range repos {
 		if param := checkIntFieldSize(repo.Id); param > defRepoColumnSize["Num"] {
 			defRepoColumnSize["Num"] = param
 		}

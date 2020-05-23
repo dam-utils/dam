@@ -17,7 +17,7 @@ package db
 import "dam/driver/storage"
 
 type RProvider interface {
-	GetRepos() *[]storage.Repo
+	GetRepos() []*storage.Repo
 	GetRepoById(id int) *storage.Repo
 	GetDefaultRepo() *storage.Repo
 	NewRepo(repo *storage.Repo)
@@ -28,7 +28,7 @@ type RProvider interface {
 }
 
 type AProvider interface {
-	GetApps() *[]storage.App
+	GetApps() []*storage.App
 	NewApp(app *storage.App)
 	GetAppById(id int) *storage.App
 }

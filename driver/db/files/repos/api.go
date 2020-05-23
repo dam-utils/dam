@@ -19,7 +19,7 @@ import (
 )
 
 type provider struct {
-	//GetRepos() *[]storage.Repo
+	//GetRepos() []*storage.Repo
 	//GetRepoById(id int) *storage.Repo
 	//GetDefaultRepo() *storage.Repo
 	//NewRepo(repo *storage.Repo)
@@ -33,7 +33,7 @@ func NewProvider() *provider {
 	return &provider{}
 }
 
-func (p *provider) GetRepos() *[]storage.Repo {
+func (p *provider) GetRepos() []*storage.Repo {
 	return GetRepos()
 }
 

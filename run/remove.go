@@ -61,7 +61,7 @@ func getAppIdByName(name string) *storage.App {
 	var id int
 
 	apps := db.ADriver.GetApps()
-	for _, app := range *apps {
+	for _, app := range apps {
 		if app.ImageName == name {
 			id = app.Id
 		}
@@ -72,7 +72,7 @@ func getAppIdByName(name string) *storage.App {
 	}
 
 	app := db.ADriver.GetAppById(id)
-	logger.Debug("Remove app '%s'", *app)
+	logger.Debug("Remove app '%s'", app)
 	if app == nil {
 		logger.Fatal("Not found app with name '%s' in DB", name)
 	}

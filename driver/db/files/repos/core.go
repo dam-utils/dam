@@ -33,23 +33,23 @@ func NewRepo(repo *storage.Repo) {
 	repos := GetRepos()
 	//preparedRepo := preparePassword(repo)
 	repo.Id = getNewRepoID(repos)
-	if len(*repos) == 0 {
+	if len(repos) == 0 {
 		repo.Default = true
 		repo.Id = 2
 	}
-	var preparedRepos []storage.Repo
+	var preparedRepos []*storage.Repo
 	if repo.Default {
 		preparedRepos = cleanDefaults(repos)
 	} else {
-		preparedRepos = *repos
+		preparedRepos = repos
 	}
-	newRepos := append(preparedRepos, *repo)
-	saveRepos(&newRepos)
+	newRepos := append(preparedRepos, repo)
+	saveRepos(newRepos)
 }
 
-func cleanDefaults(repos *[]storage.Repo) []storage.Repo {
-	var newRepo []storage.Repo
-	for _, repo := range *repos {
+func cleanDefaults(repos []*storage.Repo) []*storage.Repo {
+	var newRepo []*storage.Repo
+	for _, repo := range repos {
 		repo.Default = false
 		newRepo = append(newRepo, repo)
 	}
@@ -78,45 +78,46 @@ func ModifyRepo(mRepo *storage.Repo) {
 		}
 	}
 
-	var newRepos []storage.Repo
-	for _, repo := range *cleanRepos {
+	var newRepos []*storage.Repo
+	for _, repo := range cleanRepos {
 		if repo.Id == defRepo.Id {
 			repo.Default = defRepo.Default
 		}
 		if repo.Id == mRepo.Id {
-			newRepos = append(newRepos, *mRepo)
+			newRepos = append(newRepos, mRepo)
 		} else {
 			newRepos = append(newRepos, repo)
 		}
 	}
 
-	prepNewRepos := prepareClearRepos(&newRepos)
+	prepNewRepos := prepareClearRepos(newRepos)
 	logger.Debug("ModifyRepo():prepareClearRepos(&newRepos): '%v'", prepNewRepos)
 	saveRepos(prepNewRepos)
 }
 
-func prepareClearRepos(repos *[]storage.Repo) *[]storage.Repo {
+func prepareClearRepos(repos []*storage.Repo) []*storage.Repo {
 	existingDefault := false
-	for _, repo := range *repos {
+	for _, repo := range repos {
 		if repo.Default {
 			existingDefault = true
 		}
 	}
 	if !existingDefault {
-		newRepos := *repos
+		newRepos := repos
 		newRepos[0].Default = true
-		return &newRepos
+		return newRepos
 	}
 	return repos
 }
 
-func cleanReposDefault(repos *[]storage.Repo) *[]storage.Repo {
-	var newRepos []storage.Repo
-	for _, repo := range *repos {
+func cleanReposDefault(repos []*storage.Repo) []*storage.Repo {
+	var newRepos []*storage.Repo
+
+	for _, repo := range repos {
 			repo.Default = false
 			newRepos = append(newRepos, repo)
 	}
-	return &newRepos
+	return newRepos
 }
 
 func repo2str(repo *storage.Repo) *string {
@@ -141,7 +142,7 @@ func repo2str(repo *storage.Repo) *string {
 	return &repoStr
 }
 
-func saveRepos(repos *[]storage.Repo) {
+func saveRepos(repos []*storage.Repo) {
 	newRepos := preparePasswordRepos(repos)
 
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
@@ -150,8 +151,8 @@ func saveRepos(repos *[]storage.Repo) {
 	}
 	defer f.Close()
 
-	for _, repo := range *newRepos {
-		newLine := repo2str(&repo)
+	for _, repo := range newRepos {
+		newLine := repo2str(repo)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
 			logger.Fatal(err.Error())
@@ -192,9 +193,9 @@ func ClearRepos() {
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 }
 
-func GetRepos() *[]storage.Repo {
+func GetRepos() []*storage.Repo {
 	// Ex: 2||auto_repo|packages.test.com|admin|YWRtaW4K|
-	var Repos []storage.Repo
+	var repos []*storage.Repo
 	fileHandle, err := os.Open(config.FILES_DB_REPOS)
 	if err != nil {
 		logger.Fatal("Cannot open file '%s'", config.FILES_DB_REPOS)
@@ -209,54 +210,54 @@ func GetRepos() *[]storage.Repo {
 	fileScanner := bufio.NewScanner(fileHandle)
 	for fileScanner.Scan() {
 		NewLine := fileScanner.Text()
-		Repos = append(Repos, *str2Repo(NewLine))
+		repos = append(repos, str2Repo(NewLine))
 	}
 
-	if len(Repos) == 0 {
-		Repos = append(Repos, storage.OfficialRepo)
-		saveRepos(&Repos)
+	offRepo := storage.OfficialRepo
+	if len(repos) == 0 {
+		repos = append(repos, &offRepo)
+		saveRepos(repos)
 	}
 
 	if config.FILES_DB_VALIDATE {
-		internalValidatingReposDB(&Repos)
+		internalValidatingReposDB(repos)
 	}
-	return &Repos
+	return repos
 }
 
 func GetRepoById(id int) *storage.Repo {
-	repos := GetRepos()
-	for _, repo := range *repos {
+	for _, repo := range GetRepos() {
 		if repo.Id == id {
-			return &repo
+			return repo
 		}
 	}
 	return nil
 }
 
 func GetDefaultRepo() *storage.Repo {
-	repos := GetRepos()
-	for _, repo := range *repos {
+	for _, repo := range GetRepos() {
 		if repo.Default {
-			return &repo
+			return repo
 		}
 	}
 	return nil
 }
 
 func RemoveRepoById(id int) {
+	var newRepos []*storage.Repo
+
 	if id == 1 {
 		logger.Fatal("Cannot remove official Repository. This is base repository in DB")
 	}
 
-	NewRepos := new([]storage.Repo)
 	repos := GetRepos()
-	for _, repo := range *repos {
+	for _, repo := range repos {
 		if repo.Id != id {
-			*NewRepos = append(*NewRepos, repo)
+			newRepos = append(newRepos, repo)
 		}
 	}
-	if len(*NewRepos) < len(*repos) {
-		preparedRepos := prepareDefaultInRepos(*NewRepos)
+	if len(newRepos) < len(repos) {
+		preparedRepos := prepareDefaultInRepos(newRepos)
 		saveRepos(preparedRepos)
 	} else {
 		logger.Fatal("Not found Id or Name of Repository")
@@ -264,8 +265,7 @@ func RemoveRepoById(id int) {
 }
 
 func GetRepoIdByName(name *string) int {
-	repos := GetRepos()
-	for _, repo := range *repos {
+	for _, repo := range GetRepos() {
 		if repo.Name == *name {
 			return repo.Id
 		}
@@ -273,7 +273,7 @@ func GetRepoIdByName(name *string) int {
 	return 0
 }
 
-func prepareDefaultInRepos(repos []storage.Repo) *[]storage.Repo {
+func prepareDefaultInRepos(repos []*storage.Repo) []*storage.Repo {
 	def := false
 	for _, repo := range repos {
 		if repo.Default {
@@ -284,16 +284,16 @@ func prepareDefaultInRepos(repos []storage.Repo) *[]storage.Repo {
 		repos[0].Default = true
 	}
 
-	return &repos
+	return repos
 }
 
-func getNewRepoID(repos *[]storage.Repo) int {
+func getNewRepoID(repos []*storage.Repo) int {
 	Res := 0
 
-	if len(*repos) == 0 {
+	if len(repos) == 0 {
 		return 0
 	}
-	for _, repo := range *repos {
+	for _, repo := range repos {
 		if repo.Id >= Res {
 			Res = repo.Id
 		}
@@ -322,14 +322,14 @@ func str2Repo(repo string) *storage.Repo {
 	return Repo
 }
 
-func preparePasswordRepos(repos *[]storage.Repo) *[]storage.Repo {
-	var NewRepos []storage.Repo
+func preparePasswordRepos(repos []*storage.Repo) []*storage.Repo {
+	var newRepos []*storage.Repo
 
-	for _, repo := range *repos {
+	for _, repo := range repos {
 		repo.Password = strToBase64(repo.Password)
-		NewRepos = append(NewRepos, repo)
+		newRepos = append(newRepos, repo)
 	}
-	return &NewRepos
+	return newRepos
 }
 
 func strToBase64(str string) string {
@@ -341,9 +341,9 @@ func base64ToStr(str string) (string, error) {
 	return string(sDec), err
 }
 
-func internalValidatingReposDB(repos *[]storage.Repo) {
+func internalValidatingReposDB(repos []*storage.Repo) {
 	defRepo := false
-	for _, repo := range *repos{
+	for _, repo := range repos{
 		if repo.Default {
 			if defRepo {
 				logger.Fatal("Internal error. Found many default repositories in DB. Default repository must be only one")

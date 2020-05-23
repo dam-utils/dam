@@ -17,14 +17,16 @@ package apps
 import "dam/driver/storage"
 
 type provider struct {
-	//GetApps() *[]storage.App
+	//GetApps() []*storage.App
+	//NewApp(app *storage.App)
+	//GetAppById(id int) *storage.App
 }
 
 func NewProvider() *provider {
 	return &provider{}
 }
 
-func (p *provider) GetApps() *[]storage.App {
+func (p *provider) GetApps() []*storage.App {
 	return GetApps()
 }
 

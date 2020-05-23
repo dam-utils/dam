@@ -27,8 +27,8 @@ import (
 )
 
 
-func GetApps() *[]storage.App {
-	var apps []storage.App
+func GetApps() []*storage.App {
+	var apps []*storage.App
 
 	fileHandle, _ := os.Open(config.FILES_DB_APPS)
 	defer fileHandle.Close()
@@ -36,16 +36,16 @@ func GetApps() *[]storage.App {
 	fileScanner := bufio.NewScanner(fileHandle)
 	for fileScanner.Scan() {
 		NewLine := fileScanner.Text()
-		apps = append(apps, *str2app(NewLine))
+		apps = append(apps, str2app(NewLine))
 	}
-	return &apps
+	return apps
 }
 
 func GetAppById(id int) *storage.App {
 	apps := GetApps()
-	for _, app := range *apps {
+	for _, app := range apps {
 		if app.Id == id {
-			return &app
+			return app
 		}
 	}
 	return nil
@@ -74,17 +74,17 @@ func NewApp(app *storage.App) {
 	apps := GetApps()
 	app.Id = getNewAppID(apps)
 
-	newApps := append(*apps, *app)
-	saveApps(&newApps)
+	newApps := append(apps, app)
+	saveApps(newApps)
 }
 
-func getNewAppID(apps *[]storage.App) int {
+func getNewAppID(apps []*storage.App) int {
 	res := 0
 
-	if len(*apps) == 0 {
+	if len(apps) == 0 {
 		return 0
 	}
-	for _, app := range *apps {
+	for _, app := range apps {
 		if app.Id >= res {
 			res = app.Id
 		}
@@ -92,15 +92,15 @@ func getNewAppID(apps *[]storage.App) int {
 	return res + 1
 }
 
-func saveApps(apps *[]storage.App) {
+func saveApps(apps []*storage.App) {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 	defer f.Close()
 
-	for _, app := range *apps {
-		newLine := app2str(&app)
+	for _, app := range apps {
+		newLine := app2str(app)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
 			logger.Fatal(err.Error())

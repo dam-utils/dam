@@ -31,7 +31,7 @@ var defAppColumnSize = map[string]int {
 
 func PrintRAWAppsList() {
 	apps := db.ADriver.GetApps()
-	for _, app := range *apps {
+	for _, app := range apps {
 		var multiVers string
 		if app.MultiVersion {
 			multiVers = config.DECORATE_BOOL_FLAG
@@ -53,25 +53,25 @@ func PrintAppsList(){
 	prepareAppsColumnSize(apps)
 	// general field size
 	fieldSize := (config.DECORATE_MAX_DISPLAY_WIDTH - len(ColumnSeparator)*(len(defAppColumnSize)-1))/len(defAppColumnSize)
-	if len(*apps) != 0 {
+	if len(apps) != 0 {
 		printAppsTitle(fieldSize)
 		printAppsLineSeparator(fieldSize)
-		for _, app := range *apps {
-			printApp(&app, fieldSize)
+		for _, app := range apps {
+			printApp(app, fieldSize)
 		}
 		fmt.Println()
 	}
 }
 
-func prepareAppsColumnSize(apps *[]storage.App){
-	for _, app := range *apps {
+func prepareAppsColumnSize(apps []*storage.App){
+	for _, app := range apps {
 		if param := checkStrFieldSize(app.ImageName); param > defAppColumnSize["Name"] {
 			defAppColumnSize["Name"] = param
 		}
 		if param := checkStrFieldSize(app.ImageVersion); param > defAppColumnSize["Version"] {
 			defAppColumnSize["Version"] = param
 		}
-		if param := checkStrFieldSize(getRepoNameByApp(&app)); param > defAppColumnSize["Repository"] {
+		if param := checkStrFieldSize(getRepoNameByApp(app)); param > defAppColumnSize["Repository"] {
 			defAppColumnSize["Repository"] = param
 		}
 	}

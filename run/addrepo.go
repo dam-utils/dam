@@ -43,8 +43,7 @@ func AddRepo(){
 		repo.Name = AddRepoFlags.Name
 	}
 
-	repos :=  db.RDriver.GetRepos()
-	for _, repoDB := range *repos {
+	for _, repoDB := range db.RDriver.GetRepos() {
 		if repoDB.Name == repo.Name {
 			logger.Fatal("Repository name already exist in DB")
 		}
