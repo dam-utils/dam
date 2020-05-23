@@ -36,9 +36,11 @@ func setDefaultConfig() {
 		config.FILES_DB_REPOS = "Repos"
 		config.FILES_DB_APPS = "Apps"
 		config.FILES_DB_TMP = ".db"
+		config.FILES_DB_SEPARATOR = "|"
 	default:
 		logger.Fatal("Cannot supported db '%s'", config.DB_TYPE)
 	}
+	config.DECORATE_RAW_SEPARATOR = "|"
 	config.OFFICIAL_REGISTRY_URL = "https://registry-1.docker.io/"
 }
 

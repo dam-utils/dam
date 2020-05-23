@@ -22,12 +22,13 @@ var (
 	//Decorating options
 	COLLOR_ON=true
 	DECORATE_MAX_DISPLAY_WIDTH =100
-	DECORATE_RAW_SEPARATOR     ="|"
+	DECORATE_RAW_SEPARATOR     =";"
 	DECORATE_BOOL_FLAG         ="*"
 	//DB types
 	DB_TYPE            ="files" // TODO create new dbs
 	//FILES DB options. Type: "files"
-	FILES_DB_SEPARATOR         = "|"
+	// WARN: Use only absolutely files path
+	FILES_DB_SEPARATOR         = ";"
 	FILES_DB_BOOL_FLAG         = "*"
 	FILES_DB_REPOS             = "/tmp/Repos"
 	FILES_DB_APPS              = "/tmp/Apps"
