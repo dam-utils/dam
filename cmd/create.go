@@ -21,7 +21,8 @@ import (
 )
 
 var createAppCmd = &cobra.Command{
-	Use:   "create (ce) [project directory] [--meta <meta directory path>] [--dockerfile <dockerfile path>] [--env <env file path>]",
+	Use:   "create <project directory>",
+	Aliases: []string{"ce"},
 	Short: "Create docker application.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),

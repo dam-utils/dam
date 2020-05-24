@@ -21,7 +21,7 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list [options]",
+	Use:   "list",
 	Short: "List all installed your applications.",
 	Long:  ``,
 	Args:  cobra.NoArgs,

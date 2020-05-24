@@ -24,10 +24,11 @@ import (
 )
 
 var modifyRepoCmd = &cobra.Command{
-	Use:   "modifyrepo (mr) <id> [repo options]",
+	Use:   "modifyrepo <id>",
+	Aliases: []string{"mr"},
 	Short: "Modify properties of repositories specified.",
 	Long:  ``,
-	Args:  cobra.RangeArgs(0, 1),
+	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		flags := []string{"--name","--server","--default","--username","--password"}
 		for _, arg := range os.Args {

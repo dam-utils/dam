@@ -21,7 +21,8 @@ import (
 )
 
 var installAppCmd = &cobra.Command{
-	Use:   "install (in) <app>:<version>",
+	Use:   "install <app>:<version>",
+	Aliases: []string{"in"},
 	Short: "Install docker application from a docker registry.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),
@@ -29,5 +30,3 @@ var installAppCmd = &cobra.Command{
 		run.InstallApp(args[0])
 	},
 }
-
-

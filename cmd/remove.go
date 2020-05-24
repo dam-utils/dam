@@ -21,7 +21,8 @@ import (
 )
 
 var removeAppCmd = &cobra.Command{
-	Use:   "remove (rm) <app>",
+	Use:   "remove <app>",
+	Aliases: []string{"rm"},
 	Short: "Remove docker application.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),
@@ -32,5 +33,5 @@ var removeAppCmd = &cobra.Command{
 
 func init() {
 	// TODO "-f" flag
-	removeAppCmd.Flags().BoolVar(&run.RemoveAppFlags.Force, "force", false, "Removing applications from the database with ignoring errors.")
+	//removeAppCmd.Flags().BoolVar(&run.RemoveAppFlags.Force, "force", false, "Removing applications from the database with ignoring errors.")
 }

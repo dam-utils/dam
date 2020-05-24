@@ -21,7 +21,8 @@ import (
 )
 
 var listReposCmd = &cobra.Command{
-	Use:   "listrepos (lr) [--raw]",
+	Use:   "listrepos",
+	Aliases: []string{"lr"},
 	Short: "List all defined repositories.",
 	Long:  ``,
 	Args:  cobra.NoArgs,

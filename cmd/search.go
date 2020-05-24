@@ -21,8 +21,9 @@ import (
 )
 
 var searchCmd = &cobra.Command{
-	Use:   "search (se) [<mask>]",
-	Short: "Search application in remote registry.",
+	Use:   "search [<mask>]",
+	Aliases: []string{"se"},
+	Short: "Search app in remote registry.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
