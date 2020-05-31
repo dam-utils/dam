@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"dam/config"
 	"dam/run"
 
 	"github.com/spf13/cobra"
@@ -29,4 +30,9 @@ var createAppCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		run.CreateApp(args[0])
 	},
+}
+
+func init(){
+	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Name, "name", "", "App name. Sets the value of the "+config.APP_NAME_ENV+" variable")
+	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Version, "version", "", "App version. Sets the value of the "+config.APP_VERS_ENV+" variable")
 }

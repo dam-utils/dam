@@ -42,14 +42,18 @@ test:
 lint:
 	$(call lint_func)
 
-clean: clean-docker
-	rm -rf _build src/build/dam/linux/dam || true
+clean: clean-docker clean-binary
+	rm -rf _build || true
+
+clean-binary:
+	rm -rf _build/linux/${PROJECT_NAME} || true
+	rm -rf _build/windows/${PROJECT_NAME} || true
+	rm -rf src/build/dam-linux/${PROJECT_NAME} || true
 
 clean-docker:
 	$(call clear_func,windows)
 	$(call clear_func,linux)
 
-app-linux:
-	$(call build_func,linux,amd64)
+app-linux: clean-binary	build-linux
 	cp -f _build/linux/${PROJECT_NAME} src/build/dam-linux/${PROJECT_NAME}
-	$(shell src/build/dam-linux/${PROJECT_NAME} create src/build/dam-linux/ --name ${PROJECT_NAME} --version ${PROJECT_VERSION})
+	src/build/dam-linux/${PROJECT_NAME} create src/build/dam-linux/ --name ${PROJECT_NAME} --version ${PROJECT_VERSION}

@@ -27,7 +27,8 @@ import (
 )
 
 type CreateAppSettings struct {
-
+	Name   string
+	Version string
 }
 
 var CreateAppFlags = new(CreateAppSettings)
@@ -39,6 +40,8 @@ func CreateApp(path string) {
 	// Create environment map
 	envs := combineEnvs(envFile, dockerFile)
 	preparedEnvs := env.PrepareProjectEnvs(envs)
+	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_NAME_ENV, CreateAppFlags.Name)
+	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_VERS_ENV, CreateAppFlags.Version)
 
 	meta.PrepareExpFiles(metaDir, preparedEnvs)
 	meta.PrepareExecFiles(metaDir)
@@ -76,4 +79,11 @@ func combineEnvs(envFile string, dockerFile string) map[string]string {
 
 	fEnv := env.GetFileEnv(envFile)
 	return env.MergeEnvs(env.MergeEnvs(osEnv, dfEnv), fEnv)
+}
+
+func setEnvFlag(envs map[string]string, env, envFlag string) map[string]string {
+	if envFlag != "" {
+		envs[env] = envFlag
+	}
+	return envs
 }
