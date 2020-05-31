@@ -16,8 +16,9 @@ package config
 
 var (
 	//Global options // TODO fix it
-	UTIL_NAME="dam"
-	DISABLE_DEBUG=true //	It is recommended to enable this option in a production. Debug messages may be contain passwords
+	PROJECT_NAME    ="dam"
+	PROJECT_VERSION ="1.0.0"
+	DISABLE_DEBUG   =true //	It is recommended to enable this option in a production. Debug messages may be contain passwords
 
 	//Decorating options
 	COLLOR_ON=true

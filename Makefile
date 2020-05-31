@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-PROJECT_NAME := $(shell basename "$(shell pwd)")
+PROJECT_NAME := $(shell grep 'PROJECT_NAME' config/sys.config.go | awk -F '=' '{print $$2}' | awk -F '\"' '{print $$2}')
+PROJECT_VERSION := $(shell grep 'PROJECT_VERSION' config/sys.config.go | awk -F '=' '{print $$2}' | awk -F '\"' '{print $$2}')
 
 # Удалить за собой временные контейнеры docker
 CLEAR_BUILD_CONTAINER	:= true
@@ -51,4 +52,4 @@ clean-docker:
 app-linux:
 	$(call build_func,linux,amd64)
 	cp -f _build/linux/${PROJECT_NAME} src/build/dam-linux/${PROJECT_NAME}
-	src/build/dam-linux/${PROJECT_NAME} create src/build/dam-linux/
+	$(shell src/build/dam-linux/${PROJECT_NAME} create src/build/dam-linux/ --name ${PROJECT_NAME} --version ${PROJECT_VERSION})

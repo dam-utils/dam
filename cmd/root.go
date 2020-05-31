@@ -23,9 +23,13 @@ import (
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   config.UTIL_NAME,
-		Short: "/--/",
-		Long:  `/--/`,
+		Use:   config.PROJECT_NAME,
+		Short: `Docker Application Manager
+
+Version:
+  `+config.PROJECT_VERSION,
+		Long:  `Docker Application Manager
+Version: `,
 	}
 )
 
