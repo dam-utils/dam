@@ -20,9 +20,12 @@ import (
 	"dam/driver/logger"
 	"dam/driver/registry"
 	"dam/driver/sort"
+	"dam/driver/validate"
 )
 
 func Search(arg string) {
+	validate.SearchMask(arg)
+
 	repo := db.RDriver.GetDefaultRepo()
 	registry.CheckRepository(repo)
 	appList := registry.GetAppNamesByMask(repo, arg)

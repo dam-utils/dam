@@ -29,7 +29,9 @@ var (
 Version:
   `+config.PROJECT_VERSION,
 		Long:  `Docker Application Manager
-Version: `,
+
+Version:
+  `+config.PROJECT_VERSION,
 	}
 )
 

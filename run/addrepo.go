@@ -18,7 +18,7 @@ import (
 	"dam/driver/db"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/driver/storage/validate"
+	"dam/driver/validate"
 )
 
 type AddRepoSettings struct {
@@ -32,37 +32,23 @@ type AddRepoSettings struct {
 var AddRepoFlags = new(AddRepoSettings)
 
 func AddRepo(){
-	// Convert pass to base64
+	validate.RepoName(AddRepoFlags.Name)
+	validate.RepoServer(AddRepoFlags.Server)
+	validate.RepoUsername(AddRepoFlags.Username)
+	validate.RepoPassword(AddRepoFlags.Password)
+
 	repo  := new(storage.Repo)
 	repo.Default = AddRepoFlags.Default
-
-	err := validate.CheckRepoName(AddRepoFlags.Name,)
-	if err != nil {
-		logger.Fatal(err.Error())
-	} else {
-		repo.Name = AddRepoFlags.Name
-	}
+	repo.Name = AddRepoFlags.Name
+	repo.Server = AddRepoFlags.Server
+	repo.Username = AddRepoFlags.Username
+	repo.Password = AddRepoFlags.Password
 
 	for _, repoDB := range db.RDriver.GetRepos() {
 		if repoDB.Name == repo.Name {
 			logger.Fatal("Repository name already exist in DB")
 		}
 	}
-
-	err = validate.CheckServer(AddRepoFlags.Server)
-	if err != nil {
-		logger.Fatal(err.Error())
-	} else {
-		repo.Server = AddRepoFlags.Server
-	}
-	err = validate.CheckLogin(AddRepoFlags.Username)
-	if err != nil {
-		logger.Fatal(err.Error())
-	} else {
-		repo.Username = AddRepoFlags.Username
-	}
-	repo.Username = AddRepoFlags.Username
-	repo.Password = AddRepoFlags.Password
 
 	db.RDriver.NewRepo(repo)
 }

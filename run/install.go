@@ -19,17 +19,19 @@ import (
 	"path/filepath"
 	"strings"
 
-
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/docker"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
+	"dam/driver/validate"
 	"dam/run/internal"
 )
 
 func InstallApp(appCurrentName string) {
+	validate.AppPlusVersion(appCurrentName)
+
 	logger.Success("Start '%s' installing to the system.", appCurrentName)
 
 	tag := dockerPull(appCurrentName)

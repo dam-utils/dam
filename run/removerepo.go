@@ -19,6 +19,7 @@ import (
 
 	"dam/driver/db"
 	"dam/driver/logger"
+	"dam/driver/validate"
 )
 
 type RemoveRepoSettings struct {
@@ -29,13 +30,12 @@ var RemoveRepoFlags = new(RemoveRepoSettings)
 
 func RemoveRepo(arg string) {
 	var repoId int
-	repoId, err := strconv.Atoi(arg)
-	if err != nil {
-		// Maybe It is Name
+	if isRepoID(arg) {
+		validate.RepoName(arg)
 		repoId = db.RDriver.GetRepoIdByName(&arg)
-	}
-	if repoId == 1 {
-		logger.Fatal("Command argument '%s' is not Id or Name of Repository", arg)
+	} else {
+		validate.RepoID(arg)
+		repoId, _ = strconv.Atoi(arg)
 	}
 
 	defRepo := db.RDriver.GetDefaultRepo()
@@ -43,4 +43,12 @@ func RemoveRepo(arg string) {
 		logger.Fatal("Repository with Id '%v' is default. Use '--skip' flag for removing", repoId)
 	}
 	db.RDriver.RemoveRepoById(repoId)
+}
+
+func isRepoID(id string) bool {
+	_, err := strconv.Atoi(id )
+	if err != nil {
+		return true
+	}
+	return false
 }

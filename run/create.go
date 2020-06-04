@@ -24,6 +24,7 @@ import (
 	"dam/driver/filesystem/project"
 	"dam/driver/logger"
 	"dam/driver/storage"
+	"dam/driver/validate"
 )
 
 type CreateAppSettings struct {
@@ -34,6 +35,10 @@ type CreateAppSettings struct {
 var CreateAppFlags = new(CreateAppSettings)
 
 func CreateApp(path string) {
+	validate.ProjectDirectory(path)
+	validate.AppName(CreateAppFlags.Name)
+	validate.AppVersion(CreateAppFlags.Version)
+
 	projectDir := fs.GetAbsolutePath(path)
 	metaDir, dockerFile, envFile := project.Prepare(projectDir)
 

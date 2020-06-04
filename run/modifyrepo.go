@@ -19,6 +19,7 @@ import (
 
 	"dam/driver/db"
 	"dam/driver/logger"
+	"dam/driver/validate"
 )
 
 type ModifyRepoSettings struct {
@@ -34,9 +35,15 @@ var ModifyRepoFlags = new(ModifyRepoSettings)
 var ExistingMRFlags = make(map[string]bool)
 
 func ModifyRepo(arg string) {
+	validate.RepoID(arg)
+	validate.RepoName(ModifyRepoFlags.Name)
+	validate.RepoServer(ModifyRepoFlags.Server)
+	validate.RepoUsername(ModifyRepoFlags.Username)
+	validate.RepoPassword(ModifyRepoFlags.Password)
+
 	ID, err := strconv.Atoi(arg)
 	if err != nil {
-		logger.Fatal("Command argument is not ID. See 'help modifyrepo'")
+		logger.Fatal("Internal error. Command argument is not ID. See 'help modifyrepo'")
 	}
 	repo := db.RDriver.GetRepoById(ID)
 	if ExistingMRFlags["--default"] && repo.Default != ModifyRepoFlags.Default {
