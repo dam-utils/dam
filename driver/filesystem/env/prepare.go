@@ -29,25 +29,18 @@ func PrepareExpString(s string, envs map[string]string) string {
 }
 
 func PrepareProjectEnvs(envs map[string]string) map[string]string {
-	// app name
-	val, ok := envs[config.APP_NAME_ENV]
-	if !ok || val == "" {
-		val = config.DEF_APP_NAME
-	}
-	envs[config.APP_NAME_ENV]=val
+	envs = setDefaultEnv(envs, config.APP_NAME_ENV, config.DEF_APP_NAME)
+	envs = setDefaultEnv(envs, config.APP_VERS_ENV, config.DEF_APP_VERS)
+	envs = setDefaultEnv(envs, config.APP_FAMILY_ENV, config.APP_NAME_ENV)
+	return envs
+}
 
-	//app vers
-	val, ok = envs[config.APP_VERS_ENV]
+func setDefaultEnv(envs map[string]string, env, defEnv string) map[string]string {
+	val, ok := envs[env]
 	if !ok || val == "" {
-		val = config.DEF_APP_VERS
+		val = defEnv
 	}
-	envs[config.APP_VERS_ENV]=val
+	envs[env]=val
 
-	//app family
-	val, ok = envs[config.APP_FAMILY]
-	if !ok || val == "" {
-		val = envs[config.APP_NAME_ENV]
-	}
-	envs[config.APP_FAMILY]=val
 	return envs
 }

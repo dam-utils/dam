@@ -78,7 +78,7 @@ func saveInstallAppToDB(tag string){
 	app.DockerID = docker.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
-	app.Family = docker.GetImageLabel(tag, config.APP_FAMILY)
+	app.Family = docker.GetImageLabel(tag, config.APP_FAMILY_ENV)
 
 	db.ADriver.NewApp(&app)
 }

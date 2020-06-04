@@ -61,7 +61,7 @@ func IsFamily (path string) bool {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
-		matchFamily, err := regexp.MatchString("LABEL "+config.APP_FAMILY+"=.* ", line)
+		matchFamily, err := regexp.MatchString("LABEL "+config.APP_FAMILY_ENV+"=.* ", line)
 		if err != nil {
 			if matchFamily {
 				return true
