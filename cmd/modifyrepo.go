@@ -33,8 +33,7 @@ var modifyRepoCmd = &cobra.Command{
 		flags := []string{"--name","--server","--default","--username","--password"}
 		for _, arg := range os.Args {
 			for _, flag := range flags {
-				//TODO Fix if flags --name='--default'
-				if strings.Contains(arg, flag) {
+				if strings.HasPrefix(arg, flag) {
 					run.ExistingMRFlags[flag] = true
 				}
 			}
