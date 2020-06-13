@@ -25,12 +25,12 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/driver/validate"
+	"dam/driver/flag"
 	"dam/run/internal"
 )
 
 func InstallApp(appCurrentName string) {
-	validate.AppPlusVersion(appCurrentName)
+	flag.ValidateAppPlusVersion(appCurrentName)
 
 	logger.Success("Start '%s' installing to the system.", appCurrentName)
 

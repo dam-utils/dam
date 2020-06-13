@@ -18,8 +18,8 @@ import (
 	"strconv"
 
 	"dam/driver/db"
+	"dam/driver/flag"
 	"dam/driver/logger"
-	"dam/driver/validate"
 )
 
 type ModifyRepoSettings struct {
@@ -35,15 +35,23 @@ var ModifyRepoFlags = new(ModifyRepoSettings)
 var ExistingMRFlags = make(map[string]bool)
 
 func ModifyRepo(arg string) {
-	validate.RepoID(arg)
-	validate.RepoName(ModifyRepoFlags.Name)
-	validate.RepoServer(ModifyRepoFlags.Server)
-	validate.RepoUsername(ModifyRepoFlags.Username)
-	validate.RepoPassword(ModifyRepoFlags.Password)
+	flag.ValidateRepoID(arg)
+	if ExistingMRFlags["--name"] {
+		flag.ValidateRepoName(ModifyRepoFlags.Name)
+	}
+	if ExistingMRFlags["--server"] {
+		flag.ValidateRepoServer(ModifyRepoFlags.Server)
+	}
+	if ExistingMRFlags["--username"] {
+		flag.ValidateRepoUsername(ModifyRepoFlags.Username)
+	}
+	if ExistingMRFlags["--password"] {
+		flag.ValidateRepoPassword(ModifyRepoFlags.Password)
+	}
 
 	ID, err := strconv.Atoi(arg)
 	if err != nil {
-		logger.Fatal("Internal error. Command argument is not ID. See 'help modifyrepo'")
+		logger.Fatal("Internal error. Command argument is not ID")
 	}
 	repo := db.RDriver.GetRepoById(ID)
 	if ExistingMRFlags["--default"] && repo.Default != ModifyRepoFlags.Default {
@@ -66,7 +74,7 @@ func ModifyRepo(arg string) {
 		noModifyOfficialRepoFlags := []string{"--name", "--server", "--username", "--password"}
 		for _, noModFlag := range noModifyOfficialRepoFlags {
 			if ExistingMRFlags[noModFlag] {
-				logger.Fatal("Cannot use flag '%s'for official repository. Except flag '--default'", noModFlag)
+				logger.Fatal("Cannot modificate official repository with the flag '%s'. Except flag '--default'", noModFlag)
 			}
 		}
 	}

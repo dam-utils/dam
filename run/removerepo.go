@@ -19,7 +19,7 @@ import (
 
 	"dam/driver/db"
 	"dam/driver/logger"
-	"dam/driver/validate"
+	"dam/driver/flag"
 )
 
 type RemoveRepoSettings struct {
@@ -31,10 +31,10 @@ var RemoveRepoFlags = new(RemoveRepoSettings)
 func RemoveRepo(arg string) {
 	var repoId int
 	if isRepoID(arg) {
-		validate.RepoName(arg)
+		flag.ValidateRepoName(arg)
 		repoId = db.RDriver.GetRepoIdByName(&arg)
 	} else {
-		validate.RepoID(arg)
+		flag.ValidateRepoID(arg)
 		repoId, _ = strconv.Atoi(arg)
 	}
 

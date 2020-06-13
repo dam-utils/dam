@@ -41,6 +41,19 @@ func Fatal(message string, args ...interface{}) {
 	//os.Exit(1)
 }
 
+func Error(message string, args ...interface{}) {
+	message = "ERROR: " + message
+	if config.COLLOR_ON == true {
+		message = color.Red + message + color.Reset
+	}
+
+	if len(args) == 0 {
+		log.Println(message)
+	} else {
+		log.Printf(message, args...)
+	}
+}
+
 func Debug(message string, args ...interface{}) {
 	message = "DEBUG: "+message
 	if config.COLLOR_ON == true {

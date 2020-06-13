@@ -25,7 +25,7 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/driver/validate"
+	"dam/driver/flag"
 	"dam/run/internal"
 )
 
@@ -36,7 +36,7 @@ type RemoveAppSettings struct {
 var RemoveAppFlags = new(RemoveAppSettings)
 
 func RemoveApp(name string) {
-	validate.AppName(name)
+	flag.ValidateAppName(name)
 
 	app := getAppIdByName(name)
 	tag := getTagFormApp(app)

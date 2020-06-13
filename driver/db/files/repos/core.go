@@ -25,7 +25,7 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/driver/storage/validate"
+	"dam/driver/validate"
 )
 
 
@@ -350,6 +350,7 @@ func internalValidatingReposDB(repos []*storage.Repo) {
 				defRepo = true
 			}
 		}
+
 		if validate.CheckRepoName(repo.Name) != nil {
 			logger.Fatal("Internal error. Repo name '%s' is invalid in DB", repo.Name)
 		}
@@ -359,6 +360,7 @@ func internalValidatingReposDB(repos []*storage.Repo) {
 		if validate.CheckServer(repo.Server) != nil {
 			logger.Fatal("Internal error. Repo server '%s' is invalid in DB", repo.Server)
 		}
+
 	}
 	if !defRepo {
 		logger.Fatal("Internal error. Not found default repository in DB")
