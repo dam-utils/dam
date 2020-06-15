@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"dam/config"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -16,7 +17,7 @@ func CheckRepoName(name string) error {
 	regexPattern := "[A-Za-z0-9_]"
 	matched, err := regexp.Match(regexPattern, []byte(name))
 	if err != nil {
-		return fmt.Errorf("Internal error. Cannot match regex patern '%s' with registry name '%s'", regexPattern, name)
+		return fmt.Errorf("Cannot match regex patern '%s' with registry name '%s'", regexPattern, name)
 	}
 	if !matched {
 		return fmt.Errorf("Repository name '%s' is bad. It must have only letters, numbers and '_'", name)
@@ -51,7 +52,7 @@ func CheckLogin(login string) error {
 
 func CheckPassword(pass string) error {
 	if len(pass) > 120 {
-		return fmt.Errorf("Password '%s' is bad. It must have lenght '<' or '=' 120 symbols", pass)
+		return fmt.Errorf("Password is bad. It must have lenght '<' or '=' 120 symbols")
 	}
 	return nil
 }
@@ -78,7 +79,7 @@ func CheckAppName(name string) error {
 	regexPattern := "[A-Za-z0-9_]"
 	matched, err := regexp.Match(regexPattern, []byte(name))
 	if err != nil {
-		return fmt.Errorf("Internal error. Cannot match regex patern '%s' with registry name '%s'", regexPattern, name)
+		return fmt.Errorf("Cannot match regex patern '%s' with registry name '%s'", regexPattern, name)
 	}
 	if !matched {
 		return fmt.Errorf("App name '%s' is bad. It must have only letters, numbers and '_'", name)
@@ -105,7 +106,7 @@ func CheckVersion(version string) error {
 	regexPattern := "[A-Za-z0-9_.]"
 	matched, err := regexp.Match(regexPattern, []byte(version))
 	if err != nil {
-		return fmt.Errorf("Internal error. Cannot match regex patern '%s' with app version '%s'", regexPattern, version)
+		return fmt.Errorf("Cannot match regex patern '%s' with app version '%s'", regexPattern, version)
 	}
 	if !matched {
 		return fmt.Errorf("App version '%s' is bad. It must have only letters, numbers, '_' and '.'", version)
@@ -142,10 +143,36 @@ func CheckMask(mask string) error {
 	regexPattern := "[A-Za-z0-9-_.]"
 	matched, err := regexp.Match(regexPattern, []byte(mask))
 	if err != nil {
-		return fmt.Errorf("Internal error. Cannot match regex patern '%s' with search mask '%s'", regexPattern, mask)
+		return fmt.Errorf("Cannot match regex patern '%s' with search mask '%s'", regexPattern, mask)
 	}
 	if !matched {
 		return fmt.Errorf("Mask '%s' is bad. It must have only letters, numbers, '_', '-' and '.'", mask)
+	}
+
+	return nil
+}
+
+func CheckDockerID(id string) error {
+	l := len(id)
+	if l != 12 {
+		return fmt.Errorf("Docker id '%s' is bad. It must have lenght only 12 symbols", id)
+	}
+
+	regexPattern := "[a-z0-9]"
+	matched, err := regexp.Match(regexPattern, []byte(id))
+	if err != nil {
+		return fmt.Errorf("Cannot match regex patern '%s' with docker id '%s'", regexPattern, id)
+	}
+	if !matched {
+		return fmt.Errorf("Docker id '%s' is bad. It must have only lowercase letters and numbers", id)
+	}
+
+	return nil
+}
+
+func CheckBool(b string) error {
+	if b != config.FILES_DB_BOOL_FLAG && b != ""  {
+		return fmt.Errorf("Bool flag with value '%s' is bad", b)
 	}
 
 	return nil

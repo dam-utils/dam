@@ -147,7 +147,7 @@ func saveRepos(repos []*storage.Repo) {
 
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 	defer f.Close()
 
@@ -155,16 +155,16 @@ func saveRepos(repos []*storage.Repo) {
 		newLine := repo2str(repo)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal(err.Error())
+			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
@@ -173,21 +173,21 @@ func saveRepos(repos []*storage.Repo) {
 func ClearRepos() {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 	defer f.Close()
 	_, err = f.WriteString("")
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
@@ -300,25 +300,45 @@ func getNewRepoID(repos []*storage.Repo) int {
 	return Res +1
 }
 
-func str2Repo(repo string) *storage.Repo {
-	// Ex: 2||auto_repo|localhost:5000|admin|YWRtaW4K
-	Repo := new(storage.Repo)
-	ParseRepo := strings.Split(repo, config.FILES_DB_SEPARATOR)
-	Repo.Id, _ = strconv.Atoi(ParseRepo[0])
-	if ParseRepo[1] == config.FILES_DB_BOOL_FLAG {
-		Repo.Default = true
-	} else {
-		Repo.Default = false
-	}
-	Repo.Name = ParseRepo[2]
-	Repo.Server = ParseRepo[3]
-	Repo.Username = ParseRepo[4]
-	var err error
-	Repo.Password, err = base64ToStr(ParseRepo[5])
+func str2Repo(str string) *storage.Repo {
+	repoArray := new(storage.Repo)
+	strRepo := strings.Split(str, config.FILES_DB_SEPARATOR)
+
+	pass, err := base64ToStr(strRepo[5])
 	if err != nil {
-		logger.Fatal("Cannot read the password of user '%s'", Repo.Username)
+		logger.Fatal("Internal error. Cannot read the password of user '%s' in line '%s'", repoArray.Username, str)
 	}
-	return Repo
+
+	if validate.CheckID(strRepo[0]) != nil {
+		logger.Fatal("Internal error. Cannot parse the repo id in line '%s'", str)
+	}
+	if validate.CheckBool(strRepo[1]) != nil {
+		logger.Fatal("Internal error. Cannot parse the default flag in line '%s'", str)
+	}
+	if validate.CheckRepoName(strRepo[2]) != nil {
+		logger.Fatal("Internal error. Cannot parse the repo name in line '%s'", str)
+	}
+	if validate.CheckServer(strRepo[3]) != nil {
+		logger.Fatal("Internal error. Cannot parse the server in line '%s'", str)
+	}
+	if validate.CheckLogin(strRepo[4]) != nil {
+		logger.Fatal("Internal error. Cannot parse the username in line '%s'", str)
+	}
+	if validate.CheckPassword(pass) != nil {
+		logger.Fatal("Internal error. Cannot parse the password in line '%s'", str)
+	}
+
+
+	repoArray.Id, _ = strconv.Atoi(strRepo[0])
+	if strRepo[1] == config.FILES_DB_BOOL_FLAG {
+		repoArray.Default = true
+	}
+	repoArray.Name = strRepo[2]
+	repoArray.Server = strRepo[3]
+	repoArray.Username = strRepo[4]
+	repoArray.Password = pass
+
+	return repoArray
 }
 
 func preparePasswordRepos(repos []*storage.Repo) []*storage.Repo {

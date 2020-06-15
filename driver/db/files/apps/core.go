@@ -16,6 +16,7 @@ package apps
 
 import (
 	"bufio"
+
 	"os"
 	"strconv"
 	"strings"
@@ -24,19 +25,23 @@ import (
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
+	"dam/driver/validate"
 )
 
 
 func GetApps() []*storage.App {
 	var apps []*storage.App
 
-	fileHandle, _ := os.Open(config.FILES_DB_APPS)
+	fileHandle, err := os.Open(config.FILES_DB_APPS)
+	if err != nil {
+		logger.Fatal("Cannot open file '%s' with error: %s", config.FILES_DB_APPS, err)
+	}
 	defer fileHandle.Close()
 
 	fileScanner := bufio.NewScanner(fileHandle)
 	for fileScanner.Scan() {
-		NewLine := fileScanner.Text()
-		apps = append(apps, str2app(NewLine))
+		newLine := fileScanner.Text()
+		apps = append(apps, str2app(newLine))
 	}
 	return apps
 }
@@ -51,23 +56,42 @@ func GetAppById(id int) *storage.App {
 	return nil
 }
 
-func str2app(app string) *storage.App {
-	// Ex: 1|fd78216a9d61|test_image|2.4.7_18|0||test_image
-	App := new(storage.App)
+func str2app(str string) *storage.App {
+	app := new(storage.App)
+	strArray := strings.Split(str, config.FILES_DB_SEPARATOR)
 
-	ParseApp := strings.Split(app, config.FILES_DB_SEPARATOR)
-	App.Id, _ = strconv.Atoi(ParseApp[0])
-	App.DockerID = ParseApp[1]
-	App.ImageName = ParseApp[2]
-	App.ImageVersion = ParseApp[3]
-	App.RepoID, _ = strconv.Atoi(ParseApp[4])
-	if ParseApp[5] == config.FILES_DB_BOOL_FLAG {
-		App.MultiVersion = true
-	} else {
-		App.MultiVersion = false
+	if validate.CheckID(strArray[0]) != nil {
+		logger.Fatal("Internal error. Cannot parse the app ID in line '%s'", str)
 	}
-	App.Family = ParseApp[6]
-	return App
+	if validate.CheckDockerID(strArray[1]) != nil {
+		logger.Fatal("Internal error. Cannot parse the docker ID in line '%s'", str)
+	}
+	if validate.CheckAppName(strArray[2]) != nil {
+		logger.Fatal("Internal error. Cannot parse the app name in line '%s'", str)
+	}
+	if validate.CheckVersion(strArray[3]) != nil {
+		logger.Fatal("Internal error. Cannot parse the app version in line '%s'", str)
+	}
+	if validate.CheckID(strArray[4]) != nil {
+		logger.Fatal("Internal error. Cannot parse the repo id in line '%s'", str)
+	}
+	if validate.CheckBool(strArray[5]) != nil {
+		logger.Fatal("Internal error. Cannot parse the multiversion flag in line '%s'", str)
+	}
+	if validate.CheckBool(strArray[6]) != nil {
+		logger.Fatal("Internal error. Cannot parse the family flag in line '%s'", str)
+	}
+
+	app.Id, _ = strconv.Atoi(strArray[0])
+	app.DockerID = strArray[1]
+	app.ImageName = strArray[2]
+	app.ImageVersion = strArray[3]
+	app.RepoID, _ = strconv.Atoi(strArray[4])
+	if strArray[5] == config.FILES_DB_BOOL_FLAG {
+		app.MultiVersion = true
+	}
+	app.Family = strArray[6]
+	return app
 }
 
 func NewApp(app *storage.App) {
@@ -95,7 +119,7 @@ func getNewAppID(apps []*storage.App) int {
 func saveApps(apps []*storage.App) {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 	defer f.Close()
 
@@ -103,16 +127,16 @@ func saveApps(apps []*storage.App) {
 		newLine := app2str(app)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal(err.Error())
+			logger.Fatal("Cannot write to apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
 
 	logger.Debug("Move '%s' to '%s'", config.FILES_DB_TMP, config.FILES_DB_APPS)
@@ -146,5 +170,3 @@ func app2str(app *storage.App) *string {
 	}
 	return &appStr
 }
-
-
