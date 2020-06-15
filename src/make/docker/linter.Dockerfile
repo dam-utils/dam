@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-FROM golangci/golangci-lint:v1.24
+FROM golangci/golangci-lint:v1.27
 
 ARG PROJECT_NAME
 

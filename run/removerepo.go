@@ -47,8 +47,6 @@ func RemoveRepo(arg string) {
 
 func isRepoID(id string) bool {
 	_, err := strconv.Atoi(id )
-	if err != nil {
-		return true
-	}
-	return false
+
+	return err != nil
 }
