@@ -62,6 +62,9 @@ func getImageTag(envs map[string]string) string {
 	var tag string
 
 	r := db.RDriver.GetDefaultRepo()
+	if r == nil {
+		logger.Fatal("Internal error. Not found default repo")
+	}
 
 	if r.Id == storage.OfficialRepo.Id {
 		tag = envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]

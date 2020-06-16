@@ -54,6 +54,9 @@ func ModifyRepo(arg string) {
 		logger.Fatal("Internal error. Command argument is not ID")
 	}
 	repo := db.RDriver.GetRepoById(ID)
+	if repo == nil {
+		logger.Fatal("Internal error. Cannot get repo for ID '%v'", ID)
+	}
 	if ExistingMRFlags["--default"] && repo.Default != ModifyRepoFlags.Default {
 		repo.Default = ModifyRepoFlags.Default
 	}

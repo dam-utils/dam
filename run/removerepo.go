@@ -39,6 +39,9 @@ func RemoveRepo(arg string) {
 	}
 
 	defRepo := db.RDriver.GetDefaultRepo()
+	if defRepo == nil {
+		logger.Fatal("Internal error. Not found default repo")
+	}
 	if !RemoveRepoFlags.Force && repoId == defRepo.Id {
 		logger.Fatal("Repository with Id '%v' is default. Use '--skip' flag for removing", repoId)
 	}

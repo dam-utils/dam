@@ -269,7 +269,9 @@ func GetRepoIdByName(name *string) int {
 			return repo.Id
 		}
 	}
-	return 0
+
+	logger.Fatal("Internal error. Not found repo ID for name '%s'", *name)
+	return -1
 }
 
 func prepareDefaultInRepos(repos []*storage.Repo) []*storage.Repo {

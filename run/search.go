@@ -27,6 +27,9 @@ func Search(arg string) {
 	flag.ValidateSearchMask(arg)
 
 	repo := db.RDriver.GetDefaultRepo()
+	if repo == nil {
+		logger.Fatal("Internal error. Not found default repo")
+	}
 	registry.CheckRepository(repo)
 	appList := registry.GetAppNamesByMask(repo, arg)
 	logger.Debug("run/search.go:appList: '%v'", appList)

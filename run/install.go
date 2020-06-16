@@ -54,6 +54,9 @@ func InstallApp(appCurrentName string) {
 
 func dockerPull(app string) string {
 	defRepo := db.RDriver.GetDefaultRepo()
+	if defRepo == nil {
+		logger.Fatal("Internal error. Not found default repo")
+	}
 
 	var tag string
 	if defRepo.Id == storage.OfficialRepo.Id {
@@ -73,6 +76,9 @@ func dockerPull(app string) string {
 
 func saveInstallAppToDB(tag string){
 	repo := db.RDriver.GetDefaultRepo()
+	if repo == nil {
+		logger.Fatal("Internal error. Not found default repo")
+	}
 	_, imageName, imageVersion := splitTag(tag)
 
 	var app storage.App

@@ -41,6 +41,7 @@ var (
 	OFFICIAL_REGISTRY_AUTH_URL="https://auth.docker.io/token?service=registry.docker.io"
 	OFFICIAL_REGISTRY_URL="https://registry-1.docker.io/"
 	OFFICIAL_REGISTRY_NAME="official" // TODO delete hardcode in tests
+	UNKNOWN_REPO_NAME="~unknown~"
 	//Docker
 	DOCKER_API_VERSION="1.40"
 	//Search

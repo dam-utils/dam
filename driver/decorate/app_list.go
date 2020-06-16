@@ -87,7 +87,7 @@ func printAppsTitle(fsize int) {
 }
 
 func getRepoNameByApp(app *storage.App) string {
-	name := "~unknown~"
+	name := config.UNKNOWN_REPO_NAME
 	repo := db.RDriver.GetRepoById(app.RepoID)
 	if repo != nil {
 		name = repo.Name

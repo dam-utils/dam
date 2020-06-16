@@ -87,6 +87,9 @@ func getTagFormApp(app *storage.App) string {
 
 	if app.RepoID != storage.OfficialRepo.Id {
 		repo := db.RDriver.GetRepoById(app.RepoID)
+		if repo == nil {
+			logger.Fatal("Internal error. Cannot get repo for ID '%v'", app.RepoID)
+		}
 		tag.WriteString(repo.Server)
 		tag.WriteString("/")
 	}
