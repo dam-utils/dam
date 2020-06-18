@@ -31,10 +31,14 @@ func SearchAppNames(mask string) *[]string {
 	}
 
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	searchOpts := types.ImageSearchOptions {}
 	searchOpts.Limit = config.OFFICIAL_REPO_SEARCH_APPS_LIMIT

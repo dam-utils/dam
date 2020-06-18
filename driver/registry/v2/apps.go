@@ -46,10 +46,14 @@ func GetAppNames(repo *storage.Repo) *[]string {
 	}
 
 	resp, err := client.Do(req)
+	defer func() {
+		if resp.Body != nil {
+			resp.Body.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err.Error())
 	}
-	defer resp.Body.Close()
 
 	var body ResponseGetAppNames
 	err = json.NewDecoder(resp.Body).Decode(&body)

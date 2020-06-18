@@ -39,12 +39,21 @@ func prepareExpFile(path string, envs map[string]string) {
 	newPath := path[:4]
 
 	f, err := os.Open(path)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open file '%s' with error: %s", path, err.Error())
 	}
-	defer f.Close()
 
 	newf, err := os.Create(newPath)
+	defer func() {
+		if newf != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		newf.Close()
 		logger.Fatal("Cannot create file '%s' with error: %s", newPath, err.Error())
@@ -55,7 +64,6 @@ func prepareExpFile(path string, envs map[string]string) {
 		newString := env.PrepareExpString(scanner.Text(), envs)
 		_, err = f.WriteString(newString)
 		if err != nil {
-			newf.Close()
 			logger.Fatal("Cannot write string to file '%s' with error: %s", newPath, err.Error())
 		}
 	}

@@ -31,10 +31,14 @@ import (
 
 func ContainerCreate(image string, name string) string {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	var conf = container.Config{
 		Image: image,
@@ -52,10 +56,14 @@ func ContainerCreate(image string, name string) string {
 
 func CopyFromContainer(containerID, sourcePath, destPath string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	reader, _, err := cli.CopyFromContainer(context.Background(), containerID, sourcePath)
 	if err != nil {
@@ -123,10 +131,14 @@ func CopyFromContainer(containerID, sourcePath, destPath string) {
 
 func ContainerRemove(id string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	var opts = types.ContainerRemoveOptions{
 		RemoveVolumes: true,

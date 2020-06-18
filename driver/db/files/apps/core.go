@@ -32,13 +32,17 @@ import (
 func GetApps() []*storage.App {
 	var apps []*storage.App
 
-	fileHandle, err := os.Open(config.FILES_DB_APPS)
+	f, err := os.Open(config.FILES_DB_APPS)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open file '%s' with error: %s", config.FILES_DB_APPS, err)
 	}
-	defer fileHandle.Close()
 
-	fileScanner := bufio.NewScanner(fileHandle)
+	fileScanner := bufio.NewScanner(f)
 	for fileScanner.Scan() {
 		newLine := fileScanner.Text()
 		apps = append(apps, str2app(newLine))
@@ -118,10 +122,14 @@ func getNewAppID(apps []*storage.App) int {
 
 func saveApps(apps []*storage.App) {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
-	defer f.Close()
 
 	for _, app := range apps {
 		newLine := app2str(app)

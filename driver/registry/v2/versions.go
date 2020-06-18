@@ -33,7 +33,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 
 	url := SessionURL + "v2/" + appName + "/tags/list"
 	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
+	if err != nil || req == nil {
 		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err.Error())
 	}
 	if repo.Username != "" {
@@ -41,10 +41,14 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 	}
 
 	resp, err := client.Do(req)
+	defer func() {
+		if resp.Body != nil {
+			resp.Body.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err.Error())
 	}
-	defer resp.Body.Close()
 
 	type AppVersionsResponse struct {
 		Tags []string `json:"tags"`

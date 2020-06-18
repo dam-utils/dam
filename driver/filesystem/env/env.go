@@ -26,11 +26,15 @@ func GetFileEnv(file string) map[string]string {
 	var envMap = make(map[string]string)
 
 	f, err := os.Open(file)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Warn("Cannot open env file with error: %s", err.Error())
 		return envMap
 	}
-	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -46,10 +50,14 @@ func GetDockerFileEnv(file string) map[string]string {
 	var envMap = make(map[string]string)
 
 	f, err := os.Open(file)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open docker file with error: %s", err.Error())
 	}
-	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -68,7 +76,7 @@ func GetOSEnv(envPrefix string) map[string]string {
 		pair := strings.SplitN(e, "=", 2)
 		if len(pair) == 2 {
 			if strings.HasPrefix(pair[0], envPrefix) {
-				envMap[pair[0]]=pair[1]
+				envMap[pair[0]] = pair[1]
 			}
 		}
 	}
@@ -83,24 +91,24 @@ func MergeEnvs(map1, map2 map[string]string) map[string]string {
 	return map1
 }
 
-func convertEnvFileLIne(line string) (string, string, bool){
+func convertEnvFileLIne(line string) (string, string, bool) {
 	// Формат ENVIRONMENT файла:
 	//- Не игнорируются пробелы и табуляции
 	//- комментарии начинаются с символа '#'
 	//- нельзя использовать переменную в несколько строчек
 	//- нельзя делать комментарии в той же строке, что и переменная
 	//- строчки без '=' игнорируются
-	if strings.HasPrefix(line,"#") {
-		return "","", false
+	if strings.HasPrefix(line, "#") {
+		return "", "", false
 	}
 	splResult := strings.SplitN(line, "=", 2)
 	if len(splResult) != 2 {
-		return "","", false
+		return "", "", false
 	}
 	return splResult[0], splResult[1], true
 }
 
-func convertDockerFileLIne(line string) (string, string, bool){
+func convertDockerFileLIne(line string) (string, string, bool) {
 	// Формат Dockerfile:
 	//- Пример `ENV FOO=foo`
 	//- Не игнорируются пробелы и табуляции
@@ -108,8 +116,8 @@ func convertDockerFileLIne(line string) (string, string, bool){
 	//- нельзя комментарии в той же строке, что и переменная
 	//- разделителем имени переменной могут быть символы "=" и " "
 	//- переменные без значения игнорируются
-	if !strings.HasPrefix(line,"ENV "){
-		return "","", false
+	if !strings.HasPrefix(line, "ENV ") {
+		return "", "", false
 	}
 
 	newline := line[4:]
@@ -123,4 +131,3 @@ func convertDockerFileLIne(line string) (string, string, bool){
 	}
 	return splResult1[0], splResult1[1], true
 }
-

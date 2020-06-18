@@ -146,10 +146,14 @@ func saveRepos(repos []*storage.Repo) {
 	newRepos := preparePasswordRepos(repos)
 
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
-	defer f.Close()
 
 	for _, repo := range newRepos {
 		newLine := repo2str(repo)
@@ -172,10 +176,15 @@ func saveRepos(repos []*storage.Repo) {
 
 func ClearRepos() {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
-	defer f.Close()
+
 	_, err = f.WriteString("")
 	if err != nil {
 		logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
@@ -196,18 +205,18 @@ func ClearRepos() {
 func GetRepos() []*storage.Repo {
 	// Ex: 2||auto_repo|packages.test.com|admin|YWRtaW4K|
 	var repos []*storage.Repo
-	fileHandle, err := os.Open(config.FILES_DB_REPOS)
+	f, err := os.Open(config.FILES_DB_REPOS)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open file '%s'", config.FILES_DB_REPOS)
 	}
-	defer func (){
-		err := fileHandle.Close()
-		if err != nil {
-			logger.Fatal("Cannot close file '%s'", config.FILES_DB_REPOS)
-		}
-	}()
 
-	fileScanner := bufio.NewScanner(fileHandle)
+
+	fileScanner := bufio.NewScanner(f)
 	for fileScanner.Scan() {
 		NewLine := fileScanner.Text()
 		repos = append(repos, str2Repo(NewLine))

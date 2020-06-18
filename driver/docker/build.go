@@ -45,16 +45,25 @@ func Build(imageTag, projectDir string) {
 	}
 
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	resp, err := cli.ImageBuild(context.Background(), buildCtx, opts)
+	defer func() {
+		if resp.Body != nil {
+			resp.Body.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot build docker image with error: %s", err.Error())
 	}
-	defer resp.Body.Close()
+
 
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	err = jsonmessage.DisplayJSONMessagesStream(resp.Body, os.Stderr, termFd, isTerm, nil)

@@ -31,10 +31,14 @@ import (
 
 func Pull(tag string, repo *storage.Repo) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	authConfig := types.AuthConfig{
 		Username: repo.Username,
@@ -51,11 +55,15 @@ func Pull(tag string, repo *storage.Repo) {
 		RegistryAuth: authStr,
 	}
 	out, err := cli.ImagePull(context.Background(), tag, pullOpts)
+	defer func() {
+		if out != nil {
+			out.Close()
+		}
+	}()
 	if err != nil {
 		logger.Warn("Cannot pull docker image with error: %s", err.Error())
 		return
 	}
-	defer out.Close()
 
 	_, err = io.Copy(os.Stdout, out)
 	if err != nil {
@@ -66,10 +74,14 @@ func Pull(tag string, repo *storage.Repo) {
 // TODO refactoring
 func GetImageID(tag string) string {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	var opts = types.ImageListOptions{}
 	imageSum, err := cli.ImageList(context.Background(),opts)
@@ -90,10 +102,14 @@ func GetImageID(tag string) string {
 // TODO refactoring
 func GetImageLabel(tag, labelName string) string {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot create new docker client")
 	}
-	defer cli.Close()
 
 	var opts = types.ImageListOptions{}
 	imageSum, err := cli.ImageList(context.Background(),opts)

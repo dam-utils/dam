@@ -25,10 +25,14 @@ import (
 
 func IsCopyMeta(path string) bool {
 	f, err := os.Open(path)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open Dockerfile with error: %s", err.Error())
 	}
-	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -53,10 +57,14 @@ func IsCopyMeta(path string) bool {
 
 func IsFamily (path string) bool {
 	f, err := os.Open(path)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
 	if err != nil {
 		logger.Fatal("Cannot open Dockerfile with error: %s", err.Error())
 	}
-	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
