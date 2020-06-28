@@ -139,6 +139,15 @@ func ProjectDir(path string) error {
 	return nil
 }
 
+func FilePath(path string) error {
+	l := len(path)
+	if l == 0 {
+		return fmt.Errorf("Path '%s' is not valid. It cannot be an empty string", path)
+	}
+
+	return nil
+}
+
 func CheckMask(mask string) error {
 	regexPattern := "[A-Za-z0-9-_.]"
 	matched, err := regexp.Match(regexPattern, []byte(mask))

@@ -16,54 +16,55 @@ package config
 
 var (
 	//Global options // TODO fix it
-	PROJECT_NAME    ="dam"
-	PROJECT_VERSION ="1.0.0"
+	PROJECT_NAME    = "dam"
+	PROJECT_VERSION = "1.0.0"
 
 	//Decorating options
-	COLLOR_ON=true
-	DECORATE_MAX_DISPLAY_WIDTH =100
-	DECORATE_RAW_SEPARATOR     =";"
-	DECORATE_BOOL_FLAG         ="*"
+	COLLOR_ON                  = true
+	DECORATE_MAX_DISPLAY_WIDTH = 100
+	DECORATE_RAW_SEPARATOR     = ";"
+	DECORATE_BOOL_FLAG         = "*"
 	//DB types
-	DB_TYPE            ="files" // TODO create new dbs
+	DB_TYPE = "files" // TODO create new dbs
 	//FILES DB options. Type: "files"
 	// WARN: Use only absolutely files path
-	FILES_DB_SEPARATOR         = ";"
-	FILES_DB_BOOL_FLAG         = "*"
-	FILES_DB_REPOS             = "/tmp/Repos"
-	FILES_DB_APPS              = "/tmp/Apps"
-	FILES_DB_TMP               = "/tmp/.db"
+	FILES_DB_SEPARATOR = ";"
+	FILES_DB_BOOL_FLAG = "*"
+	FILES_DB_REPOS     = "/tmp/Repos"
+	FILES_DB_APPS      = "/tmp/Apps"
+	FILES_DB_TMP       = "/tmp/.db"
 	//Repositories
-	SEARCH_PROTOCOL_STRATEGY=[]string{"https","http"} // The order of the protocols is important.
-	SEARCH_MAX_CONNECTS=1
-	SEARCH_TIMEOUT_MS=1000
-	OFFICIAL_REGISTRY_AUTH_URL="https://auth.docker.io/token?service=registry.docker.io"
-	OFFICIAL_REGISTRY_URL="https://registry-1.docker.io/"
-	OFFICIAL_REGISTRY_NAME="official" // TODO delete hardcode in tests
-	UNKNOWN_REPO_NAME="~unknown~"
+	SEARCH_PROTOCOL_STRATEGY   = []string{"https", "http"} // The order of the protocols is important.
+	SEARCH_MAX_CONNECTS        = 1
+	SEARCH_TIMEOUT_MS          = 1000
+	OFFICIAL_REGISTRY_AUTH_URL = "https://auth.docker.io/token?service=registry.docker.io"
+	OFFICIAL_REGISTRY_URL      = "https://registry-1.docker.io/"
+	OFFICIAL_REGISTRY_NAME     = "official" // TODO delete hardcode in tests
+	UNKNOWN_REPO_NAME          = "~unknown~"
 	//Docker
-	DOCKER_API_VERSION="1.40"
+	DOCKER_API_VERSION = "1.40"
 	//Search
-	OFFICIAL_REPO_SEARCH_APPS_LIMIT=100  // [1,100]
-	INTERNAL_REPO_SEARCH_APPS_LIMIT=999
+	OFFICIAL_REPO_SEARCH_APPS_LIMIT = 100 // [1,100]
+	INTERNAL_REPO_SEARCH_APPS_LIMIT = 999
 	//Sorting
-	SORT_APP_TYPE="alphabetic" // TODO create new sorting
-	SORT_VERSION_TYPE="semantic_version" // TODO create new sorting
+	SORT_APP_TYPE     = "alphabetic"       // TODO create new sorting
+	SORT_VERSION_TYPE = "semantic_version" // TODO create new sorting
 	//Creating
-	META_DIR_NAME="meta"
-	DOCKERFILE_NAME="Dockerfile"
-	ENV_FILE_NAME="ENVIRONMENT"
-	INSTALL_FILE_NAME="install"
-	UNINSTALL_FILE_NAME="uninstall"
-
-	OS_ENV_PREFIX="DAM_"
-	EXPAND_META_FILE=".exp"
+	META_DIR_NAME       = "meta"
+	DOCKERFILE_NAME     = "Dockerfile"
+	ENV_FILE_NAME       = "ENVIRONMENT"
+	INSTALL_FILE_NAME   = "install"
+	UNINSTALL_FILE_NAME = "uninstall"
+	OS_ENV_PREFIX       = "DAM_"
+	EXPAND_META_FILE    = ".exp"
 	//Reserved ENVs
-	APP_NAME_ENV   ="DAM_APP_NAME"
-	DEF_APP_NAME   ="unknown"
-	APP_VERS_ENV   ="DAM_APP_VERSION"
-	DEF_APP_VERS   ="SNAPSHOT"
-	APP_FAMILY_ENV ="DAM_APP_FAMILY"
+	APP_NAME_ENV   = "DAM_APP_NAME"
+	DEF_APP_NAME   = "unknown"
+	APP_VERS_ENV   = "DAM_APP_VERSION"
+	DEF_APP_VERS   = "SNAPSHOT"
+	APP_FAMILY_ENV = "DAM_APP_FAMILY"
 	//Install app
-	TMP_META_PATH="./.tmp.meta"
+	TMP_META_PATH = "./.tmp.meta"
+	//Export
+	EXPORT_APP_SEPARATOR = ":"
 )

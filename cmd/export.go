@@ -12,27 +12,20 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package main
+package cmd
 
 import (
-	"os"
+	"dam/run"
 
-	"dam/cmd"
-	"dam/driver/config"
-	"dam/driver/db"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	// чтобы успеть закрыть все f.Close и соединения перед выходом
-	defer func() {
-		_ = recover()
-		os.Exit(1)
-	}()
-
-	config.Prepare()
-	db.Init()
-
-	cmd.Execute()
-
-	os.Exit(0)
+var exportCmd = &cobra.Command{
+	Use:   "export [<file path>]",
+	Short: "Export apps to file.",
+	Long:  ``,
+	Args:  cobra.RangeArgs(1, 1),
+	Run: func(cmd *cobra.Command, args []string) {
+		run.Export(args[0])
+	},
 }

@@ -12,3 +12,11 @@ func ValidateProjectDirectory(s string) {
 		logger.Fatal("Project directory flag is not valid.")
 	}
 }
+
+func ValidateFilePath(s string) {
+	err := validate.FilePath(s)
+	if err != nil {
+		logger.Error(err.Error())
+		logger.Fatal("File path flag is not valid.")
+	}
+}
