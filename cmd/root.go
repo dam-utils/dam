@@ -43,7 +43,11 @@ func Execute() {
 	}
 }
 
+var debug bool
+
 func init() {
+	rootCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Enable debug mode")
+
 	rootCmd.AddCommand(removeAppCmd)
 	rootCmd.AddCommand(installAppCmd)
 	rootCmd.AddCommand(createAppCmd)
@@ -55,7 +59,7 @@ func init() {
 	rootCmd.AddCommand(searchCmd)
 
 	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	if !config.DISABLE_DEBUG {
+	if debug {
 		logger.DebugMode = true
 	}
 }

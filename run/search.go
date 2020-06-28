@@ -17,10 +17,10 @@ package run
 import (
 	"dam/driver/db"
 	"dam/driver/decorate"
+	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/registry"
 	"dam/driver/sort"
-	"dam/driver/flag"
 )
 
 func Search(arg string) {

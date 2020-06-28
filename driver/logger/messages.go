@@ -15,9 +15,12 @@
 package logger
 
 import (
+	"fmt"
+	"log"
+	"runtime/debug"
+
 	"dam/config"
 	"dam/driver/logger/color"
-	"log"
 )
 
 var DebugMode bool
@@ -26,19 +29,21 @@ func init(){
 	log.SetFlags(0)
 }
 
+
 func Fatal(message string, args ...interface{}) {
+	debug.SetTraceback("")
+
 	message = "ERROR: " + message
 	if config.COLLOR_ON == true {
 		message = color.Red + message + color.Reset
 	}
 
-	if len(args) == 0 {
-		log.Println(message)
-	} else {
-		log.Printf(message, args...)
+	if len(args) != 0 {
+		message = fmt.Sprintf(message, args...)
 	}
+
+	log.Printf(message)
 	panic(nil)
-	//os.Exit(1)
 }
 
 func Error(message string, args ...interface{}) {
