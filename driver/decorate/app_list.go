@@ -15,6 +15,7 @@
 package decorate
 
 import (
+	"dam/driver/logger/color"
 	"fmt"
 	"strconv"
 
@@ -116,4 +117,18 @@ func printApp(app *storage.App, limitSize int) {
 	fmt.Print(ColumnSeparator)
 	printField(getRepoNameByApp(app), limitSize, defAppColumnSize["Repository"])
 	fmt.Println()
+}
+
+func PrintAppList(title string, appSkipList []*storage.ImportApp, c string) {
+	if len(appSkipList) == 0 {
+		return
+	}
+
+	fmt.Println(c + title)
+
+	for _, app := range appSkipList {
+		fmt.Println("\t"+ app.CurrentName())
+	}
+
+	fmt.Println(color.Reset)
 }

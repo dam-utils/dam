@@ -23,9 +23,9 @@ import (
 	"dam/driver/db"
 	"dam/driver/docker"
 	fs "dam/driver/filesystem"
+	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/driver/flag"
 	"dam/run/internal"
 )
 
@@ -62,7 +62,7 @@ func dockerPull(app string) string {
 	if defRepo.Id == storage.OfficialRepo.Id {
 		tag = app
 	} else {
-		tag = defRepo.Server+"/"+app
+		tag = defRepo.Server + "/" + app
 	}
 
 	if defRepo.Id == storage.OfficialRepo.Id {
@@ -74,7 +74,7 @@ func dockerPull(app string) string {
 	return tag
 }
 
-func saveInstallAppToDB(tag string){
+func saveInstallAppToDB(tag string) {
 	repo := db.RDriver.GetDefaultRepo()
 	if repo == nil {
 		logger.Fatal("Internal error. Not found default repo")
@@ -102,7 +102,7 @@ func getInstall(meta string) string {
 func splitTag(tag string) (string, string, string) {
 	n := strings.Split(tag, "/")
 	nameWithVersion := n[len(n)-1]
-	server := strings.Join(n[:len(n)-1],"/")
+	server := strings.Join(n[:len(n)-1], "/")
 
 	v := strings.Split(nameWithVersion, ":")
 	version := v[len(v)-1]

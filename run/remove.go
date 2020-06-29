@@ -23,14 +23,14 @@ import (
 	"dam/driver/db"
 	"dam/driver/docker"
 	fs "dam/driver/filesystem"
+	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/storage"
-	"dam/driver/flag"
 	"dam/run/internal"
 )
 
 type RemoveAppSettings struct {
-	Force   bool
+	Force bool
 }
 
 var RemoveAppFlags = new(RemoveAppSettings)
@@ -41,7 +41,7 @@ func RemoveApp(name string) {
 	app := getAppIdByName(name)
 	tag := getTagFormApp(app)
 
-	logger.Success("Start app '%s:%s' removing from the system.",app.ImageName, app.ImageVersion)
+	logger.Success("Start app '%s:%s' removing from the system.", app.ImageName, app.ImageVersion)
 
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
@@ -56,7 +56,7 @@ func RemoveApp(name string) {
 	fs.RunFile(uninstall)
 	fs.Remove(tmpMeta)
 
-	logger.Success("App '%s:%s' was removed.",app.ImageName, app.ImageVersion)
+	logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)
 }
 
 func getAppIdByName(name string) *storage.App {
