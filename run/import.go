@@ -28,6 +28,12 @@ import (
 	"dam/driver/storage"
 )
 
+type ImportSettings struct {
+	Yes bool
+}
+
+var ImportFlags = new(ImportSettings)
+
 func Import(arg string) {
 	flag.ValidateFilePath(arg)
 
@@ -41,10 +47,13 @@ func Import(arg string) {
 	decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
 	decorate.PrintAppList("Delete apps:\n", appDeleteList, color.Red)
 
-	answer := questionYesNo()
-	if answer == false {
-		logger.Success("Stop import.")
-		os.Exit(0)
+
+	if !ImportFlags.Yes {
+		answer := questionYesNo()
+		if answer == false {
+			logger.Success("Stop import.")
+			os.Exit(0)
+		}
 	}
 
 	for _, app := range appDeleteList {
@@ -153,7 +162,7 @@ func questionYesNo() bool {
 	case 'N', 'n':
 		return false
 	default:
-		logger.Warn("Unknown symbol '%v'. Stop import.", char)
+		logger.Warn("Unknown symbol '%v'", char)
 	}
 
 	return false

@@ -58,6 +58,7 @@ func init() {
 	rootCmd.AddCommand(modifyRepoCmd)
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(exportCmd)
+	rootCmd.AddCommand(importCmd)
 
 	//if pFlagDebug && config.DISABLE_DEBUG == false {
 	if debug {

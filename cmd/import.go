@@ -30,3 +30,7 @@ var importCmd = &cobra.Command{
 	},
 }
 
+func init() {
+	importCmd.Flags().BoolVar(&run.ImportFlags.Yes, "yes", false, "Agree to all questions.")
+}
+
