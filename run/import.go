@@ -30,18 +30,28 @@ import (
 
 type ImportSettings struct {
 	Yes bool
+	Restore bool
 }
 
 var ImportFlags = new(ImportSettings)
 
 func Import(arg string) {
+	appSkipList := make([]*storage.ImportApp, 0)
+	appDeleteList := make([]*storage.ImportApp, 0)
+	appInstallList := make([]*storage.ImportApp, 0)
+
 	flag.ValidateFilePath(arg)
 
 	appAllList := getListFromApps(db.ADriver.GetApps())
 
 	appImportList := appsFromFile(arg)
 
-	appDeleteList, appInstallList, appSkipList := matchLists(appAllList, appImportList)
+	if ImportFlags.Restore {
+		appDeleteList = appAllList
+		appInstallList = appImportList
+	} else {
+		appDeleteList, appInstallList, appSkipList = matchLists(appAllList, appImportList)
+	}
 
 	decorate.PrintAppList("Skip apps:\n", appSkipList, color.Yellow)
 	decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
@@ -56,15 +66,19 @@ func Import(arg string) {
 		}
 	}
 
-	for _, app := range appDeleteList {
-		RemoveApp(app.Name)
+	if len(appDeleteList) != 0 {
+		for _, app := range appDeleteList {
+			RemoveApp(app.Name)
+		}
 	}
 
-	for _, app := range appInstallList {
-		InstallApp(app.CurrentName())
+	if len(appInstallList) != 0 {
+		for _, app := range appInstallList {
+			InstallApp(app.CurrentName())
+		}
 	}
 
-	logger.Success("Import was successful")
+	logger.Success("Import was successful.")
 }
 
 
