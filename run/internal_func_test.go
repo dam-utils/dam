@@ -52,7 +52,7 @@ func dropTestDB(t *testing.T) {
 			if err != nil{
 				t.Fail()
 			} else {
-				t.Log("File '"+path+"' was removed")
+				t.Log("FilePath '"+path+"' was removed")
 			}
 		} else {
 			t.Log("Skip removing '"+path+"' file")

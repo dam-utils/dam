@@ -15,10 +15,14 @@
 package docker
 
 import (
+	"archive/tar"
+	"compress/gzip"
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 
 	"dam/config"
@@ -131,4 +135,79 @@ func GetImageLabel(tag, labelName string) string {
 	}
 	logger.Warn("Cannot found image label '%s'", labelName)
 	return ""
+}
+
+func SaveImage(imageId, filePath string) {
+	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot create new docker client with error: '%s'")
+	}
+
+	readCloser, err := cli.ImageSave(context.Background(), []string{imageId})
+	defer func() {
+		if readCloser != nil {
+			readCloser.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot save image with id '%s' with error: '%s'", imageId, err.Error())
+	}
+
+	saveToFile(filePath, readCloser)
+}
+
+func saveToFile(srcFile string, r io.ReadCloser) {
+	f, err := os.Open(srcFile)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open archive file '%s' with error: '%s'", srcFile, err.Error())
+	}
+
+	gzf, err := gzip.NewReader(r)
+	if err != nil {
+		logger.Fatal("Cannot open archive gzip reader for file '%s' with error: '%s'", srcFile, err.Error())
+	}
+	tarReader := tar.NewReader(gzf)
+
+
+	for true {
+		h, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			logger.Fatal("Cannot write image to gzip archive '%s' with error: '%s'", srcFile, err.Error())
+		}
+		if h == nil {
+			logger.Fatal("Internal error. Header is nil in saving file '%s'", srcFile)
+		}
+		name := h.Name
+
+		switch h.Typeflag {
+		case tar.TypeDir:
+			os.Mkdir(name, 0755)
+		case tar.TypeReg:
+			data := make([]byte, h.Size)
+			_, err := tarReader.Read(data)
+			if err != nil {
+				logger.Fatal("Cannot get data from reader with error: '%s'", err.Error())
+			}
+
+			err = ioutil.WriteFile(name, data, 0755)
+			if err != nil {
+				logger.Fatal("Cannot write data to file '%s' with error: '%s'", name, err.Error())
+			}
+		default:
+			logger.Fatal("Unknown type '%s' for file '%s'", h.Typeflag, name)
+		}
+	}
 }

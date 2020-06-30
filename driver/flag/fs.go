@@ -17,6 +17,6 @@ func ValidateFilePath(s string) {
 	err := validate.FilePath(s)
 	if err != nil {
 		logger.Error(err.Error())
-		logger.Fatal("File path flag is not valid.")
+		logger.Fatal("FilePath path flag is not valid.")
 	}
 }

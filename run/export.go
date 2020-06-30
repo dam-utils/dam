@@ -24,6 +24,12 @@ import (
 	"dam/driver/logger"
 )
 
+type ExportSettings struct {
+	All bool
+}
+
+var ExportFlags = new(ExportSettings)
+
 func Export(arg string) {
 	flag.ValidateFilePath(arg)
 

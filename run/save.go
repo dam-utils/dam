@@ -1,0 +1,70 @@
+// Copyright 2020 The Docker Applications Manager Authors
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+//
+package run
+
+import (
+	"dam/config"
+	"dam/driver/db"
+	"dam/driver/docker"
+	fs "dam/driver/filesystem"
+	"dam/driver/flag"
+	"dam/driver/logger"
+	"dam/driver/storage"
+	"dam/run/internal"
+	"os"
+)
+
+type SaveSettings struct {
+	FilePath string
+}
+
+var SaveFlags = new(SaveSettings)
+
+func Save(appFullName string) {
+	var filePath string
+
+	flag.ValidateAppPlusVersion(appFullName)
+	_, name, version := internal.SplitTag(appFullName)
+
+	if SaveFlags.FilePath != "" {
+		flag.ValidateFilePath(SaveFlags.FilePath)
+		filePath = SaveFlags.FilePath
+	} else {
+		filePath = fs.GetCurrentDir()+
+			string(os.PathSeparator)+
+			name+
+			config.SAVE_FILE_SEPARATOR+
+			version+
+			".gz"
+	}
+
+	app := getAppByFullName(name, version)
+	docker.SaveImage(app.DockerID, filePath)
+}
+
+func getAppByFullName(name, version string) *storage.App {
+	apps := db.ADriver.GetApps()
+	if len(apps) == 0 {
+		logger.Fatal("Not found apps in DB", name)
+	}
+	for _, app := range apps {
+		if app.ImageName == name && app.ImageVersion == version {
+			return app
+		}
+	}
+
+	logger.Fatal("Not found app with full name '%s:%s' in DB", name, version)
+	return nil
+}

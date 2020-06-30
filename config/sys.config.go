@@ -67,4 +67,7 @@ var (
 	TMP_META_PATH = "./.tmp.meta"
 	//Export
 	EXPORT_APP_SEPARATOR = ":"
+	//Save
+	SAVE_FILE_SEPARATOR = "-"
+	SAVE_FILE_POSTFIX = ".dam.tmp"
 )

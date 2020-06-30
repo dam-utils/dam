@@ -12,8 +12,24 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package run
+package cmd
 
-import "testing"
+import (
+	"dam/run"
 
+	"github.com/spf13/cobra"
+)
 
+var saveCmd = &cobra.Command{
+	Use:   "save <app>:<version> [-f <file path>]",
+	Short: "Save app to an archive.",
+	Long:  ``,
+	Args:  cobra.RangeArgs(1, 1),
+	Run: func(cmd *cobra.Command, args []string) {
+		run.Save(args[0])
+	},
+}
+
+func init() {
+	saveCmd.Flags().StringVar(&run.SaveFlags.FilePath, "f", "", "Set file name for saving archive.")
+}

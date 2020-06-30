@@ -59,6 +59,7 @@ func init() {
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(importCmd)
+	rootCmd.AddCommand(saveCmd)
 
 	//if pFlagDebug && config.DISABLE_DEBUG == false {
 	if debug {

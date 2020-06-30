@@ -29,3 +29,7 @@ var exportCmd = &cobra.Command{
 		run.Export(args[0])
 	},
 }
+
+func init() {
+	exportCmd.Flags().BoolVar(&run.ExportFlags.All, "all", false, "Export apps to archive.")
+}
