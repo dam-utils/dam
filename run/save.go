@@ -33,11 +33,12 @@ type SaveSettings struct {
 var SaveFlags = new(SaveSettings)
 
 func Save(appFullName string) {
-	var filePath string
+	var filePath, resultPrefixPath string
 
 	flag.ValidateAppPlusVersion(appFullName)
 	_, name, version := internal.SplitTag(appFullName)
 
+	// TODO refactoring
 	if SaveFlags.FilePath != "" {
 		flag.ValidateFilePath(SaveFlags.FilePath)
 		filePath = SaveFlags.FilePath
@@ -46,12 +47,23 @@ func Save(appFullName string) {
 			string(os.PathSeparator)+
 			name+
 			config.SAVE_FILE_SEPARATOR+
+			version+config.SAVE_TMP_FILE_POSTFIX
+		resultPrefixPath =  fs.GetCurrentDir()+
+			string(os.PathSeparator)+
+			name+
+			config.SAVE_FILE_SEPARATOR+
 			version+
-			".gz"
+			config.SAVE_OPTIONAL_SEPARATOR
 	}
 
 	app := getAppByFullName(name, version)
 	docker.SaveImage(app.DockerID, filePath)
+
+	if SaveFlags.FilePath == "" {
+		resultPath := resultPrefixPath+fs.HashFileCRC32(filePath)+config.SAVE_FILE_SEPARATOR+fs.FileSize(filePath)+config.SAVE_FILE_POSTFIX
+		fs.MoveFile(filePath, resultPath)
+		logger.Success("Created '%s' file.", resultPath)
+	}
 }
 
 func getAppByFullName(name, version string) *storage.App {

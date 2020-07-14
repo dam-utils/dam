@@ -320,7 +320,7 @@ func str2Repo(str string) *storage.Repo {
 		logger.Fatal("Internal error. Cannot read the password of user '%s' in line '%s'", repoArray.Username, str)
 	}
 
-	if validate.CheckID(strRepo[0]) != nil {
+	if validate.CheckRepoID(strRepo[0]) != nil {
 		logger.Fatal("Internal error. Cannot parse the repo id in line '%s'", str)
 	}
 	if validate.CheckBool(strRepo[1]) != nil {

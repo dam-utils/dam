@@ -17,7 +17,6 @@ package run
 import (
 	"os"
 	"path/filepath"
-	"strings"
 
 	"dam/config"
 	"dam/driver/db"
@@ -79,7 +78,7 @@ func saveInstallAppToDB(tag string) {
 	if repo == nil {
 		logger.Fatal("Internal error. Not found default repo")
 	}
-	_, imageName, imageVersion := splitTag(tag)
+	_, imageName, imageVersion := internal.SplitTag(tag)
 
 	var app storage.App
 	app.RepoID = repo.Id

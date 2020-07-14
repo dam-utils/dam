@@ -64,7 +64,7 @@ func str2app(str string) *storage.App {
 	app := new(storage.App)
 	strArray := strings.Split(str, config.FILES_DB_SEPARATOR)
 
-	if validate.CheckID(strArray[0]) != nil {
+	if validate.CheckAppID(strArray[0]) != nil {
 		logger.Fatal("Internal error. Cannot parse the app ID in line '%s'", str)
 	}
 	if validate.CheckDockerID(strArray[1]) != nil {
@@ -76,7 +76,7 @@ func str2app(str string) *storage.App {
 	if validate.CheckVersion(strArray[3]) != nil {
 		logger.Fatal("Internal error. Cannot parse the app version in line '%s'", str)
 	}
-	if validate.CheckID(strArray[4]) != nil {
+	if validate.CheckRepoID(strArray[4]) != nil {
 		logger.Fatal("Internal error. Cannot parse the repo id in line '%s'", str)
 	}
 	if validate.CheckBool(strArray[5]) != nil {

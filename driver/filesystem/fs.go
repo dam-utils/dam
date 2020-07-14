@@ -16,10 +16,15 @@ package filesystem
 
 import (
 	"bytes"
+	"dam/config"
+	"encoding/hex"
+	"hash/crc32"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 
 	"dam/driver/logger"
 )
@@ -157,9 +162,42 @@ func RunFile(installFile string) {
 func Touch(file string) {
 	if !IsExistFile(file) {
 		emptyFile, err := os.Create(file)
+		defer func() {
+			if emptyFile != nil {
+				emptyFile.Close()
+			}
+		}()
 		if err != nil {
 			logger.Fatal("Cannot create file '%s' with error: %s", file, err.Error())
 		}
-		emptyFile.Close()
 	}
+}
+
+func HashFileCRC32(filePath string) string {
+	f, err := os.Open(filePath)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open file '%s' with error: %s", filePath, err.Error())
+	}
+
+	tablePolynomial := crc32.MakeTable(config.SAVE_POLYNOMIAL_CKSUM)
+	hash := crc32.New(tablePolynomial)
+	if _, err := io.Copy(hash, f); err != nil {
+		logger.Fatal("Cannot check hash file '%s' with error: %s", filePath, err.Error())
+	}
+	hashInBytes := hash.Sum(nil)[:]
+	return hex.EncodeToString(hashInBytes)
+}
+
+func FileSize(filePath string) string {
+	fi, err := os.Stat(filePath)
+	if err != nil {
+		logger.Fatal("Cannot check file '%s' with error: %s", filePath, err.Error())
+	}
+
+	return strconv.FormatInt(fi.Size(), 10)
 }

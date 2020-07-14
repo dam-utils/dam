@@ -38,7 +38,7 @@ func ValidateRepoPassword(s string) {
 }
 
 func ValidateRepoID(s string) {
-	err := validate.CheckID(s)
+	err := validate.CheckRepoID(s)
 	if err != nil {
 		logger.Error(err.Error())
 		logger.Fatal("ID flag is not valid.")

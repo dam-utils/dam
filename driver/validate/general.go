@@ -57,7 +57,7 @@ func CheckPassword(pass string) error {
 	return nil
 }
 
-func CheckID(id string) error {
+func CheckRepoID(id string) error {
 	id32, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {
 		return fmt.Errorf("ID '%s' is bad. It must be a number (ID)", id)
@@ -65,6 +65,15 @@ func CheckID(id string) error {
 
 	if id32 == 0 {
 		return fmt.Errorf("ID '%s' is bad. It cannot be '0'", id)
+	}
+
+	return nil
+}
+
+func CheckAppID(id string) error {
+	_, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		return fmt.Errorf("ID '%s' is bad. It must be a number (ID)", id)
 	}
 
 	return nil

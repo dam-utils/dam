@@ -15,17 +15,17 @@
 package docker
 
 import (
-	"archive/tar"
 	"compress/gzip"
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"dam/config"
+	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/storage"
 
@@ -95,12 +95,18 @@ func GetImageID(tag string) string {
 	for _, img := range imageSum {
 		for _, sourceTag := range img.RepoTags {
 			if sourceTag == tag {
-				return img.ID
+				return prepareImageID(img.ID)
 			}
 		}
 	}
 	logger.Fatal("Cannot found images tag '%s' in images list", tag)
 	return ""
+}
+
+// Incoming format: 'sha256:767d33...'
+func prepareImageID(id string) string {
+	arr := strings.Split(id, ":")
+	return arr[1][0:12]
 }
 
 // TODO refactoring
@@ -162,7 +168,9 @@ func SaveImage(imageId, filePath string) {
 }
 
 func saveToFile(srcFile string, r io.ReadCloser) {
-	f, err := os.Open(srcFile)
+	fs.Touch(srcFile)
+
+	f, err := os.OpenFile(srcFile, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	defer func() {
 		if f != nil {
 			f.Close()
@@ -172,42 +180,19 @@ func saveToFile(srcFile string, r io.ReadCloser) {
 		logger.Fatal("Cannot open archive file '%s' with error: '%s'", srcFile, err.Error())
 	}
 
-	gzf, err := gzip.NewReader(r)
+	content, err := ioutil.ReadAll(r)
 	if err != nil {
 		logger.Fatal("Cannot open archive gzip reader for file '%s' with error: '%s'", srcFile, err.Error())
 	}
-	tarReader := tar.NewReader(gzf)
 
-
-	for true {
-		h, err := tarReader.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			logger.Fatal("Cannot write image to gzip archive '%s' with error: '%s'", srcFile, err.Error())
-		}
-		if h == nil {
-			logger.Fatal("Internal error. Header is nil in saving file '%s'", srcFile)
-		}
-		name := h.Name
-
-		switch h.Typeflag {
-		case tar.TypeDir:
-			os.Mkdir(name, 0755)
-		case tar.TypeReg:
-			data := make([]byte, h.Size)
-			_, err := tarReader.Read(data)
-			if err != nil {
-				logger.Fatal("Cannot get data from reader with error: '%s'", err.Error())
-			}
-
-			err = ioutil.WriteFile(name, data, 0755)
-			if err != nil {
-				logger.Fatal("Cannot write data to file '%s' with error: '%s'", name, err.Error())
-			}
-		default:
-			logger.Fatal("Unknown type '%s' for file '%s'", h.Typeflag, name)
-		}
+	w := gzip.NewWriter(f)
+	_, err = w.Write(content)
+	if err != nil {
+		logger.Fatal("Cannot write image to gzip archive '%s' with error: '%s'", srcFile, err.Error())
 	}
+	err = w.Close()
+	if err != io.EOF && err != nil {
+		logger.Fatal("Cannot close write image for the file '%s'. Error is '%s'", srcFile, err.Error())
+	}
+	return
 }
