@@ -73,4 +73,5 @@ var (
 	SAVE_TMP_FILE_POSTFIX = ".dam.tmp"
 	SAVE_FILE_POSTFIX = ".dam"
 	SAVE_POLYNOMIAL_CKSUM uint32 = 0xedb88320
+	SAVE_MANIFEST_FILE = "manifest.json"
 )

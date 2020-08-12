@@ -15,7 +15,6 @@
 package docker
 
 import (
-	"compress/gzip"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -170,29 +169,15 @@ func SaveImage(imageId, filePath string) {
 func saveToFile(srcFile string, r io.ReadCloser) {
 	fs.Touch(srcFile)
 
-	f, err := os.OpenFile(srcFile, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-	defer func() {
-		if f != nil {
-			f.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot open archive file '%s' with error: '%s'", srcFile, err.Error())
-	}
-
 	content, err := ioutil.ReadAll(r)
 	if err != nil {
-		logger.Fatal("Cannot open archive gzip reader for file '%s' with error: '%s'", srcFile, err.Error())
+		logger.Fatal("Cannot open reader for file '%s' with error: '%s'", srcFile, err.Error())
 	}
 
-	w := gzip.NewWriter(f)
-	_, err = w.Write(content)
+	err = ioutil.WriteFile(srcFile, content, 0644)
 	if err != nil {
-		logger.Fatal("Cannot write image to gzip archive '%s' with error: '%s'", srcFile, err.Error())
+		logger.Fatal("Cannot write image to file '%s' with error: '%s'", srcFile, err.Error())
 	}
-	err = w.Close()
-	if err != io.EOF && err != nil {
-		logger.Fatal("Cannot close write image for the file '%s'. Error is '%s'", srcFile, err.Error())
-	}
+
 	return
 }

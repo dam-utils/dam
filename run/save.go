@@ -15,15 +15,15 @@
 package run
 
 import (
+	"os"
+
 	"dam/config"
-	"dam/driver/db"
 	"dam/driver/docker"
+	"dam/driver/docker/manifest"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
-	"dam/driver/storage"
 	"dam/run/internal"
-	"os"
 )
 
 type SaveSettings struct {
@@ -56,8 +56,9 @@ func Save(appFullName string) {
 			config.SAVE_OPTIONAL_SEPARATOR
 	}
 
-	app := getAppByFullName(name, version)
-	docker.SaveImage(app.DockerID, filePath)
+	docker.SaveImage(docker.GetImageID(appFullName), filePath)
+
+	modifyManifest(filePath, appFullName)
 
 	if SaveFlags.FilePath == "" {
 		resultPath := resultPrefixPath+fs.HashFileCRC32(filePath)+config.SAVE_FILE_SEPARATOR+fs.FileSize(filePath)+config.SAVE_FILE_POSTFIX
@@ -66,17 +67,12 @@ func Save(appFullName string) {
 	}
 }
 
-func getAppByFullName(name, version string) *storage.App {
-	apps := db.ADriver.GetApps()
-	if len(apps) == 0 {
-		logger.Fatal("Not found apps in DB", name)
-	}
-	for _, app := range apps {
-		if app.ImageName == name && app.ImageVersion == version {
-			return app
-		}
-	}
+func modifyManifest(filePath, appFullName string) {
+	tarDir := fs.Untar(filePath, filePath+"_tar")
+	manifestFile := tarDir+string(os.PathSeparator)+config.SAVE_MANIFEST_FILE
 
-	logger.Fatal("Not found app with full name '%s:%s' in DB", name, version)
-	return nil
+	manifest.ModifyRepoTags(manifestFile, appFullName)
+	fs.Remove(filePath)
+	fs.Gzip(tarDir, filePath)
+	fs.Remove(tarDir)
 }
