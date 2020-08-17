@@ -32,6 +32,7 @@ var ExportFlags = new(ExportSettings)
 
 func Export(arg string) {
 	flag.ValidateFilePath(arg)
+	logger.Debug("Flags validated with success")
 
 	fs.Touch(arg)
 
@@ -45,6 +46,7 @@ func Export(arg string) {
 		logger.Fatal("Cannot open apps file '%s' with error: %s", arg, err.Error())
 	}
 
+	logger.Debug("Getting apps ...")
 	apps := db.ADriver.GetApps()
 	for _, app := range apps {
 		newLine := app.ImageName+config.EXPORT_APP_SEPARATOR+app.ImageVersion+"\n"

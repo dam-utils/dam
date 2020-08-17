@@ -15,6 +15,11 @@
 package run
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/docker"
@@ -23,10 +28,6 @@ import (
 	"dam/driver/logger"
 	"dam/driver/storage"
 	"dam/run/internal"
-	"encoding/json"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
 func InstallApp(appCurrentName string) {
@@ -39,9 +40,10 @@ func InstallApp(appCurrentName string) {
 		isFileInstalling = false
 		flag.ValidateAppPlusVersion(appCurrentName)
 	}
-
+	logger.Debug("Flags validated with success")
 	logger.Success("Start '%s' installing to the system.", appCurrentName)
 
+	logger.Debug("Preparing docker image ...")
 	var tag string
 	if isFileInstalling {
 		tag = getTagFromArchiveManifest(appCurrentName)
@@ -50,19 +52,21 @@ func InstallApp(appCurrentName string) {
 		tag = dockerPull(appCurrentName)
 	}
 
+	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
-	logger.Debug("tag: '%v', tmpMeta: '%v'", tag, tmpMeta)
 	containerId := docker.ContainerCreate(tag, "")
-
 	docker.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
 	docker.ContainerRemove(containerId)
 
+	logger.Debug("Installing meta ...")
 	installMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
 	install := getInstall(installMeta)
 
+	logger.Debug("Removing tmp files ...")
 	fs.RunFile(install)
 	fs.Remove(tmpMeta)
 
+	logger.Debug("Saving to DB ...")
 	saveInstallAppToDB(tag)
 	logger.Success("App '%s' was installed.", appCurrentName)
 }

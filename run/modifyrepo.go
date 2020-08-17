@@ -48,7 +48,9 @@ func ModifyRepo(arg string) {
 	if ExistingMRFlags["--password"] {
 		flag.ValidateRepoPassword(ModifyRepoFlags.Password)
 	}
+	logger.Debug("Flags validated with success")
 
+	logger.Debug("Preparing options ...")
 	ID, err := strconv.Atoi(arg)
 	if err != nil {
 		logger.Fatal("Internal error. Command argument is not ID")
@@ -81,6 +83,7 @@ func ModifyRepo(arg string) {
 			}
 		}
 	}
-	logger.Debug("Repo for modify: '%v'", *repo)
+
+	logger.Debug("Modifying checked repo ...")
 	db.RDriver.ModifyRepo(repo)
 }

@@ -37,22 +37,26 @@ var RemoveAppFlags = new(RemoveAppSettings)
 
 func RemoveApp(name string) {
 	flag.ValidateAppName(name)
+	logger.Debug("Flags validated with success")
 
+	logger.Debug("Getting app tag ...")
 	app := getAppIdByName(name)
 	tag := getTagFormApp(app)
 
 	logger.Success("Start app '%s:%s' removing from the system.", app.ImageName, app.ImageVersion)
 
+	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
 	containerId := docker.ContainerCreate(tag, "")
-
 	docker.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
 	docker.ContainerRemove(containerId)
 
+	logger.Debug("Uninstalling image ...")
 	uninstallMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
 	uninstall := getUninstall(uninstallMeta)
 
+	logger.Debug("Clearing tmp ...")
 	fs.RunFile(uninstall)
 	fs.Remove(tmpMeta)
 

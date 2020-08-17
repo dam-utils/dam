@@ -38,6 +38,7 @@ func CreateApp(path string) {
 	flag.ValidateProjectDirectory(path)
 	flag.ValidateAppName(CreateAppFlags.Name)
 	flag.ValidateAppVersion(CreateAppFlags.Version)
+	logger.Debug("Flags validated with success")
 
 	projectDir := fs.GetAbsolutePath(path)
 	metaDir, dockerFile, envFile := project.Prepare(projectDir)
@@ -48,12 +49,15 @@ func CreateApp(path string) {
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_NAME_ENV, CreateAppFlags.Name)
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_VERS_ENV, CreateAppFlags.Version)
 
+	logger.Debug("Preparing metaDir ...")
 	meta.PrepareExpFiles(metaDir, preparedEnvs)
 	meta.PrepareExecFiles(metaDir)
 
+	logger.Debug("Preparing tag ...")
 	tag := getImageTag(preparedEnvs)
 	project.ValidateTag(tag)
 
+	logger.Debug("Building image ...")
 	docker.Build(getImageTag(preparedEnvs), projectDir)
 	logger.Success("App '%s' was created.", tag)
 }

@@ -36,6 +36,7 @@ func AddRepo(){
 	flag.ValidateRepoServer(AddRepoFlags.Server)
 	flag.ValidateRepoUsername(AddRepoFlags.Username)
 	flag.ValidateRepoPassword(AddRepoFlags.Password)
+	logger.Debug("Flags validated with success")
 
 	repo  := new(storage.Repo)
 	repo.Default = AddRepoFlags.Default
@@ -44,11 +45,13 @@ func AddRepo(){
 	repo.Username = AddRepoFlags.Username
 	repo.Password = AddRepoFlags.Password
 
+	logger.Debug("Starting db.RDriver.GetRepos() ...")
 	for _, repoDB := range db.RDriver.GetRepos() {
 		if repoDB.Name == repo.Name {
 			logger.Fatal("Repository name already exist in DB")
 		}
 	}
 
+	logger.Debug("Creating new repo ...")
 	db.RDriver.NewRepo(repo)
 }

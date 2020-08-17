@@ -36,8 +36,12 @@ func Save(appFullName string) {
 	var filePath, resultPrefixPath string
 
 	flag.ValidateAppPlusVersion(appFullName)
+	logger.Debug("Flags validated with success")
+
+	logger.Debug("Parsing tag ...")
 	_, name, version := internal.SplitTag(appFullName)
 
+	logger.Debug("Getting archive path ...")
 	// TODO refactoring
 	if SaveFlags.FilePath != "" {
 		flag.ValidateFilePath(SaveFlags.FilePath)
@@ -56,10 +60,13 @@ func Save(appFullName string) {
 			config.SAVE_OPTIONAL_SEPARATOR
 	}
 
+	logger.Debug("Saving archive ...")
 	docker.SaveImage(docker.GetImageID(appFullName), filePath)
 
+	logger.Debug("Preparing manifest ...")
 	modifyManifest(filePath, appFullName)
 
+	logger.Debug("Releasing archive ...")
 	if SaveFlags.FilePath == "" {
 		resultPath := resultPrefixPath+fs.HashFileCRC32(filePath)+config.SAVE_FILE_SEPARATOR+fs.FileSize(filePath)+config.SAVE_FILE_POSTFIX
 		fs.MoveFile(filePath, resultPath)

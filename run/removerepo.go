@@ -18,8 +18,8 @@ import (
 	"strconv"
 
 	"dam/driver/db"
-	"dam/driver/logger"
 	"dam/driver/flag"
+	"dam/driver/logger"
 )
 
 type RemoveRepoSettings struct {
@@ -37,7 +37,9 @@ func RemoveRepo(arg string) {
 		flag.ValidateRepoID(arg)
 		repoId, _ = strconv.Atoi(arg)
 	}
+	logger.Debug("Flags validated with success")
 
+	logger.Debug("Getting default repo ...")
 	defRepo := db.RDriver.GetDefaultRepo()
 	if defRepo == nil {
 		logger.Fatal("Internal error. Not found default repo")
@@ -45,6 +47,8 @@ func RemoveRepo(arg string) {
 	if !RemoveRepoFlags.Force && repoId == defRepo.Id {
 		logger.Fatal("Repository with Id '%v' is default. Use '--skip' flag for removing", repoId)
 	}
+
+	logger.Debug("Removing from DB ...")
 	db.RDriver.RemoveRepoById(repoId)
 }
 

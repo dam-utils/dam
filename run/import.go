@@ -41,11 +41,14 @@ func Import(arg string) {
 	appInstallList := make([]*storage.ImportApp, 0)
 
 	flag.ValidateFilePath(arg)
+	logger.Debug("Flags validated with success")
 
+	logger.Debug("Getting appAllList ...")
 	appAllList := getListFromApps(db.ADriver.GetApps())
-
+	logger.Debug("Getting appImportList ...")
 	appImportList := appsFromFile(arg)
 
+	logger.Debug("Preparing change list ...")
 	if ImportFlags.Restore {
 		appDeleteList = appAllList
 		appInstallList = appImportList
@@ -56,7 +59,6 @@ func Import(arg string) {
 	decorate.PrintAppList("Skip apps:\n", appSkipList, color.Yellow)
 	decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
 	decorate.PrintAppList("Delete apps:\n", appDeleteList, color.Red)
-
 
 	if !ImportFlags.Yes {
 		answer := questionYesNo()
