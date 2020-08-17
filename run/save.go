@@ -68,11 +68,11 @@ func Save(appFullName string) {
 }
 
 func modifyManifest(filePath, appFullName string) {
-	tarDir := fs.Untar(filePath, filePath+"_tar")
-	manifestFile := tarDir+string(os.PathSeparator)+config.SAVE_MANIFEST_FILE
+	dir := fs.Untar(filePath)
+	manifestFile := dir+string(os.PathSeparator)+config.SAVE_MANIFEST_FILE
 
 	manifest.ModifyRepoTags(manifestFile, appFullName)
 	fs.Remove(filePath)
-	fs.Gzip(tarDir, filePath)
-	fs.Remove(tarDir)
+	fs.Gzip(dir, filePath)
+	fs.Remove(dir)
 }

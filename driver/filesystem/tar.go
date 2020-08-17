@@ -25,8 +25,9 @@ import (
 	"dam/driver/logger"
 )
 
-// COPY FROM: https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
-func Untar(source, dst string) string {
+func Untar(source string) string {
+	dst := source + "_tar"
+
 	f, err := os.Open(source)
 	defer func() {
 		if f != nil {
@@ -43,22 +44,19 @@ func Untar(source, dst string) string {
 		header, err := tr.Next()
 
 		switch {
-
 		case err == io.EOF:
 			return dst
-
 		case err != nil:
 			logger.Fatal("Cannot find file %s in tar with error: %s", dst, err.Error())
 			return dst
-
 		case header == nil:
 			continue
 		}
 
 		target := filepath.Join(dst, header.Name)
+		MkDir(filepath.Dir(target))
 
 		switch header.Typeflag {
-
 		case tar.TypeDir:
 			if _, err := os.Stat(target); err != nil {
 				if err := os.MkdirAll(target, 0755); err != nil {
@@ -66,23 +64,22 @@ func Untar(source, dst string) string {
 					return dst
 				}
 			}
-
 		case tar.TypeReg:
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				logger.Fatal("Cannot open file %s with error: %s", target, err.Error())
 				return dst
 			}
-
 			if _, err := io.Copy(f, tr); err != nil {
 				logger.Fatal("Cannot copy file: %s with error: %s", target, err.Error())
 				return dst
 			}
-
 			err = f.Sync()
 			if err != nil {
 				logger.Fatal("Cannot sync file '%s' with error: %s", target, err)
 			}
+
+			EraceDataCreation(target)
 			err = f.Close()
 			if err != nil {
 				logger.Fatal("Cannot close file '%s' with error: %s", target, err)
@@ -91,6 +88,40 @@ func Untar(source, dst string) string {
 	}
 }
 
+func Gunzip(source string) string {
+	target := source + "_zip"
+
+	f, err := os.Open(source)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open gzip file '%s' with error: %s", source, err)
+	}
+
+	gr, err := gzip.NewReader(f)
+	defer func() {
+		if gr != nil {
+			gr.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot create gzip reader for file '%s' with error: %s", source, err)
+	}
+
+	target = filepath.Join(target, gr.Name)
+	writer, err := os.Create(target)
+	if err != nil {
+		logger.Fatal("Cannot read archive '%s' with error: '%s'", source, err)
+	}
+	defer writer.Close()
+
+	_, err = io.Copy(writer, gr)
+
+	return target
+}
 
 func Gzip(source, target string) {
 	f, err := os.Create(target)
@@ -118,6 +149,7 @@ func Gzip(source, target string) {
 	}()
 
 	walkFn := func(path string, info os.FileInfo, err error) error {
+		fmt.Println(info)
 		if info.Mode().IsDir() {
 			return nil
 		}
@@ -144,7 +176,7 @@ func Gzip(source, target string) {
 				logger.Fatal("Cannot write header for '%s' with error: %s", newPath, err)
 			}
 		}
-		if _ , err := io.Copy(tw, pathFile); err != nil {
+		if _, err := io.Copy(tw, pathFile); err != nil {
 			logger.Fatal("Cannot write file '%s' to archive with error: %s", pathFile, err)
 		}
 
@@ -152,8 +184,6 @@ func Gzip(source, target string) {
 	}
 
 	if err = filepath.Walk(source, walkFn); err != nil {
-		fmt.Println(err)
+		logger.Fatal("Cannot create archive")
 	}
-
-
 }

@@ -25,8 +25,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"dam/driver/logger"
+
+	"github.com/docker/docker/pkg/system"
 )
 
 func GetCurrentDir() string {
@@ -74,15 +77,22 @@ func GetFileList(path string, agg *[]string) *[]string {
 func Ls(dir string) []string {
 	files, err := filepath.Glob("dir/*")
 	if err != nil {
-		logger.Fatal("Cannot check files in path '%s/' with error: %s", dir, err.Error())
+		logger.Fatal("Cannot check files in path '%s/' with error: %s", dir, err)
 	}
 	return files
+}
+
+func MkDir(dir string) {
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		logger.Fatal("Cannot create directory '%s/' with error: %s", dir, err)
+	}
 }
 
 func Remove(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		logger.Warn("Cannot check path '%s' with error: %s", path, err.Error())
+		logger.Warn("Cannot check path '%s' with error: %s", path, err)
 	}
 
 	err = os.RemoveAll(path)
@@ -200,4 +210,11 @@ func FileSize(filePath string) string {
 	}
 
 	return strconv.FormatInt(fi.Size(), 10)
+}
+
+func EraceDataCreation(path string) {
+	// https://github.com/moby/moby/blob/e9b4655bc98563602d961c72fc62cb20cc143515/image/tarexport/save.go#L187
+	if err := system.Chtimes(path, time.Unix(0, 0), time.Unix(0, 0)); err != nil {
+		logger.Fatal("Cannot erase metadata for manifest file with error: %s", err)
+	}
 }

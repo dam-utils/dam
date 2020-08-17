@@ -21,9 +21,9 @@ import (
 )
 
 var installAppCmd = &cobra.Command{
-	Use:   "install <app>:<version>",
+	Use:   "install [<app>:<version> | <archive path>]",
 	Aliases: []string{"in"},
-	Short: "Install docker application from a docker registry.",
+	Short: "Install docker application from a docker registry or a specific file archive.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {

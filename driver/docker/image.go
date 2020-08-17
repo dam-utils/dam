@@ -32,6 +32,43 @@ import (
 	"github.com/docker/docker/client"
 )
 
+func LoadImage(file string) {
+	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	defer func() {
+		if cli != nil {
+			cli.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot create new docker client")
+	}
+
+	f, err := os.Open(file)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open the loaded file '%s' with error: %s", file, err)
+	}
+
+	out, err := cli.ImageLoad(context.Background(), f, false)
+	defer func() {
+		if out.Body != nil {
+			out.Body.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot pull docker image with error: %s", err)
+	}
+
+	_, err = io.Copy(os.Stdout, out.Body)
+	if err != nil {
+		logger.Fatal("Cannot print docker stdout with error: %s", err)
+	}
+}
+
 func Pull(tag string, repo *storage.Repo) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {

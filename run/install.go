@@ -15,9 +15,6 @@
 package run
 
 import (
-	"os"
-	"path/filepath"
-
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/docker"
@@ -26,14 +23,33 @@ import (
 	"dam/driver/logger"
 	"dam/driver/storage"
 	"dam/run/internal"
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 func InstallApp(appCurrentName string) {
-	flag.ValidateAppPlusVersion(appCurrentName)
+	var isFileInstalling bool
+
+	if fs.IsExistFile(appCurrentName) {
+		isFileInstalling = true
+		flag.ValidateFilePath(appCurrentName)
+	} else {
+		isFileInstalling = false
+		flag.ValidateAppPlusVersion(appCurrentName)
+	}
 
 	logger.Success("Start '%s' installing to the system.", appCurrentName)
 
-	tag := dockerPull(appCurrentName)
+	var tag string
+	if isFileInstalling {
+		tag = getTagFromArchiveManifest(appCurrentName)
+		docker.LoadImage(appCurrentName)
+	} else {
+		tag = dockerPull(appCurrentName)
+	}
+
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 	logger.Debug("tag: '%v', tmpMeta: '%v'", tag, tmpMeta)
 	containerId := docker.ContainerCreate(tag, "")
@@ -98,4 +114,47 @@ func getInstall(meta string) string {
 	return inst
 }
 
+func getTagFromArchiveManifest(appCurrentName string) string {
+	//TODO read manifest without archive uncompressing
+	gzipFile := fs.Gunzip(appCurrentName)
+	//defer fs.Remove(gzipFile)
+	tarGzipDir := fs.Untar(gzipFile)
+	//defer fs.Remove(tarGzipDir)
 
+	manifestFile := tarGzipDir + string(filepath.Separator) + config.SAVE_MANIFEST_FILE
+
+	content, err := os.Open(manifestFile)
+	defer func() {
+		if content != nil {
+			content.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open the manifest file '%s' with error: %s", manifestFile, err)
+	}
+
+	type manifest struct {
+		RepoTags []string `json:"RepoTags"`
+	}
+
+	result := make([]manifest, 0)
+	byteValue, err := ioutil.ReadAll(content)
+	if err != nil {
+		logger.Fatal("Cannot read content in manifest file with error: %s", err)
+	}
+
+	err = json.Unmarshal(byteValue, &result)
+	if err != nil {
+		logger.Fatal("Cannot unmarshal manifest file with error: %s", err)
+	}
+
+	if len(result) > 0 {
+		if len(result[0].RepoTags) > 0 {
+			flag.ValidateAppPlusVersion(result[0].RepoTags[0])
+			return result[0].RepoTags[0]
+		}
+	}
+
+	logger.Fatal("Cannot get manifest tag from archive '%s'", appCurrentName)
+	return ""
+}

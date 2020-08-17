@@ -1,6 +1,7 @@
 package manifest
 
 import (
+	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"io/ioutil"
 	"strings"
@@ -23,4 +24,6 @@ func ModifyRepoTags(file, tag string) {
 	if err != nil {
 		logger.Fatal("Cannot write manifest file '%s' with error: '%s'", file, err)
 	}
+
+	fs.EraceDataCreation(file)
 }
