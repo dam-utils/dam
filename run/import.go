@@ -45,6 +45,7 @@ func Import(arg string) {
 
 	logger.Debug("Getting appAllList ...")
 	appAllList := getListFromApps(db.ADriver.GetApps())
+
 	logger.Debug("Getting appImportList ...")
 	appImportList := appsFromFile(arg)
 

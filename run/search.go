@@ -32,11 +32,14 @@ func Search(arg string) {
 	if repo == nil {
 		logger.Fatal("Internal error. Not found default repo")
 	}
+
 	logger.Debug("Getting registry info ...")
 	registry.CheckRepository(repo)
 	appList := registry.GetAppNamesByMask(repo, arg)
+
 	logger.Debug("Sorting app list ...")
 	appSortedList := sort.SortAppNames(appList)
+
 	logger.Debug("Printing app list ...")
 	for _, app := range *appSortedList {
 		decorate.PrintSearchedApp(app)

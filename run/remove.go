@@ -47,6 +47,7 @@ func RemoveApp(name string) {
 
 	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
 	containerId := docker.ContainerCreate(tag, "")
 	docker.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
