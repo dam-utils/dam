@@ -50,7 +50,7 @@ func ContainerCreate(image string, name string) string {
 		logger.Fatal("Cannot build docker image with error: %s", err.Error())
 	}
 
-	logger.Debug("Response: %v", resp)
+	logger.Debug("Response ContainerCreate('%s'): %v", name, resp)
 	return (resp.ID)[:12]
 }
 

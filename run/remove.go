@@ -57,8 +57,10 @@ func RemoveApp(name string) {
 	uninstallMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
 	uninstall := getUninstall(uninstallMeta)
 
-	logger.Debug("Clearing tmp ...")
+	logger.Debug("Running uninstall ...")
 	fs.RunFile(uninstall)
+
+	logger.Debug("Clearing tmp ...")
 	fs.Remove(tmpMeta)
 
 	logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)

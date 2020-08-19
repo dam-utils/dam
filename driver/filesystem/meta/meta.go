@@ -27,8 +27,22 @@ import (
 )
 
 func PrepareExpFiles(metaDir string, envs map[string]string) {
-	files := fs.GetFileList(metaDir, &[]string{})
-	for _, file := range *files {
+	files := make([]string, 0)
+	err := filepath.Walk(metaDir,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if fs.IsExistFile(path) {
+				files = append(files, path)
+			}
+			return nil
+		})
+	if err != nil {
+		logger.Fatal("Cannot walk in meta directory with error: %s", err)
+	}
+
+	for _, file := range files {
 		if strings.HasSuffix(file, config.EXPAND_META_FILE){
 			prepareExpFile(file, envs)
 		}
@@ -36,7 +50,7 @@ func PrepareExpFiles(metaDir string, envs map[string]string) {
 }
 
 func prepareExpFile(path string, envs map[string]string) {
-	newPath := path[:4]
+	newPath := strings.TrimSuffix(path, config.EXPAND_META_FILE)
 
 	f, err := os.Open(path)
 	defer func() {
@@ -62,7 +76,7 @@ func prepareExpFile(path string, envs map[string]string) {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		newString := env.PrepareExpString(scanner.Text(), envs)
-		_, err = f.WriteString(newString)
+		_, err = newf.WriteString(newString+"\n")
 		if err != nil {
 			logger.Fatal("Cannot write string to file '%s' with error: %s", newPath, err.Error())
 		}

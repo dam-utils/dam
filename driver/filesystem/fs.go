@@ -62,22 +62,21 @@ func GetBaseName(path string) string {
 	return filepath.Base(path)
 }
 
-func GetFileList(path string, agg *[]string) *[]string {
+func GetFileList(path string, agg []string) []string {
 	if IsExistDir(path) {
 		for _, p := range Ls(path) {
-			GetFileList(p, agg)
+			return append(agg, GetFileList(p, agg)...)
 		}
 	} else {
-		newAgg := append(*agg, path)
-		return &newAgg
+		return append(agg, path)
 	}
 	return agg
 }
 
 func Ls(dir string) []string {
-	files, err := filepath.Glob("dir/*")
+	files, err := filepath.Glob(dir + string(os.PathSeparator) + "*")
 	if err != nil {
-		logger.Fatal("Cannot check files in path '%s/' with error: %s", dir, err)
+		logger.Fatal("Cannot check files in path '%s' with error: %s", dir, err)
 	}
 	return files
 }
@@ -146,14 +145,14 @@ func Chdir(path string) {
 }
 
 // https://stackoverflow.com/questions/40670228/how-to-run-binary-files-inside-golang-program
-func RunFile(installFile string) {
+func RunFile(runFile string) {
 	pwd := GetCurrentDir()
 	defer Chdir(pwd)
 
-	homeDir := filepath.Dir(installFile)
+	homeDir := filepath.Dir(runFile)
 	Chdir(homeDir)
 
-	c := exec.Command(installFile)
+	c := exec.Command(runFile)
 	c.Dir = homeDir   //TODO delete?
 	// set var to get the output
 	var outb, errb bytes.Buffer
@@ -164,7 +163,7 @@ func RunFile(installFile string) {
 	err := c.Run()
 	if err != nil {
 		logger.Warn(errb.String())
-		logger.Fatal("Cannot execute file '%s' with error: %s", installFile, err.Error())
+		logger.Fatal("Cannot execute file '%s' with error: %s", runFile, err.Error())
 	}
 	logger.Info(outb.String())
 }
