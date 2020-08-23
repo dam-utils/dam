@@ -19,8 +19,8 @@ import (
 
 	"dam/config"
 	"dam/driver/docker"
-	"dam/driver/docker/manifest"
 	fs "dam/driver/filesystem"
+	"dam/driver/filesystem/manifest"
 	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/run/internal"
@@ -46,40 +46,38 @@ func Save(appFullName string) {
 	if SaveFlags.FilePath != "" {
 		flag.ValidateFilePath(SaveFlags.FilePath)
 		filePath = SaveFlags.FilePath
+		logger.Debug("Saving archive ...")
+		docker.SaveImage(docker.GetImageID(appFullName), filePath)
+
+		logger.Debug("Preparing manifest ...")
+		modifyManifest(filePath, appFullName)
+		
+		logger.Success("Created '%s' file.", filePath)
 	} else {
-		filePath = fs.GetCurrentDir()+
-			string(os.PathSeparator)+
-			name+
-			config.SAVE_FILE_SEPARATOR+
-			version+config.SAVE_TMP_FILE_POSTFIX
-		resultPrefixPath =  fs.GetCurrentDir()+
-			string(os.PathSeparator)+
-			name+
-			config.SAVE_FILE_SEPARATOR+
-			version+
-			config.SAVE_OPTIONAL_SEPARATOR
-	}
+		baseName := fs.GetCurrentDir() + string(os.PathSeparator) + name + config.SAVE_FILE_SEPARATOR + version
+		filePath = baseName + config.SAVE_TMP_FILE_POSTFIX
+		resultPrefixPath = baseName + config.SAVE_OPTIONAL_SEPARATOR
 
-	logger.Debug("Saving archive ...")
-	docker.SaveImage(docker.GetImageID(appFullName), filePath)
+		logger.Debug("Saving archive ...")
+		docker.SaveImage(docker.GetImageID(appFullName), filePath)
 
-	logger.Debug("Preparing manifest ...")
-	modifyManifest(filePath, appFullName)
+		logger.Debug("Preparing manifest ...")
+		modifyManifest(filePath, appFullName)
 
-	logger.Debug("Releasing archive ...")
-	if SaveFlags.FilePath == "" {
-		resultPath := resultPrefixPath+fs.HashFileCRC32(filePath)+config.SAVE_FILE_SEPARATOR+fs.FileSize(filePath)+config.SAVE_FILE_POSTFIX
+		logger.Debug("Releasing archive ...")
+		resultPath := resultPrefixPath + fs.HashFileCRC32(filePath) + config.SAVE_FILE_SEPARATOR + fs.FileSize(filePath) + config.SAVE_FILE_POSTFIX
 		fs.MoveFile(filePath, resultPath)
+
 		logger.Success("Created '%s' file.", resultPath)
 	}
 }
 
 func modifyManifest(filePath, appFullName string) {
 	dir := fs.Untar(filePath)
-	manifestFile := dir+string(os.PathSeparator)+config.SAVE_MANIFEST_FILE
+	manifestFile := dir + string(os.PathSeparator) + config.SAVE_MANIFEST_FILE
 
 	manifest.ModifyRepoTags(manifestFile, appFullName)
 	fs.Remove(filePath)
-	fs.Gzip(dir, filePath)
+	fs.Gzip(dir, filePath, false)
 	fs.Remove(dir)
 }

@@ -15,6 +15,7 @@
 package run
 
 import (
+	"dam/driver/docker"
 	"os"
 
 	"dam/config"
@@ -34,25 +35,67 @@ func Export(arg string) {
 	flag.ValidateFilePath(arg)
 	logger.Debug("Flags validated with success")
 
-	fs.Touch(arg)
+	if !ExportFlags.All {
+		exportAppsListToFile(arg)
+		logger.Success("Export app list to file '%s'", arg)
+	} else {
+		tmpDir := arg + "_tmp"
+		fs.MkDir(tmpDir)
+		defer fs.Remove(tmpDir)
 
-	f, err := os.OpenFile(arg, os.O_WRONLY|os.O_CREATE, 0644)
+		logger.Debug("Exporting images file to tmp dir ...")
+		exportAppsListToFile(arg+string(os.PathSeparator)+config.EXPORT_APPS_FILE_NAME)
+		logger.Debug("Exporting docker images to tmp dir ...")
+		exportImagesToDir(tmpDir)
+
+		logger.Debug("Creating general apps archive ...")
+		fs.Gzip(tmpDir, arg, true)
+
+		logger.Success("Export app list to apps archive '%s'", arg)
+	}
+}
+
+func exportImagesToDir(tmpDir string) {
+	for _, app := range db.ADriver.GetApps() {
+		logger.Debug("Export image %s:%s", app.ImageName, app.ImageVersion)
+		tmpFilePath := tmpDir+string(os.PathSeparator)+config.SAVE_TMP_FILE_POSTFIX
+		tag := app.ImageName+":"+app.ImageVersion
+		docker.SaveImage(docker.GetImageID(tag), tmpFilePath)
+		modifyManifest(tmpFilePath, tag)
+		resultPath := tmpDir +
+			string(os.PathSeparator) +
+			app.ImageName +
+			config.SAVE_FILE_SEPARATOR +
+			app.ImageVersion +
+			config.SAVE_OPTIONAL_SEPARATOR +
+			fs.HashFileCRC32(tmpFilePath) +
+			config.SAVE_FILE_SEPARATOR +
+			fs.FileSize(tmpFilePath) +
+			config.SAVE_FILE_POSTFIX
+		fs.MoveFile(tmpFilePath, resultPath)
+	}
+}
+
+func exportAppsListToFile(path string) {
+	fs.Touch(path)
+
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
 			f.Close()
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open apps file '%s' with error: %s", arg, err.Error())
+		logger.Fatal("Cannot open apps file '%s' with error: %s", path, err.Error())
 	}
 
 	logger.Debug("Getting apps ...")
 	apps := db.ADriver.GetApps()
 	for _, app := range apps {
-		newLine := app.ImageName+config.EXPORT_APP_SEPARATOR+app.ImageVersion+"\n"
+		newLine := app.ImageName + config.EXPORT_APP_SEPARATOR + app.ImageVersion + "\n"
 		_, err := f.WriteString(newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to apps file '%s' with error: %s", arg, err.Error())
+			logger.Fatal("Cannot write to apps file '%s' with error: %s", path, err.Error())
 		}
 	}
 
@@ -64,6 +107,4 @@ func Export(arg string) {
 	if err != nil {
 		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
 	}
-
-	logger.Info("Export file save to '%s'", arg)
 }

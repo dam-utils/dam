@@ -17,7 +17,6 @@ package filesystem
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -123,7 +122,7 @@ func Gunzip(source string) string {
 	return target
 }
 
-func Gzip(source, target string) {
+func Gzip(source, target string, onlyTar bool) {
 	f, err := os.Create(target)
 	defer func() {
 		if f != nil {
@@ -134,22 +133,31 @@ func Gzip(source, target string) {
 		logger.Fatal("Cannot create file '%s' with error: %s", target, err)
 	}
 
-	gw := gzip.NewWriter(f)
-	defer func() {
-		if gw != nil {
-			gw.Close()
-		}
-	}()
+	var tw *tar.Writer
+	if !onlyTar {
+		gw := gzip.NewWriter(f)
+		defer func() {
+			if gw != nil {
+				gw.Close()
+			}
+		}()
 
-	tw := tar.NewWriter(gw)
-	defer func() {
-		if tw != nil {
-			tw.Close()
-		}
-	}()
+		tw = tar.NewWriter(gw)
+		defer func() {
+			if tw != nil {
+				tw.Close()
+			}
+		}()
+	} else {
+		tw = tar.NewWriter(f)
+		defer func() {
+			if tw != nil {
+				tw.Close()
+			}
+		}()
+	}
 
 	walkFn := func(path string, info os.FileInfo, err error) error {
-		fmt.Println(info)
 		if info.Mode().IsDir() {
 			return nil
 		}

@@ -67,6 +67,7 @@ var (
 	TMP_META_PATH = "./.tmp.meta"
 	//Export
 	EXPORT_APP_SEPARATOR = ":"
+	EXPORT_APPS_FILE_NAME = "app_list"
 	//Save
 	SAVE_OPTIONAL_SEPARATOR = "."
 	SAVE_FILE_SEPARATOR = "-"
