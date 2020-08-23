@@ -47,7 +47,7 @@ func ContainerCreate(image string, name string) string {
 	}
 	resp, err := cli.ContainerCreate(context.Background(), &conf, nil, nil, name)
 	if err != nil {
-		logger.Fatal("Cannot build docker image with error: %s", err.Error())
+		logger.Fatal("Cannot build docker image with error: %s", err)
 	}
 
 	logger.Debug("Response ContainerCreate('%s'): %v", name, resp)
@@ -67,7 +67,7 @@ func CopyFromContainer(containerID, sourcePath, destPath string) {
 
 	reader, _, err := cli.CopyFromContainer(context.Background(), containerID, sourcePath)
 	if err != nil {
-		logger.Fatal("Cannot copy from the container with ID '%s' with error: %s", containerID, err.Error())
+		logger.Fatal("Cannot copy from the container with ID '%s' with error: %s", containerID, err)
 	}
 
 	// Ex:
@@ -84,7 +84,7 @@ func CopyFromContainer(containerID, sourcePath, destPath string) {
 
 		// return any other error
 		case err != nil:
-			logger.Fatal("Cannot get '%s' from container tar archive with containerID '%s' with error: %s", header.Name, containerID, err.Error())
+			logger.Fatal("Cannot get '%s' from container tar archive with containerID '%s' with error: %s", header.Name, containerID, err)
 
 		// if the header is nil, just skip it (not sure how this happens)
 		case header == nil:
@@ -105,7 +105,7 @@ func CopyFromContainer(containerID, sourcePath, destPath string) {
 		case tar.TypeDir:
 			if _, err := os.Stat(target); err != nil {
 				if err := os.MkdirAll(target, 0755); err != nil {
-					logger.Fatal("Cannot create target directory '%s' from containerID '%s' with error: %s", header.Name, containerID, err.Error())
+					logger.Fatal("Cannot create target directory '%s' from containerID '%s' with error: %s", header.Name, containerID, err)
 				}
 			}
 
@@ -113,12 +113,12 @@ func CopyFromContainer(containerID, sourcePath, destPath string) {
 		case tar.TypeReg:
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
-				logger.Fatal("Cannot create target file '%s' from containerID '%s' with error: %s", header.Name, containerID, err.Error())
+				logger.Fatal("Cannot create target file '%s' from containerID '%s' with error: %s", header.Name, containerID, err)
 			}
 
 			// copy over contents
 			if _, err := io.Copy(f, tr); err != nil {
-				logger.Fatal("Cannot write to target file '%s' from containerID '%s' with error: %s", header.Name, containerID, err.Error())
+				logger.Fatal("Cannot write to target file '%s' from containerID '%s' with error: %s", header.Name, containerID, err)
 			}
 
 			// manually close here after each file operation; defering would cause each file close
@@ -146,6 +146,6 @@ func ContainerRemove(id string) {
 	}
 	err = cli.ContainerRemove(context.Background(), id, opts)
 	if err != nil {
-		logger.Fatal("Cannot remove the container with ID '%s' with error: %s", id, err.Error())
+		logger.Fatal("Cannot remove the container with ID '%s' with error: %s", id, err)
 	}
 }

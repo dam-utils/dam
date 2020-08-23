@@ -59,7 +59,7 @@ func prepareExpFile(path string, envs map[string]string) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open file '%s' with error: %s", path, err.Error())
+		logger.Fatal("Cannot open file '%s' with error: %s", path, err)
 	}
 
 	newf, err := os.Create(newPath)
@@ -70,7 +70,7 @@ func prepareExpFile(path string, envs map[string]string) {
 	}()
 	if err != nil {
 		newf.Close()
-		logger.Fatal("Cannot create file '%s' with error: %s", newPath, err.Error())
+		logger.Fatal("Cannot create file '%s' with error: %s", newPath, err)
 	}
 
 	scanner := bufio.NewScanner(f)
@@ -78,18 +78,18 @@ func prepareExpFile(path string, envs map[string]string) {
 		newString := env.PrepareExpString(scanner.Text(), envs)
 		_, err = newf.WriteString(newString+"\n")
 		if err != nil {
-			logger.Fatal("Cannot write string to file '%s' with error: %s", newPath, err.Error())
+			logger.Fatal("Cannot write string to file '%s' with error: %s", newPath, err)
 		}
 	}
 
 	err = newf.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync of writable file '%s' with error: %s", newPath, err.Error())
+		logger.Fatal("Cannot sync of writable file '%s' with error: %s", newPath, err)
 	}
 
 	err = newf.Close()
 	if err != nil {
-		logger.Fatal("Cannot close of writable file '%s' with error: %s", newPath, err.Error())
+		logger.Fatal("Cannot close of writable file '%s' with error: %s", newPath, err)
 	}
 }
 

@@ -45,7 +45,7 @@ func SearchAppNames(mask string) *[]string {
 	var results []registry.SearchResult
 	results, err = cli.ImageSearch(context.Background(), mask,  searchOpts)
 	if err != nil {
-		logger.Fatal("Cannot get results of docker search with error: %s", err.Error())
+		logger.Fatal("Cannot get results of docker search with error: %s", err)
 	}
 
 	var appNames []string

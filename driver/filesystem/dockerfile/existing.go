@@ -31,7 +31,7 @@ func IsCopyMeta(path string) bool {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open Dockerfile with error: %s", err.Error())
+		logger.Fatal("Cannot open Dockerfile with error: %s", err)
 	}
 
 	scanner := bufio.NewScanner(f)
@@ -63,7 +63,7 @@ func IsFamily (path string) bool {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open Dockerfile with error: %s", err.Error())
+		logger.Fatal("Cannot open Dockerfile with error: %s", err)
 	}
 
 	scanner := bufio.NewScanner(f)

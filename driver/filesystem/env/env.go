@@ -32,7 +32,7 @@ func GetFileEnv(file string) map[string]string {
 		}
 	}()
 	if err != nil {
-		logger.Warn("Cannot open env file with error: %s", err.Error())
+		logger.Warn("Cannot open env file with error: %s", err)
 		return envMap
 	}
 
@@ -56,7 +56,7 @@ func GetDockerFileEnv(file string) map[string]string {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open docker file with error: %s", err.Error())
+		logger.Fatal("Cannot open docker file with error: %s", err)
 	}
 
 	scanner := bufio.NewScanner(f)

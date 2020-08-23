@@ -46,7 +46,7 @@ func Untar(source string) string {
 		case err == io.EOF:
 			return dst
 		case err != nil:
-			logger.Fatal("Cannot find file %s in tar with error: %s", dst, err.Error())
+			logger.Fatal("Cannot find file %s in tar with error: %s", dst, err)
 			return dst
 		case header == nil:
 			continue
@@ -59,18 +59,18 @@ func Untar(source string) string {
 		case tar.TypeDir:
 			if _, err := os.Stat(target); err != nil {
 				if err := os.MkdirAll(target, 0755); err != nil {
-					logger.Fatal("Cannot create directory %s with error: %s", target, err.Error())
+					logger.Fatal("Cannot create directory %s with error: %s", target, err)
 					return dst
 				}
 			}
 		case tar.TypeReg:
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
-				logger.Fatal("Cannot open file %s with error: %s", target, err.Error())
+				logger.Fatal("Cannot open file %s with error: %s", target, err)
 				return dst
 			}
 			if _, err := io.Copy(f, tr); err != nil {
-				logger.Fatal("Cannot copy file: %s with error: %s", target, err.Error())
+				logger.Fatal("Cannot copy file: %s with error: %s", target, err)
 				return dst
 			}
 			err = f.Sync()

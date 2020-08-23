@@ -35,7 +35,7 @@ import (
 func GetCurrentDir() string {
 	dir, err := os.Getwd()
 	if err != nil {
-		logger.Fatal("Cannot get current dir with error: %s", err.Error())
+		logger.Fatal("Cannot get current dir with error: %s", err)
 	}
 	return dir
 }
@@ -43,7 +43,7 @@ func GetCurrentDir() string {
 func IsExistDir(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Debug("Cannot check directory '%s' with error: %s", path, err.Error())
+		logger.Debug("Cannot check directory '%s' with error: %s", path, err)
 		return false
 	}
 	return info.IsDir()
@@ -52,7 +52,7 @@ func IsExistDir(path string) bool {
 func IsExistFile(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Debug("Cannot check file '%s' with error: %s", path, err.Error())
+		logger.Debug("Cannot check file '%s' with error: %s", path, err)
 		return false
 	}
 	return !info.IsDir()
@@ -96,7 +96,7 @@ func Remove(path string) bool {
 
 	err = os.RemoveAll(path)
 	if err != nil {
-		logger.Warn("Cannot remove path '%s' with error: %s", path, err.Error())
+		logger.Warn("Cannot remove path '%s' with error: %s", path, err)
 	}
 	return false
 }
@@ -104,19 +104,19 @@ func Remove(path string) bool {
 func MoveFile(oldLocation, newLocation string) {
 	err := os.Rename(oldLocation, newLocation)
 	if err != nil {
-		logger.Fatal("Cannot move file '%s' to '%s' with error: %s", oldLocation, newLocation, err.Error())
+		logger.Fatal("Cannot move file '%s' to '%s' with error: %s", oldLocation, newLocation, err)
 	}
 }
 
 func CopyFile(sourceFile, destFile string) {
 	input, err := ioutil.ReadFile(sourceFile)
 	if err != nil {
-		logger.Fatal("Cannot read file '%s' with error: %s", sourceFile, err.Error())
+		logger.Fatal("Cannot read file '%s' with error: %s", sourceFile, err)
 	}
 
 	err = ioutil.WriteFile(destFile, input, 0644)
 	if err != nil {
-		logger.Fatal("Cannot write to tmp file '%s' with error: %s", destFile, err.Error())
+		logger.Fatal("Cannot write to tmp file '%s' with error: %s", destFile, err)
 	}
 }
 
@@ -124,7 +124,7 @@ func GetAbsolutePath(path string) string {
 	p, err := filepath.Abs(path)
 	{
 		if err != nil {
-			logger.Fatal("Cannot get absolute path for '%s' with error: %s", path, err.Error())
+			logger.Fatal("Cannot get absolute path for '%s' with error: %s", path, err)
 		}
 	}
 	return p
@@ -133,14 +133,14 @@ func GetAbsolutePath(path string) string {
 // TODO заменить на ChmodPlusX()
 func Chmod777(path string) {
 	if err := os.Chmod(path, 0777); err != nil {
-		logger.Fatal("Cannot chmod 777 '%s' with error: %s", path, err.Error())
+		logger.Fatal("Cannot chmod 777 '%s' with error: %s", path, err)
 	}
 }
 
 func Chdir(path string) {
 	err := os.Chdir(path)
 	if err != nil {
-		logger.Fatal("Cannot change home dir to '%s' with error: %s", path, err.Error())
+		logger.Fatal("Cannot change home dir to '%s' with error: %s", path, err)
 	}
 }
 
@@ -163,7 +163,7 @@ func RunFile(runFile string) {
 	err := c.Run()
 	if err != nil {
 		logger.Warn(errb.String())
-		logger.Fatal("Cannot execute file '%s' with error: %s", runFile, err.Error())
+		logger.Fatal("Cannot execute file '%s' with error: %s", runFile, err)
 	}
 	logger.Info(outb.String())
 }
@@ -177,7 +177,7 @@ func Touch(file string) {
 			}
 		}()
 		if err != nil {
-			logger.Fatal("Cannot create file '%s' with error: %s", file, err.Error())
+			logger.Fatal("Cannot create file '%s' with error: %s", file, err)
 		}
 	}
 }
@@ -190,13 +190,13 @@ func HashFileCRC32(filePath string) string {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open file '%s' with error: %s", filePath, err.Error())
+		logger.Fatal("Cannot open file '%s' with error: %s", filePath, err)
 	}
 
 	tablePolynomial := crc32.MakeTable(config.SAVE_POLYNOMIAL_CKSUM)
 	hash := crc32.New(tablePolynomial)
 	if _, err := io.Copy(hash, f); err != nil {
-		logger.Fatal("Cannot check hash file '%s' with error: %s", filePath, err.Error())
+		logger.Fatal("Cannot check hash file '%s' with error: %s", filePath, err)
 	}
 	hashInBytes := hash.Sum(nil)[:]
 	return hex.EncodeToString(hashInBytes)
@@ -205,7 +205,7 @@ func HashFileCRC32(filePath string) string {
 func FileSize(filePath string) string {
 	fi, err := os.Stat(filePath)
 	if err != nil {
-		logger.Fatal("Cannot check file '%s' with error: %s", filePath, err.Error())
+		logger.Fatal("Cannot check file '%s' with error: %s", filePath, err)
 	}
 
 	return strconv.FormatInt(fi.Size(), 10)

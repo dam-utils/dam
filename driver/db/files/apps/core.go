@@ -128,23 +128,23 @@ func saveApps(apps []*storage.App) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	for _, app := range apps {
 		newLine := app2str(app)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+			logger.Fatal("Cannot write to apps file '%s' with error: %s", config.FILES_DB_TMP, err)
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	logger.Debug("Move '%s' to '%s'", config.FILES_DB_TMP, config.FILES_DB_APPS)

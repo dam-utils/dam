@@ -59,6 +59,7 @@ func CreateApp(path string) {
 
 	logger.Debug("Building image ...")
 	docker.Build(getImageTag(preparedEnvs), projectDir)
+
 	logger.Success("App '%s' was created.", tag)
 }
 

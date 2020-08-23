@@ -86,7 +86,7 @@ func exportAppsListToFile(path string) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open apps file '%s' with error: %s", path, err.Error())
+		logger.Fatal("Cannot open apps file '%s' with error: %s", path, err)
 	}
 
 	logger.Debug("Getting apps ...")
@@ -95,16 +95,16 @@ func exportAppsListToFile(path string) {
 		newLine := app.ImageName + config.EXPORT_APP_SEPARATOR + app.ImageVersion + "\n"
 		_, err := f.WriteString(newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to apps file '%s' with error: %s", path, err.Error())
+			logger.Fatal("Cannot write to apps file '%s' with error: %s", path, err)
 		}
 	}
 
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 }

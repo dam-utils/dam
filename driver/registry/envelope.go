@@ -33,7 +33,7 @@ func CheckRepository(repo *storage.Repo) {
 	for _, protocol := range config.SEARCH_PROTOCOL_STRATEGY {
 		err := registry_v2.CheckRepo(repo, protocol)
 		if err != nil {
-			logger.Debug("Cannot connect to default registry '%s' for '%s' protocol with error: %s", repo.Name, protocol, err.Error())
+			logger.Debug("Cannot connect to default registry '%s' for '%s' protocol with error: %s", repo.Name, protocol, err)
 		} else {
 			return
 		}

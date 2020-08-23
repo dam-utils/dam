@@ -31,7 +31,7 @@ import (
 func Build(imageTag, projectDir string) {
 	buildCtx, err := archive.TarWithOptions(projectDir, &archive.TarOptions{})
 	if err != nil {
-		logger.Fatal("Cannot create docker context (project files directory) with error: %s", err.Error())
+		logger.Fatal("Cannot create docker context (project files directory) with error: %s", err)
 	}
 	opts := types.ImageBuildOptions{
 		Tags: []string{imageTag},
@@ -61,13 +61,13 @@ func Build(imageTag, projectDir string) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot build docker image with error: %s", err.Error())
+		logger.Fatal("Cannot build docker image with error: %s", err)
 	}
 
 
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	err = jsonmessage.DisplayJSONMessagesStream(resp.Body, os.Stderr, termFd, isTerm, nil)
 	if err != nil {
-		logger.Fatal("Cannot get output json for building image with error: %s", err.Error())
+		logger.Fatal("Cannot get output json for building image with error: %s", err)
 	}
 }

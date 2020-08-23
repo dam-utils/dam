@@ -39,7 +39,7 @@ func GetAppNames(repo *storage.Repo) *[]string {
 	url := SessionURL + "v2/_catalog?n="+strconv.Itoa(config.INTERNAL_REPO_SEARCH_APPS_LIMIT)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err)
 	}
 	if repo.Username != "" {
 		req.SetBasicAuth(repo.Username, repo.Password)
@@ -52,13 +52,13 @@ func GetAppNames(repo *storage.Repo) *[]string {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err)
 	}
 
 	var body ResponseGetAppNames
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		logger.Fatal("Cannot parse response from URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot parse response from URL '%s' with error: %s", url, err)
 	}
 	return &body.Repositories
 }

@@ -101,13 +101,13 @@ func Pull(tag string, repo *storage.Repo) {
 		}
 	}()
 	if err != nil {
-		logger.Warn("Cannot pull docker image with error: %s", err.Error())
+		logger.Warn("Cannot pull docker image with error: %s", err)
 		return
 	}
 
 	_, err = io.Copy(os.Stdout, out)
 	if err != nil {
-		logger.Fatal("Cannot print docker stdout with error: %s", err.Error())
+		logger.Fatal("Cannot print docker stdout with error: %s", err)
 	}
 }
 
@@ -197,7 +197,7 @@ func SaveImage(imageId, filePath string) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot save image with id '%s' with error: '%s'", imageId, err.Error())
+		logger.Fatal("Cannot save image with id '%s' with error: '%s'", imageId, err)
 	}
 
 	saveToFile(filePath, readCloser)
@@ -208,12 +208,12 @@ func saveToFile(srcFile string, r io.ReadCloser) {
 
 	content, err := ioutil.ReadAll(r)
 	if err != nil {
-		logger.Fatal("Cannot open reader for file '%s' with error: '%s'", srcFile, err.Error())
+		logger.Fatal("Cannot open reader for file '%s' with error: '%s'", srcFile, err)
 	}
 
 	err = ioutil.WriteFile(srcFile, content, 0644)
 	if err != nil {
-		logger.Fatal("Cannot write image to file '%s' with error: '%s'", srcFile, err.Error())
+		logger.Fatal("Cannot write image to file '%s' with error: '%s'", srcFile, err)
 	}
 
 	return

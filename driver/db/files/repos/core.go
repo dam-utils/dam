@@ -28,7 +28,6 @@ import (
 	"dam/driver/validate"
 )
 
-
 func NewRepo(repo *storage.Repo) {
 	repos := GetRepos()
 	//preparedRepo := preparePassword(repo)
@@ -152,23 +151,23 @@ func saveRepos(repos []*storage.Repo) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	for _, repo := range newRepos {
 		newLine := repo2str(repo)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
@@ -182,21 +181,21 @@ func ClearRepos() {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	_, err = f.WriteString("")
 	if err != nil {
-		logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err.Error())
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err)
 	}
 
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)

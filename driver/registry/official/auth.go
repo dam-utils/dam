@@ -37,7 +37,7 @@ func GetBearerToken(app string) string {
 
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		logger.Fatal("Cannot parse token in the body from URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot parse token in the body from URL '%s' with error: %s", url, err)
 	}
 	return body.AccessToken
 }

@@ -34,7 +34,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 	url := SessionURL + "v2/" + appName + "/tags/list"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil || req == nil {
-		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err)
 	}
 	if repo.Username != "" {
 		req.SetBasicAuth(repo.Username, repo.Password)
@@ -47,7 +47,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot get response from URL '%s' with error: %s", url, err)
 	}
 
 	type AppVersionsResponse struct {
@@ -57,7 +57,7 @@ func GetAppVersions(repo *storage.Repo, appName string) *[]string {
 
 	err = json.NewDecoder(resp.Body).Decode(&body)
 	if err != nil {
-		logger.Fatal("Cannot parse app versions in the body from URL '%s' with error: %s", url, err.Error())
+		logger.Fatal("Cannot parse app versions in the body from URL '%s' with error: %s", url, err)
 	}
 	vers := body.Tags
 	return &vers
