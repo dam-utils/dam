@@ -21,11 +21,11 @@ import (
 	"strings"
 
 	"dam/driver/db"
+	"dam/driver/db/storage"
 	"dam/driver/decorate"
 	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/logger/color"
-	"dam/driver/storage"
 )
 
 type ImportSettings struct {
@@ -36,9 +36,9 @@ type ImportSettings struct {
 var ImportFlags = new(ImportSettings)
 
 func Import(arg string) {
-	appSkipList := make([]*storage.ImportApp, 0)
-	appDeleteList := make([]*storage.ImportApp, 0)
-	appInstallList := make([]*storage.ImportApp, 0)
+	var appSkipList []*storage.ImportApp
+	var appDeleteList []*storage.ImportApp
+	var appInstallList []*storage.ImportApp
 
 	flag.ValidateFilePath(arg)
 	logger.Debug("Flags validated with success")

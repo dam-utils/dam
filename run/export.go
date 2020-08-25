@@ -15,10 +15,10 @@
 package run
 
 import (
-	"dam/driver/docker"
 	"os"
 
 	"dam/config"
+	"dam/driver/containerd"
 	"dam/driver/db"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
@@ -60,7 +60,10 @@ func exportImagesToDir(tmpDir string) {
 		logger.Debug("Export image %s:%s", app.ImageName, app.ImageVersion)
 		tmpFilePath := tmpDir+string(os.PathSeparator)+config.SAVE_TMP_FILE_POSTFIX
 		tag := app.ImageName+":"+app.ImageVersion
-		docker.SaveImage(docker.GetImageID(tag), tmpFilePath)
+
+		imageId := containerd.VDriver.GetImageID(tag)
+		containerd.VDriver.SaveImage(imageId, tmpFilePath)
+
 		modifyManifest(tmpFilePath, tag)
 		resultPath := tmpDir +
 			string(os.PathSeparator) +

@@ -14,28 +14,21 @@
 //
 package db
 
-import (
-	"dam/config"
-	"dam/driver/db/files/apps"
-	"dam/driver/db/files/repos"
-	"dam/driver/logger"
-)
+import "dam/driver/db/storage"
 
-var (
-	RDriver RProvider
-	ADriver AProvider
-)
-
-func Init() {
-	switch config.DB_TYPE {
-	case "files":
-		RDriver = repos.NewProvider()
-		ADriver = apps.NewProvider()
-	default:
-		dbConfigureIsBad()
-	}
+type RProvider interface {
+	GetRepos() []*storage.Repo
+	GetRepoById(id int) *storage.Repo
+	GetDefaultRepo() *storage.Repo
+	NewRepo(repo *storage.Repo)
+	ModifyRepo(repo *storage.Repo)
+	RemoveRepoById(id int)
+	GetRepoIdByName(name *string) int
+	ClearRepos()
 }
 
-func dbConfigureIsBad() {
-	logger.Fatal("Config option PROJECT_NAME='%s' not valid. DB type is bad", config.PROJECT_NAME)
+type AProvider interface {
+	GetApps() []*storage.App
+	NewApp(app *storage.App)
+	GetAppById(id int) *storage.App
 }

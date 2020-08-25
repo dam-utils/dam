@@ -12,29 +12,23 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package main
+package containerd
 
 import (
-	"os"
-
-	"dam/cmd"
-	"dam/driver/config"
-	"dam/driver/containerd"
-	"dam/driver/db"
+	"dam/config"
+	"dam/driver/containerd/docker"
+	"dam/driver/logger"
 )
 
-func main() {
-	// чтобы успеть закрыть все f.Close и соединения перед выходом
-	defer func() {
-		_ = recover()
-		os.Exit(1)
-	}()
+var (
+	VDriver VProvider
+)
 
-	config.Prepare()
-	db.Init()
-	containerd.Init()
-
-	cmd.Execute()
-
-	os.Exit(0)
+func Init() {
+	switch config.VIRTUALIZATION_TYPE {
+	case "docker":
+		VDriver = docker.NewProvider()
+	default:
+		logger.Fatal("Config option VIRTUALIZATION_TYPE='%s' not valid. DB type is bad", config.VIRTUALIZATION_TYPE)
+	}
 }

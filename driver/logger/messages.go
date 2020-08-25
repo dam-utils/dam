@@ -42,7 +42,7 @@ func Fatal(message string, args ...interface{}) {
 		message = fmt.Sprintf(message, args...)
 	}
 
-	log.Printf(message)
+	log.Println(message)
 	panic(nil)
 }
 

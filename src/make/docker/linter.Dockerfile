@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 FROM golangci/golangci-lint:v1.27
 
 ARG PROJECT_NAME
@@ -20,6 +19,5 @@ ARG PROJECT_NAME
 WORKDIR /go/src/${PROJECT_NAME}
 COPY . .
 
-RUN mv /go/src/${PROJECT_NAME}/_build/goget_cache/github.com /go/src/github.com
-RUN go get -d ./
+RUN go mod vendor
 RUN golangci-lint run

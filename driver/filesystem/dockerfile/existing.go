@@ -36,19 +36,11 @@ func IsCopyMeta(path string) bool {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		line := scanner.Text()
-		matchCopy, err := regexp.MatchString("COPY .* /meta", line)
-		if err != nil {
-			continue
-		}
-		if matchCopy {
+		if regexp.MustCompile("COPY .* /meta").Match(scanner.Bytes()) {
 			return true
 		}
-		matchAdd, err := regexp.MatchString("ADD .* /meta", line)
-		if err != nil {
-			continue
-		}
-		if matchAdd {
+
+		if regexp.MustCompile("ADD .* /meta").Match(scanner.Bytes()) {
 			return true
 		}
 	}

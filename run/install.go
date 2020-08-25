@@ -15,6 +15,7 @@
 package run
 
 import (
+	"dam/driver/containerd"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -22,11 +23,10 @@ import (
 
 	"dam/config"
 	"dam/driver/db"
-	"dam/driver/docker"
+	"dam/driver/db/storage"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
-	"dam/driver/storage"
 	"dam/run/internal"
 )
 
@@ -47,16 +47,16 @@ func InstallApp(appCurrentName string) {
 	var tag string
 	if isFileInstalling {
 		tag = getTagFromArchiveManifest(appCurrentName)
-		docker.LoadImage(appCurrentName)
+		containerd.VDriver.LoadImage(appCurrentName)
 	} else {
 		tag = dockerPull(appCurrentName)
 	}
 
 	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
-	containerId := docker.ContainerCreate(tag, "")
-	docker.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
-	docker.ContainerRemove(containerId)
+	containerId := containerd.VDriver.ContainerCreate(tag, "")
+	containerd.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
+	containerd.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Installing meta ...")
 	installMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
@@ -88,7 +88,7 @@ func dockerPull(app string) string {
 		tag = app
 	}
 
-	docker.Pull(tag, defRepo)
+	containerd.VDriver.Pull(tag, defRepo)
 
 	return tag
 }
@@ -102,10 +102,10 @@ func saveInstallAppToDB(tag string) {
 
 	var app storage.App
 	app.RepoID = repo.Id
-	app.DockerID = docker.GetImageID(tag)
+	app.DockerID = containerd.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
-	app.Family = docker.GetImageLabel(tag, config.APP_FAMILY_ENV)
+	app.Family = containerd.VDriver.GetImageLabel(tag, config.APP_FAMILY_ENV)
 
 	db.ADriver.NewApp(&app)
 }

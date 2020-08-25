@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"dam/config"
-	"dam/driver/storage"
+	"dam/driver/db/storage"
 )
 
 var SessionURL string

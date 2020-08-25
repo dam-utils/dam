@@ -44,6 +44,7 @@ lint:
 
 clean: clean-docker clean-binary
 	rm -rf _build || true
+	rm -rf vendor || true
 
 clean-binary:
 	rm -rf _build/linux/${PROJECT_NAME} || true

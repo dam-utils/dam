@@ -14,7 +14,7 @@
 //
 package apps
 
-import "dam/driver/storage"
+import "dam/driver/db/storage"
 
 type provider struct {
 	//GetApps() []*storage.App

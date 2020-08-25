@@ -12,29 +12,26 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package main
+package db
 
 import (
-	"os"
-
-	"dam/cmd"
-	"dam/driver/config"
-	"dam/driver/containerd"
-	"dam/driver/db"
+	"dam/config"
+	"dam/driver/db/files/apps"
+	"dam/driver/db/files/repos"
+	"dam/driver/logger"
 )
 
-func main() {
-	// чтобы успеть закрыть все f.Close и соединения перед выходом
-	defer func() {
-		_ = recover()
-		os.Exit(1)
-	}()
+var (
+	RDriver RProvider
+	ADriver AProvider
+)
 
-	config.Prepare()
-	db.Init()
-	containerd.Init()
-
-	cmd.Execute()
-
-	os.Exit(0)
+func Init() {
+	switch config.DB_TYPE {
+	case "files":
+		RDriver = repos.NewProvider()
+		ADriver = apps.NewProvider()
+	default:
+		logger.Fatal("Config option DB_TYPE='%s' not valid. DB type is bad", config.DB_TYPE)
+	}
 }

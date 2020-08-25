@@ -15,14 +15,14 @@
 package registry
 
 import (
+	"dam/driver/containerd"
 	"strings"
 
 	"dam/config"
-	"dam/driver/docker"
+	"dam/driver/db/storage"
 	"dam/driver/logger"
 	registry_official "dam/driver/registry/official"
 	registry_v2 "dam/driver/registry/v2"
-	"dam/driver/storage"
 )
 
 func CheckRepository(repo *storage.Repo) {
@@ -43,7 +43,8 @@ func CheckRepository(repo *storage.Repo) {
 
 func GetAppNamesByMask(repo *storage.Repo, mask string) *[]string {
 	if repo.Id == 1 {
-		return docker.SearchAppNames(mask)
+		return containerd.VDriver.
+			SearchAppNames(mask)
 	}
 	names := registry_v2.GetAppNames(repo)
 	return filterAppNamesByMask(names, mask)

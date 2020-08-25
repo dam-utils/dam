@@ -24,9 +24,9 @@ import (
 	"strings"
 
 	"dam/config"
+	"dam/driver/db/storage"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
-	"dam/driver/storage"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -215,6 +215,4 @@ func saveToFile(srcFile string, r io.ReadCloser) {
 	if err != nil {
 		logger.Fatal("Cannot write image to file '%s' with error: '%s'", srcFile, err)
 	}
-
-	return
 }

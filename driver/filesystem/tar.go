@@ -158,6 +158,10 @@ func Gzip(source, target string, onlyTar bool) {
 	}
 
 	walkFn := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if info.Mode().IsDir() {
 			return nil
 		}

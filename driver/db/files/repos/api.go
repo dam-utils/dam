@@ -15,7 +15,7 @@
 package repos
 
 import (
-	"dam/driver/storage"
+	"dam/driver/db/storage"
 )
 
 type provider struct {

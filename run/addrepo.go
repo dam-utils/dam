@@ -16,9 +16,9 @@ package run
 
 import (
 	"dam/driver/db"
-	"dam/driver/logger"
-	"dam/driver/storage"
+	"dam/driver/db/storage"
 	"dam/driver/flag"
+	"dam/driver/logger"
 )
 
 type AddRepoSettings struct {

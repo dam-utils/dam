@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"dam/config"
+	"dam/driver/db/storage"
 	"dam/driver/logger"
-	"dam/driver/storage"
 )
 
 func GetAppVersions(repo *storage.Repo, appName string) *[]string {

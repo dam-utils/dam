@@ -21,6 +21,5 @@ WORKDIR /go/src/${PROJECT_NAME}
 
 COPY . .
 
-RUN mv /go/src/${PROJECT_NAME}/_build/goget_cache/github.com /go/src/github.com
-RUN go get -d ./
+RUN go mod vendor
 RUN go build -o ${PROJECT_NAME} main.go

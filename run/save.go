@@ -18,7 +18,7 @@ import (
 	"os"
 
 	"dam/config"
-	"dam/driver/docker"
+	"dam/driver/containerd"
 	fs "dam/driver/filesystem"
 	"dam/driver/filesystem/manifest"
 	"dam/driver/flag"
@@ -46,8 +46,10 @@ func Save(appFullName string) {
 	if SaveFlags.FilePath != "" {
 		flag.ValidateFilePath(SaveFlags.FilePath)
 		filePath = SaveFlags.FilePath
+
 		logger.Debug("Saving archive ...")
-		docker.SaveImage(docker.GetImageID(appFullName), filePath)
+		imageId := containerd.VDriver.GetImageID(appFullName)
+		containerd.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
 		modifyManifest(filePath, appFullName)
@@ -59,7 +61,8 @@ func Save(appFullName string) {
 		resultPrefixPath = baseName + config.SAVE_OPTIONAL_SEPARATOR
 
 		logger.Debug("Saving archive ...")
-		docker.SaveImage(docker.GetImageID(appFullName), filePath)
+		imageId := containerd.VDriver.GetImageID(appFullName)
+		containerd.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
 		modifyManifest(filePath, appFullName)

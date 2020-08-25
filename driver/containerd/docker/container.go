@@ -45,7 +45,7 @@ func ContainerCreate(image string, name string) string {
 		Cmd:   []string{""},
 		Tty:   true, //TODO check it
 	}
-	resp, err := cli.ContainerCreate(context.Background(), &conf, nil, nil, name)
+	resp, err := cli.ContainerCreate(context.Background(), &conf,  nil, nil, name)
 	if err != nil {
 		logger.Fatal("Cannot build docker image with error: %s", err)
 	}

@@ -12,23 +12,20 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package db
+package containerd
 
-import "dam/driver/storage"
+import "dam/driver/db/storage"
 
-type RProvider interface {
-	GetRepos() []*storage.Repo
-	GetRepoById(id int) *storage.Repo
-	GetDefaultRepo() *storage.Repo
-	NewRepo(repo *storage.Repo)
-	ModifyRepo(repo *storage.Repo)
-	RemoveRepoById(id int)
-	GetRepoIdByName(name *string) int
-	ClearRepos()
+type VProvider interface {
+	SearchAppNames(mask string) *[]string
+	LoadImage(file string)
+	Pull(tag string, repo *storage.Repo)
+	GetImageID(tag string) string
+	GetImageLabel(tag, labelName string) string
+	SaveImage(imageId, filePath string)
+	ContainerCreate(image string, name string) string
+	CopyFromContainer(containerID, sourcePath, destPath string)
+	ContainerRemove(id string)
+	Build(imageTag, projectDir string)
 }
 
-type AProvider interface {
-	GetApps() []*storage.App
-	NewApp(app *storage.App)
-	GetAppById(id int) *storage.App
-}

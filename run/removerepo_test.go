@@ -21,7 +21,7 @@ import (
 	"testing"
 
 	"dam/driver/db"
-	"dam/driver/storage"
+	"dam/driver/db/storage"
 	"dam/run"
 )
 

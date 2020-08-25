@@ -20,7 +20,7 @@ import (
 
 	"dam/config"
 	"dam/driver/db"
-	"dam/driver/storage"
+	"dam/driver/db/storage"
 )
 
 func PrintRAWReposList() {

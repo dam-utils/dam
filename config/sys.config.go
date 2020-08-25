@@ -15,7 +15,7 @@
 package config
 
 var (
-	//Global options // TODO fix it
+	//Global options
 	PROJECT_NAME    = "dam"
 	PROJECT_VERSION = "1.0.0"
 
@@ -33,6 +33,8 @@ var (
 	FILES_DB_REPOS     = "/tmp/Repos"
 	FILES_DB_APPS      = "/tmp/Apps"
 	FILES_DB_TMP       = "/tmp/.db"
+	// ContainerD type
+	VIRTUALIZATION_TYPE = "docker"
 	//Repositories
 	SEARCH_PROTOCOL_STRATEGY   = []string{"https", "http"} // The order of the protocols is important.
 	SEARCH_MAX_CONNECTS        = 1
