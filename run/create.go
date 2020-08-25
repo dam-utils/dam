@@ -16,7 +16,7 @@ package run
 
 import (
 	"dam/config"
-	"dam/driver/containerd"
+	"dam/driver/engine"
 	"dam/driver/db"
 	"dam/driver/db/storage"
 	fs "dam/driver/filesystem"
@@ -58,7 +58,7 @@ func CreateApp(path string) {
 	project.ValidateTag(tag)
 
 	logger.Debug("Building image ...")
-	containerd.VDriver.Build(getImageTag(preparedEnvs), projectDir)
+	engine.VDriver.Build(getImageTag(preparedEnvs), projectDir)
 
 	logger.Success("App '%s' was created.", tag)
 }

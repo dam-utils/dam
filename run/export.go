@@ -18,7 +18,7 @@ import (
 	"os"
 
 	"dam/config"
-	"dam/driver/containerd"
+	"dam/driver/engine"
 	"dam/driver/db"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
@@ -61,8 +61,8 @@ func exportImagesToDir(tmpDir string) {
 		tmpFilePath := tmpDir+string(os.PathSeparator)+config.SAVE_TMP_FILE_POSTFIX
 		tag := app.ImageName+":"+app.ImageVersion
 
-		imageId := containerd.VDriver.GetImageID(tag)
-		containerd.VDriver.SaveImage(imageId, tmpFilePath)
+		imageId := engine.VDriver.GetImageID(tag)
+		engine.VDriver.SaveImage(imageId, tmpFilePath)
 
 		modifyManifest(tmpFilePath, tag)
 		resultPath := tmpDir +

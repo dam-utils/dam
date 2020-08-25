@@ -19,8 +19,8 @@ import (
 
 	"dam/cmd"
 	"dam/driver/config"
-	"dam/driver/containerd"
 	"dam/driver/db"
+	"dam/driver/engine"
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 
 	config.Prepare()
 	db.Init()
-	containerd.Init()
+	engine.Init()
 
 	cmd.Execute()
 

@@ -15,7 +15,7 @@
 package registry
 
 import (
-	"dam/driver/containerd"
+	"dam/driver/engine"
 	"strings"
 
 	"dam/config"
@@ -43,7 +43,7 @@ func CheckRepository(repo *storage.Repo) {
 
 func GetAppNamesByMask(repo *storage.Repo, mask string) *[]string {
 	if repo.Id == 1 {
-		return containerd.VDriver.
+		return engine.VDriver.
 			SearchAppNames(mask)
 	}
 	names := registry_v2.GetAppNames(repo)

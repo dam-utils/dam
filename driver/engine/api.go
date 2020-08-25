@@ -12,20 +12,23 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package containerd
+package engine
 
-import "dam/driver/db/storage"
+import (
+	"dam/config"
+	"dam/driver/engine/docker"
+	"dam/driver/logger"
+)
 
-type VProvider interface {
-	SearchAppNames(mask string) *[]string
-	LoadImage(file string)
-	Pull(tag string, repo *storage.Repo)
-	GetImageID(tag string) string
-	GetImageLabel(tag, labelName string) string
-	SaveImage(imageId, filePath string)
-	ContainerCreate(image string, name string) string
-	CopyFromContainer(containerID, sourcePath, destPath string)
-	ContainerRemove(id string)
-	Build(imageTag, projectDir string)
+var (
+	VDriver VProvider
+)
+
+func Init() {
+	switch config.VIRTUALIZATION_TYPE {
+	case "docker":
+		VDriver = docker.NewProvider()
+	default:
+		logger.Fatal("Config option VIRTUALIZATION_TYPE='%s' not valid. DB type is bad", config.VIRTUALIZATION_TYPE)
+	}
 }
-

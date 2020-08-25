@@ -18,7 +18,7 @@ import (
 	"os"
 
 	"dam/config"
-	"dam/driver/containerd"
+	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/filesystem/manifest"
 	"dam/driver/flag"
@@ -48,8 +48,8 @@ func Save(appFullName string) {
 		filePath = SaveFlags.FilePath
 
 		logger.Debug("Saving archive ...")
-		imageId := containerd.VDriver.GetImageID(appFullName)
-		containerd.VDriver.SaveImage(imageId, filePath)
+		imageId := engine.VDriver.GetImageID(appFullName)
+		engine.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
 		modifyManifest(filePath, appFullName)
@@ -61,8 +61,8 @@ func Save(appFullName string) {
 		resultPrefixPath = baseName + config.SAVE_OPTIONAL_SEPARATOR
 
 		logger.Debug("Saving archive ...")
-		imageId := containerd.VDriver.GetImageID(appFullName)
-		containerd.VDriver.SaveImage(imageId, filePath)
+		imageId := engine.VDriver.GetImageID(appFullName)
+		engine.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
 		modifyManifest(filePath, appFullName)

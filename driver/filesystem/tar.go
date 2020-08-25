@@ -118,6 +118,9 @@ func Gunzip(source string) string {
 	defer writer.Close()
 
 	_, err = io.Copy(writer, gr)
+	if err != nil {
+		logger.Fatal("Cannot copy archive from '%s' to '%s' with error: '%s'", source, target, err)
+	}
 
 	return target
 }

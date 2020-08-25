@@ -15,7 +15,7 @@
 package run
 
 import (
-	"dam/driver/containerd"
+	"dam/driver/engine"
 	"os"
 	"path/filepath"
 	"strings"
@@ -49,9 +49,9 @@ func RemoveApp(name string) {
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
-	containerId := containerd.VDriver.ContainerCreate(tag, "")
-	containerd.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
-	containerd.VDriver.ContainerRemove(containerId)
+	containerId := engine.VDriver.ContainerCreate(tag, "")
+	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
+	engine.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Uninstalling image ...")
 	uninstallMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
