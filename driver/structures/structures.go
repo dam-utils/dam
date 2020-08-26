@@ -12,24 +12,37 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package db
+package structures
 
-import "dam/driver/structures"
+import "dam/config"
 
-type RProvider interface {
-	GetRepos() []*structures.Repo
-	GetRepoById(id int) *structures.Repo
-	GetDefaultRepo() *structures.Repo
-	NewRepo(repo *structures.Repo)
-	ModifyRepo(repo *structures.Repo)
-	RemoveRepoById(id int)
-	GetRepoIdByName(name *string) int
-	ClearRepos()
+type Repo struct {
+	Id int
+	Default bool
+	Name string
+	Server string
+	Username string
+	Password string
 }
 
-type AProvider interface {
-	GetApps() []*structures.App
-	NewApp(app *structures.App)
-	GetAppById(id int) *structures.App
-	ExistFamily(family string) bool
+var OfficialRepo Repo
+
+func init(){
+	OfficialRepo.Id = 1
+	OfficialRepo.Name = config.OFFICIAL_REGISTRY_NAME
+	OfficialRepo.Default = true
+	OfficialRepo.Server=config.OFFICIAL_REGISTRY_URL
+	OfficialRepo.Username=""
+	OfficialRepo.Password=""
 }
+
+type App struct {
+	Id int
+	DockerID string
+	ImageName string
+	ImageVersion string
+	RepoID int
+	MultiVersion bool
+	Family string
+}
+

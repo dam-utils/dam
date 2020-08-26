@@ -16,6 +16,7 @@ package run
 
 import (
 	"bufio"
+	"dam/driver/structures"
 	"fmt"
 	"os"
 	"strings"
@@ -34,19 +35,10 @@ type ImportSettings struct {
 
 var ImportFlags = new(ImportSettings)
 
-type ImportApp struct {
-	Name    string
-	Version string
-}
-
-func (a *ImportApp) CurrentName() string {
-	return a.Name + ":" + a.Version
-}
-
 func Import(arg string) {
-	var appSkipList []*ImportApp
-	var appDeleteList []*ImportApp
-	var appInstallList []*ImportApp
+	var appSkipList []*structures.ImportApp
+	var appDeleteList []*structures.ImportApp
+	var appInstallList []*structures.ImportApp
 
 	flag.ValidateFilePath(arg)
 	logger.Debug("Flags validated with success")
@@ -92,11 +84,11 @@ func Import(arg string) {
 	logger.Success("Import was successful.")
 }
 
-func getListFromApps(apps []*db.App) []*ImportApp {
-	result := make([]*ImportApp, 0)
+func getListFromApps(apps []*structures.App) []*structures.ImportApp {
+	result := make([]*structures.ImportApp, 0)
 
 	for _, a := range apps {
-		result = append(result, &ImportApp{
+		result = append(result, &structures.ImportApp{
 			Name:    a.ImageName,
 			Version: a.ImageVersion,
 		})
@@ -105,8 +97,8 @@ func getListFromApps(apps []*db.App) []*ImportApp {
 	return result
 }
 
-func appsFromFile(path string) []*ImportApp {
-	result := make([]*ImportApp, 0)
+func appsFromFile(path string) []*structures.ImportApp {
+	result := make([]*structures.ImportApp, 0)
 
 	f, err := os.Open(path)
 	defer func() {
@@ -127,19 +119,19 @@ func appsFromFile(path string) []*ImportApp {
 	return result
 }
 
-func str2importApp(str string) *ImportApp {
+func str2importApp(str string) *structures.ImportApp {
 	strArray := strings.Split(str, ":")
 	if len(strArray) != 2 {
 		logger.Fatal("Import file is bad. String '%s' not equal '<app>:<version>'", str)
 	}
 
-	return &ImportApp{
+	return &structures.ImportApp{
 		Name:    strArray[0],
 		Version: strArray[1],
 	}
 }
 
-func matchLists(allApps, importApps []*ImportApp) (appDeleteList, appInstallList, appSkipList []*ImportApp) {
+func matchLists(allApps, importApps []*structures.ImportApp) (appDeleteList, appInstallList, appSkipList []*structures.ImportApp) {
 	for _, iApp := range importApps {
 		var flagExist = false
 		for _, aApp := range allApps {

@@ -15,27 +15,32 @@
 package apps
 
 import (
-	"dam/driver/db"
+	"dam/driver/structures"
 )
 
 type provider struct {
 	//GetApps() []*storage.App
 	//NewApp(app *storage.App)
 	//GetAppById(id int) *storage.App
+	//ExistFamily(family string) bool
 }
 
 func NewProvider() *provider {
 	return &provider{}
 }
 
-func (p *provider) GetApps() []*db.App {
+func (p *provider) GetApps() []*structures.App {
 	return GetApps()
 }
 
-func (p *provider) NewApp(app *db.App) {
+func (p *provider) NewApp(app *structures.App) {
 	NewApp(app)
 }
 
-func (p *provider) GetAppById(id int) *db.App {
+func (p *provider) GetAppById(id int) *structures.App {
 	return GetAppById(id)
+}
+
+func (p *provider) ExistFamily(family string) bool {
+	return ExistFamily(family)
 }

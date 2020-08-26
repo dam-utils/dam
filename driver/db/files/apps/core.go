@@ -16,7 +16,7 @@ package apps
 
 import (
 	"bufio"
-	"dam/driver/db"
+	"dam/driver/structures"
 
 	"os"
 	"strconv"
@@ -29,8 +29,8 @@ import (
 )
 
 
-func GetApps() []*db.App {
-	var apps []*db.App
+func GetApps() []*structures.App {
+	var apps []*structures.App
 
 	f, err := os.Open(config.FILES_DB_APPS)
 	defer func() {
@@ -50,7 +50,7 @@ func GetApps() []*db.App {
 	return apps
 }
 
-func GetAppById(id int) *db.App {
+func GetAppById(id int) *structures.App {
 	apps := GetApps()
 	for _, app := range apps {
 		if app.Id == id {
@@ -60,8 +60,8 @@ func GetAppById(id int) *db.App {
 	return nil
 }
 
-func str2app(str string) *db.App {
-	app := new(db.App)
+func str2app(str string) *structures.App {
+	app := new(structures.App)
 	strArray := strings.Split(str, config.FILES_DB_SEPARATOR)
 
 	if validate.CheckAppID(strArray[0]) != nil {
@@ -82,7 +82,7 @@ func str2app(str string) *db.App {
 	if validate.CheckBool(strArray[5]) != nil {
 		logger.Fatal("Internal error. Cannot parse the multiversion flag in line '%s'", str)
 	}
-	if validate.CheckBool(strArray[6]) != nil {
+	if validate.CheckLabel(strArray[6]) != nil {
 		logger.Fatal("Internal error. Cannot parse the family flag in line '%s'", str)
 	}
 
@@ -98,7 +98,7 @@ func str2app(str string) *db.App {
 	return app
 }
 
-func NewApp(app *db.App) {
+func NewApp(app *structures.App) {
 	apps := GetApps()
 	app.Id = getNewAppID(apps)
 
@@ -106,7 +106,7 @@ func NewApp(app *db.App) {
 	saveApps(newApps)
 }
 
-func getNewAppID(apps []*db.App) int {
+func getNewAppID(apps []*structures.App) int {
 	res := 0
 
 	if len(apps) == 0 {
@@ -120,7 +120,7 @@ func getNewAppID(apps []*db.App) int {
 	return res + 1
 }
 
-func saveApps(apps []*db.App) {
+func saveApps(apps []*structures.App) {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
@@ -151,7 +151,7 @@ func saveApps(apps []*db.App) {
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_APPS)
 }
 
-func app2str(app *db.App) *string {
+func app2str(app *structures.App) *string {
 	var appStr string
 	sep := config.FILES_DB_SEPARATOR
 
@@ -162,7 +162,8 @@ func app2str(app *db.App) *string {
 
 	fields := []string{
 		strconv.Itoa(app.Id),
-		app.DockerID, app.ImageName,
+		app.DockerID,
+		app.ImageName,
 		app.ImageVersion,
 		strconv.Itoa(app.RepoID),
 		multiVers,
@@ -177,4 +178,14 @@ func app2str(app *db.App) *string {
 		}
 	}
 	return &appStr
+}
+
+func ExistFamily(family string) bool {
+	apps := GetApps()
+	for _, a := range apps {
+		if a.Family == family {
+			return true
+		}
+	}
+	return false
 }

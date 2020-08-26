@@ -15,8 +15,8 @@
 package registry
 
 import (
-	"dam/driver/db"
 	"dam/driver/engine"
+	"dam/driver/structures"
 	"strings"
 
 	"dam/config"
@@ -25,7 +25,7 @@ import (
 	registry_v2 "dam/driver/registry/v2"
 )
 
-func CheckRepository(repo *db.Repo) {
+func CheckRepository(repo *structures.Repo) {
 	if repo.Id ==1 {
 		return
 	}
@@ -41,7 +41,7 @@ func CheckRepository(repo *db.Repo) {
 	logger.Fatal("Cannot connect to default registry '%s'", repo.Name)
 }
 
-func GetAppNamesByMask(repo *db.Repo, mask string) *[]string {
+func GetAppNamesByMask(repo *structures.Repo, mask string) *[]string {
 	if repo.Id == 1 {
 		return engine.VDriver.
 			SearchAppNames(mask)
@@ -60,7 +60,7 @@ func filterAppNamesByMask(names *[]string, mask string) *[]string {
 	return &res
 }
 
-func GetVersions(repo *db.Repo, appName string) *[]string {
+func GetVersions(repo *structures.Repo, appName string) *[]string {
 	var versions *[]string
 	if repo.Id == 1 {
 		versions = registry_official.GetAppVersions(appName)

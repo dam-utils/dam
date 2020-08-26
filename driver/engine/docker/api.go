@@ -15,7 +15,7 @@
 package docker
 
 import (
-	"dam/driver/db"
+	"dam/driver/structures"
 )
 
 type provider struct {
@@ -43,7 +43,7 @@ func (p *provider) LoadImage(file string) {
 	LoadImage(file)
 }
 
-func (p *provider) Pull(tag string, repo *db.Repo) {
+func (p *provider) Pull(tag string, repo *structures.Repo) {
 	Pull(tag, repo)
 }
 

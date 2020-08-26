@@ -16,7 +16,7 @@ package docker
 
 import (
 	"context"
-	"dam/driver/db"
+	"dam/driver/structures"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -69,7 +69,7 @@ func LoadImage(file string) {
 	}
 }
 
-func Pull(tag string, repo *db.Repo) {
+func Pull(tag string, repo *structures.Repo) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {

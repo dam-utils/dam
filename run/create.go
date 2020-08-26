@@ -24,6 +24,7 @@ import (
 	"dam/driver/filesystem/project"
 	"dam/driver/flag"
 	"dam/driver/logger"
+	"dam/driver/structures"
 )
 
 type CreateAppSettings struct {
@@ -70,7 +71,7 @@ func getImageTag(envs map[string]string) string {
 		logger.Fatal("Internal error. Not found default repo")
 	}
 
-	if r.Id == db.OfficialRepo.Id {
+	if r.Id == structures.OfficialRepo.Id {
 		tag = envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
 	} else {
 		tag = r.Name+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]

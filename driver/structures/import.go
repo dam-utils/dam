@@ -12,37 +12,13 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package db
+package structures
 
-import "dam/config"
-
-type Repo struct {
-	Id int
-	Default bool
-	Name string
-	Server string
-	Username string
-	Password string
+type ImportApp struct {
+	Name    string
+	Version string
 }
 
-var OfficialRepo Repo
-
-func init(){
-	OfficialRepo.Id = 1
-	OfficialRepo.Name = config.OFFICIAL_REGISTRY_NAME
-	OfficialRepo.Default = true
-	OfficialRepo.Server=config.OFFICIAL_REGISTRY_URL
-	OfficialRepo.Username=""
-	OfficialRepo.Password=""
+func (a *ImportApp) CurrentName() string {
+	return a.Name + ":" + a.Version
 }
-
-type App struct {
-	Id int
-	DockerID string
-	ImageName string
-	ImageVersion string
-	RepoID int
-	MultiVersion bool
-	Family string
-}
-

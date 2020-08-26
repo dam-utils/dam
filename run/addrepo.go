@@ -18,6 +18,7 @@ import (
 	"dam/driver/db"
 	"dam/driver/flag"
 	"dam/driver/logger"
+	"dam/driver/structures"
 )
 
 type AddRepoSettings struct {
@@ -37,7 +38,7 @@ func AddRepo(){
 	flag.ValidateRepoPassword(AddRepoFlags.Password)
 	logger.Debug("Flags validated with success")
 
-	repo  := new(db.Repo)
+	repo  := new(structures.Repo)
 	repo.Default = AddRepoFlags.Default
 	repo.Name = AddRepoFlags.Name
 	repo.Server = AddRepoFlags.Server

@@ -16,6 +16,7 @@ package run
 
 import (
 	"dam/driver/engine"
+	"dam/driver/structures"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -77,13 +78,13 @@ func dockerPull(app string) string {
 	}
 
 	var tag string
-	if defRepo.Id == db.OfficialRepo.Id {
+	if defRepo.Id == structures.OfficialRepo.Id {
 		tag = app
 	} else {
 		tag = defRepo.Server + "/" + app
 	}
 
-	if defRepo.Id == db.OfficialRepo.Id {
+	if defRepo.Id == structures.OfficialRepo.Id {
 		tag = app
 	}
 
@@ -99,12 +100,20 @@ func saveInstallAppToDB(tag string) {
 	}
 	_, imageName, imageVersion := internal.SplitTag(tag)
 
-	var app db.App
+	var app structures.App
 	app.RepoID = repo.Id
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
-	app.Family = engine.VDriver.GetImageLabel(tag, config.APP_FAMILY_ENV)
+	imageFamily := engine.VDriver.GetImageLabel(tag, config.APP_FAMILY_ENV)
+	if imageFamily == "" {
+		imageFamily = imageName
+	}
+	app.Family = imageFamily
+
+	if db.ADriver.ExistFamily(app.Family) {
+		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", app.Family )
+	}
 
 	db.ADriver.NewApp(&app)
 }

@@ -15,6 +15,7 @@
 package decorate
 
 import (
+	"dam/driver/structures"
 	"fmt"
 	"strconv"
 
@@ -64,7 +65,7 @@ func PrintReposList(){
 	}
 }
 
-func prepareReposColumnSize(repos []*db.Repo){
+func prepareReposColumnSize(repos []*structures.Repo){
 	for _, repo := range repos {
 		if param := checkIntFieldSize(repo.Id); param > defRepoColumnSize["Num"] {
 			defRepoColumnSize["Num"] = param
@@ -105,7 +106,7 @@ func printReposLineSeparator(fieldSize int) {
 	fmt.Println()
 }
 
-func printRepo(repo *db.Repo, limitSize int) {
+func printRepo(repo *structures.Repo, limitSize int) {
 	printField(strconv.Itoa(repo.Id), limitSize, defRepoColumnSize["Num"])
 	fmt.Print(ColumnSeparator)
 	printField(bool2Str(repo.Default), limitSize, defRepoColumnSize["Def"])

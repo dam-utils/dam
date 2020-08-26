@@ -195,3 +195,16 @@ func CheckBool(b string) error {
 
 	return nil
 }
+
+func CheckLabel(b string) error {
+	regexPattern := "[a-z0-9]"
+	matched, err := regexp.Match(regexPattern, []byte(b))
+	if err != nil {
+		return fmt.Errorf("Cannot match regex patern '%s' with label '%s'", regexPattern, b)
+	}
+	if !matched {
+		return fmt.Errorf("Label '%s' is bad. It must have only lowercase letters and numbers", b)
+	}
+
+	return nil
+}

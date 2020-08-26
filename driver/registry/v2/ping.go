@@ -15,7 +15,7 @@
 package registry_v2
 
 import (
-	"dam/driver/db"
+	"dam/driver/structures"
 	"net/http"
 	"time"
 
@@ -24,7 +24,7 @@ import (
 
 var SessionURL string
 
-func CheckRepo(repo *db.Repo, protocol string) error {
+func CheckRepo(repo *structures.Repo, protocol string) error {
 	tr := &http.Transport{
 		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
 		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,

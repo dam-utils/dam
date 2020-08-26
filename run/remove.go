@@ -16,6 +16,7 @@ package run
 
 import (
 	"dam/driver/engine"
+	"dam/driver/structures"
 	"os"
 	"path/filepath"
 	"strings"
@@ -65,7 +66,7 @@ func RemoveApp(name string) {
 	logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)
 }
 
-func getAppIdByName(name string) *db.App {
+func getAppIdByName(name string) *structures.App {
 	id := -1
 
 	apps := db.ADriver.GetApps()
@@ -89,10 +90,10 @@ func getAppIdByName(name string) *db.App {
 	return app
 }
 
-func getTagFormApp(app *db.App) string {
+func getTagFormApp(app *structures.App) string {
 	var tag strings.Builder
 
-	if app.RepoID != db.OfficialRepo.Id {
+	if app.RepoID != structures.OfficialRepo.Id {
 		repo := db.RDriver.GetRepoById(app.RepoID)
 		if repo == nil {
 			logger.Fatal("Internal error. Cannot get repo for ID '%v'", app.RepoID)

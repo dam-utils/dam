@@ -16,7 +16,7 @@ package repos
 
 import (
 	"bufio"
-	"dam/driver/db"
+	"dam/driver/structures"
 	"encoding/base64"
 	"os"
 	"strconv"
@@ -28,7 +28,7 @@ import (
 	"dam/driver/validate"
 )
 
-func NewRepo(repo *db.Repo) {
+func NewRepo(repo *structures.Repo) {
 	repos := GetRepos()
 	//preparedRepo := preparePassword(repo)
 	repo.Id = getNewRepoID(repos)
@@ -36,7 +36,7 @@ func NewRepo(repo *db.Repo) {
 		repo.Default = true
 		repo.Id = 2
 	}
-	var preparedRepos []*db.Repo
+	var preparedRepos []*structures.Repo
 	if repo.Default {
 		preparedRepos = cleanDefaults(repos)
 	} else {
@@ -46,8 +46,8 @@ func NewRepo(repo *db.Repo) {
 	saveRepos(newRepos)
 }
 
-func cleanDefaults(repos []*db.Repo) []*db.Repo {
-	var newRepo []*db.Repo
+func cleanDefaults(repos []*structures.Repo) []*structures.Repo {
+	var newRepo []*structures.Repo
 	for _, repo := range repos {
 		repo.Default = false
 		newRepo = append(newRepo, repo)
@@ -55,7 +55,7 @@ func cleanDefaults(repos []*db.Repo) []*db.Repo {
 	return newRepo
 }
 
-func ModifyRepo(mRepo *db.Repo) {
+func ModifyRepo(mRepo *structures.Repo) {
 	cleanRepos := cleanReposDefault(GetRepos())
 	defRepo := GetDefaultRepo()
 
@@ -77,7 +77,7 @@ func ModifyRepo(mRepo *db.Repo) {
 		}
 	}
 
-	var newRepos []*db.Repo
+	var newRepos []*structures.Repo
 	for _, repo := range cleanRepos {
 		if repo.Id == defRepo.Id {
 			repo.Default = defRepo.Default
@@ -94,7 +94,7 @@ func ModifyRepo(mRepo *db.Repo) {
 	saveRepos(prepNewRepos)
 }
 
-func prepareClearRepos(repos []*db.Repo) []*db.Repo {
+func prepareClearRepos(repos []*structures.Repo) []*structures.Repo {
 	existingDefault := false
 	for _, repo := range repos {
 		if repo.Default {
@@ -109,8 +109,8 @@ func prepareClearRepos(repos []*db.Repo) []*db.Repo {
 	return repos
 }
 
-func cleanReposDefault(repos []*db.Repo) []*db.Repo {
-	var newRepos []*db.Repo
+func cleanReposDefault(repos []*structures.Repo) []*structures.Repo {
+	var newRepos []*structures.Repo
 
 	for _, repo := range repos {
 			repo.Default = false
@@ -119,7 +119,7 @@ func cleanReposDefault(repos []*db.Repo) []*db.Repo {
 	return newRepos
 }
 
-func repo2str(repo *db.Repo) *string {
+func repo2str(repo *structures.Repo) *string {
 	var def string
 	if repo.Default {
 		def = config.FILES_DB_BOOL_FLAG
@@ -141,7 +141,7 @@ func repo2str(repo *db.Repo) *string {
 	return &repoStr
 }
 
-func saveRepos(repos []*db.Repo) {
+func saveRepos(repos []*structures.Repo) {
 	newRepos := preparePasswordRepos(repos)
 
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
@@ -201,9 +201,9 @@ func ClearRepos() {
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 }
 
-func GetRepos() []*db.Repo {
+func GetRepos() []*structures.Repo {
 	// Ex: 2||auto_repo|packages.test.com|admin|YWRtaW4K|
-	var repos []*db.Repo
+	var repos []*structures.Repo
 	f, err := os.Open(config.FILES_DB_REPOS)
 	defer func() {
 		if f != nil {
@@ -221,7 +221,7 @@ func GetRepos() []*db.Repo {
 		repos = append(repos, str2Repo(NewLine))
 	}
 
-	offRepo := db.OfficialRepo
+	offRepo := structures.OfficialRepo
 	if len(repos) == 0 {
 		repos = append(repos, &offRepo)
 		saveRepos(repos)
@@ -232,7 +232,7 @@ func GetRepos() []*db.Repo {
 	return repos
 }
 
-func GetRepoById(id int) *db.Repo {
+func GetRepoById(id int) *structures.Repo {
 	for _, repo := range GetRepos() {
 		if repo.Id == id {
 			return repo
@@ -241,7 +241,7 @@ func GetRepoById(id int) *db.Repo {
 	return nil
 }
 
-func GetDefaultRepo() *db.Repo {
+func GetDefaultRepo() *structures.Repo {
 	for _, repo := range GetRepos() {
 		if repo.Default {
 			return repo
@@ -251,7 +251,7 @@ func GetDefaultRepo() *db.Repo {
 }
 
 func RemoveRepoById(id int) {
-	var newRepos []*db.Repo
+	var newRepos []*structures.Repo
 
 	if id == 1 {
 		logger.Fatal("Cannot remove official Repository. This is base repository in DB")
@@ -282,7 +282,7 @@ func GetRepoIdByName(name *string) int {
 	return -1
 }
 
-func prepareDefaultInRepos(repos []*db.Repo) []*db.Repo {
+func prepareDefaultInRepos(repos []*structures.Repo) []*structures.Repo {
 	def := false
 	for _, repo := range repos {
 		if repo.Default {
@@ -296,7 +296,7 @@ func prepareDefaultInRepos(repos []*db.Repo) []*db.Repo {
 	return repos
 }
 
-func getNewRepoID(repos []*db.Repo) int {
+func getNewRepoID(repos []*structures.Repo) int {
 	Res := 0
 
 	if len(repos) == 0 {
@@ -310,8 +310,8 @@ func getNewRepoID(repos []*db.Repo) int {
 	return Res +1
 }
 
-func str2Repo(str string) *db.Repo {
-	repoArray := new(db.Repo)
+func str2Repo(str string) *structures.Repo {
+	repoArray := new(structures.Repo)
 	strRepo := strings.Split(str, config.FILES_DB_SEPARATOR)
 
 	pass, err := base64ToStr(strRepo[5])
@@ -351,8 +351,8 @@ func str2Repo(str string) *db.Repo {
 	return repoArray
 }
 
-func preparePasswordRepos(repos []*db.Repo) []*db.Repo {
-	var newRepos []*db.Repo
+func preparePasswordRepos(repos []*structures.Repo) []*structures.Repo {
+	var newRepos []*structures.Repo
 
 	for _, repo := range repos {
 		repo.Password = strToBase64(repo.Password)
@@ -370,7 +370,7 @@ func base64ToStr(str string) (string, error) {
 	return string(sDec), err
 }
 
-func internalValidatingReposDB(repos []*db.Repo) {
+func internalValidatingReposDB(repos []*structures.Repo) {
 	defRepo := false
 	for _, repo := range repos{
 		if repo.Default {
