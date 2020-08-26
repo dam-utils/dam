@@ -52,7 +52,6 @@ func IsExistDir(path string) bool {
 func IsExistFile(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
-		logger.Debug("Cannot check file '%s' with error: %s", path, err)
 		return false
 	}
 	return !info.IsDir()

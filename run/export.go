@@ -18,8 +18,8 @@ import (
 	"os"
 
 	"dam/config"
-	"dam/driver/engine"
 	"dam/driver/db"
+	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
@@ -35,23 +35,25 @@ func Export(arg string) {
 	flag.ValidateFilePath(arg)
 	logger.Debug("Flags validated with success")
 
+	absPath := fs.GetAbsolutePath(arg)
+
 	if !ExportFlags.All {
-		exportAppsListToFile(arg)
-		logger.Success("Export app list to file '%s'", arg)
+		exportAppsListToFile(absPath)
+		logger.Success("Export app list to file '%s'", absPath)
 	} else {
-		tmpDir := arg + "_tmp"
+		tmpDir := absPath + "_tmp"
 		fs.MkDir(tmpDir)
 		defer fs.Remove(tmpDir)
 
 		logger.Debug("Exporting images file to tmp dir ...")
-		exportAppsListToFile(arg+string(os.PathSeparator)+config.EXPORT_APPS_FILE_NAME)
+		exportAppsListToFile(tmpDir+string(os.PathSeparator)+config.EXPORT_APPS_FILE_NAME)
 		logger.Debug("Exporting docker images to tmp dir ...")
 		exportImagesToDir(tmpDir)
 
 		logger.Debug("Creating general apps archive ...")
-		fs.Gzip(tmpDir, arg, true)
+		fs.Gzip(tmpDir, absPath, true)
 
-		logger.Success("Export app list to apps archive '%s'", arg)
+		logger.Success("Export app list to apps archive '%s'", absPath)
 	}
 }
 

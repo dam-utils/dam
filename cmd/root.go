@@ -62,7 +62,7 @@ func init() {
 	rootCmd.AddCommand(saveCmd)
 
 	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	if debug {
+	//if debug {
 		logger.DebugMode = true
-	}
+	//}
 }
