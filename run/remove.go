@@ -63,6 +63,9 @@ func RemoveApp(name string) {
 	logger.Debug("Clearing tmp ...")
 	fs.Remove(tmpMeta)
 
+	logger.Debug("Removing app from DB ...")
+	db.ADriver.RemoveAppById(app.Id)
+
 	logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)
 }
 

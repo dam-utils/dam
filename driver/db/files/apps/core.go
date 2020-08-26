@@ -189,3 +189,19 @@ func ExistFamily(family string) bool {
 	}
 	return false
 }
+
+func RemoveAppById(id int) {
+	newApps := make([]*structures.App, 0)
+
+	apps := GetApps()
+	for _, a := range apps {
+		if a.Id != id {
+			newApps = append(newApps, a)
+		}
+	}
+	if len(newApps) < len(apps) {
+		saveApps(newApps)
+	} else {
+		logger.Fatal("Not found Id of the App in DB")
+	}
+}

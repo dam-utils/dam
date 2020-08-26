@@ -32,4 +32,5 @@ type AProvider interface {
 	NewApp(app *structures.App)
 	GetAppById(id int) *structures.App
 	ExistFamily(family string) bool
+	RemoveAppById(id int)
 }

@@ -23,6 +23,7 @@ type provider struct {
 	//NewApp(app *storage.App)
 	//GetAppById(id int) *storage.App
 	//ExistFamily(family string) bool
+	//RemoveAppById(id int)
 }
 
 func NewProvider() *provider {
@@ -43,4 +44,8 @@ func (p *provider) GetAppById(id int) *structures.App {
 
 func (p *provider) ExistFamily(family string) bool {
 	return ExistFamily(family)
+}
+
+func (p *provider) RemoveAppById(id int) {
+	RemoveAppById(id)
 }

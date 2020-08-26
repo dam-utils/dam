@@ -67,7 +67,7 @@ func InstallApp(appCurrentName string) {
 	fs.Remove(tmpMeta)
 
 	logger.Debug("Saving to DB ...")
-	saveInstallAppToDB(tag)
+	saveAppToDB(tag)
 	logger.Success("App '%s' was installed.", appCurrentName)
 }
 
@@ -93,7 +93,7 @@ func dockerPull(app string) string {
 	return tag
 }
 
-func saveInstallAppToDB(tag string) {
+func saveAppToDB(tag string) {
 	repo := db.RDriver.GetDefaultRepo()
 	if repo == nil {
 		logger.Fatal("Internal error. Not found default repo")
@@ -129,9 +129,9 @@ func getInstall(meta string) string {
 func getTagFromArchiveManifest(appCurrentName string) string {
 	//TODO read manifest without archive uncompressing
 	gzipFile := fs.Gunzip(appCurrentName)
-	//defer fs.Remove(gzipFile)
+	defer fs.Remove(gzipFile)
 	tarGzipDir := fs.Untar(gzipFile)
-	//defer fs.Remove(tarGzipDir)
+	defer fs.Remove(tarGzipDir)
 
 	manifestFile := tarGzipDir + string(filepath.Separator) + config.SAVE_MANIFEST_FILE
 
