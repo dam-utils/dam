@@ -12,7 +12,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package storage
+package db
 
 import "dam/config"
 
@@ -46,11 +46,3 @@ type App struct {
 	Family string
 }
 
-type ImportApp struct {
-	Name    string
-	Version string
-}
-
-func (a *ImportApp) CurrentName() string {
-	return a.Name + ":" + a.Version
-}

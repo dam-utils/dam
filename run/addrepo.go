@@ -16,7 +16,6 @@ package run
 
 import (
 	"dam/driver/db"
-	"dam/driver/db/storage"
 	"dam/driver/flag"
 	"dam/driver/logger"
 )
@@ -38,7 +37,7 @@ func AddRepo(){
 	flag.ValidateRepoPassword(AddRepoFlags.Password)
 	logger.Debug("Flags validated with success")
 
-	repo  := new(storage.Repo)
+	repo  := new(db.Repo)
 	repo.Default = AddRepoFlags.Default
 	repo.Name = AddRepoFlags.Name
 	repo.Server = AddRepoFlags.Server

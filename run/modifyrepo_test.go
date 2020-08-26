@@ -21,7 +21,6 @@ import (
 	"testing"
 
 	"dam/driver/db"
-	"dam/driver/db/storage"
 	"dam/run"
 )
 
@@ -42,7 +41,7 @@ func TestModifyRepoNameAndServer(t *testing.T) {
 	stdout := `1||official|https://registry-1.docker.io/|
 2|*|NewName|localhost:5000|
 `
-	db.RDriver.NewRepo(&storage.Repo{Id: 2, Default: true, Name: "test", Server: "test.com"})
+	db.RDriver.NewRepo(&db.Repo{Id: 2, Default: true, Name: "test", Server: "test.com"})
 	run.ModifyRepo("2")
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -69,7 +68,7 @@ func TestModifyRepoUsername(t *testing.T) {
 	stdout := `1||official|https://registry-1.docker.io/|
 2|*|NewName|localhost:5000|user
 `
-	db.RDriver.NewRepo(&storage.Repo{Id: 2, Default: true, Name: "test", Server: "test.com"})
+	db.RDriver.NewRepo(&db.Repo{Id: 2, Default: true, Name: "test", Server: "test.com"})
 	run.ModifyRepo("2")
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -96,7 +95,7 @@ func TestModifyRepoOneRepoToNotDefault(t *testing.T) {
 	stdout := `1|*|official|https://registry-1.docker.io/|
 2||test|localhost:5000|
 `
-	db.RDriver.NewRepo(&storage.Repo{Id: 1, Default: true, Name: "test", Server: "localhost:5000"})
+	db.RDriver.NewRepo(&db.Repo{Id: 1, Default: true, Name: "test", Server: "localhost:5000"})
 	run.ModifyRepo("2")
 	log.SetOutput(&buf)
 	run.ListRepos()
@@ -111,8 +110,8 @@ func TestModifyRepoSecondRepoToNotDefault(t *testing.T) {
 	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 
-	db.RDriver.NewRepo(&storage.Repo{Id: 1, Name: "test", Server: "localhost:5000"})
-	db.RDriver.NewRepo(&storage.Repo{Id: 2, Default: true, Name: "test2", Server: "localhost:5000"})
+	db.RDriver.NewRepo(&db.Repo{Id: 1, Name: "test", Server: "localhost:5000"})
+	db.RDriver.NewRepo(&db.Repo{Id: 2, Default: true, Name: "test2", Server: "localhost:5000"})
 
 	run.ModifyRepo("2")
 
@@ -144,7 +143,7 @@ func TestModifyRepoOfficialRepoToNotDefault(t *testing.T) {
 	db.RDriver.ClearRepos()
 	run.ListReposFlags.Raw = true
 
-	db.RDriver.NewRepo(&storage.Repo{Id: 1, Name: "test", Server: "localhost:5000"})
+	db.RDriver.NewRepo(&db.Repo{Id: 1, Name: "test", Server: "localhost:5000"})
 
 	run.ModifyRepoFlags.Default = false
 	run.ModifyRepoFlags.Name = ""

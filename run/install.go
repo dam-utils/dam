@@ -23,7 +23,6 @@ import (
 
 	"dam/config"
 	"dam/driver/db"
-	"dam/driver/db/storage"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
@@ -78,13 +77,13 @@ func dockerPull(app string) string {
 	}
 
 	var tag string
-	if defRepo.Id == storage.OfficialRepo.Id {
+	if defRepo.Id == db.OfficialRepo.Id {
 		tag = app
 	} else {
 		tag = defRepo.Server + "/" + app
 	}
 
-	if defRepo.Id == storage.OfficialRepo.Id {
+	if defRepo.Id == db.OfficialRepo.Id {
 		tag = app
 	}
 
@@ -100,7 +99,7 @@ func saveInstallAppToDB(tag string) {
 	}
 	_, imageName, imageVersion := internal.SplitTag(tag)
 
-	var app storage.App
+	var app db.App
 	app.RepoID = repo.Id
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName

@@ -16,9 +16,8 @@ package run
 
 import (
 	"dam/config"
-	"dam/driver/engine"
 	"dam/driver/db"
-	"dam/driver/db/storage"
+	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/filesystem/env"
 	"dam/driver/filesystem/meta"
@@ -71,7 +70,7 @@ func getImageTag(envs map[string]string) string {
 		logger.Fatal("Internal error. Not found default repo")
 	}
 
-	if r.Id == storage.OfficialRepo.Id {
+	if r.Id == db.OfficialRepo.Id {
 		tag = envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
 	} else {
 		tag = r.Name+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]

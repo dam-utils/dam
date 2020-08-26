@@ -14,7 +14,9 @@
 //
 package docker
 
-import "dam/driver/db/storage"
+import (
+	"dam/driver/db"
+)
 
 type provider struct {
 	//SearchAppNames(mask string) []*string
@@ -41,7 +43,7 @@ func (p *provider) LoadImage(file string) {
 	LoadImage(file)
 }
 
-func (p *provider) Pull(tag string, repo *storage.Repo) {
+func (p *provider) Pull(tag string, repo *db.Repo) {
 	Pull(tag, repo)
 }
 

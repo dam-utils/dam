@@ -14,21 +14,19 @@
 //
 package db
 
-import "dam/driver/db/storage"
-
 type RProvider interface {
-	GetRepos() []*storage.Repo
-	GetRepoById(id int) *storage.Repo
-	GetDefaultRepo() *storage.Repo
-	NewRepo(repo *storage.Repo)
-	ModifyRepo(repo *storage.Repo)
+	GetRepos() []*Repo
+	GetRepoById(id int) *Repo
+	GetDefaultRepo() *Repo
+	NewRepo(repo *Repo)
+	ModifyRepo(repo *Repo)
 	RemoveRepoById(id int)
 	GetRepoIdByName(name *string) int
 	ClearRepos()
 }
 
 type AProvider interface {
-	GetApps() []*storage.App
-	NewApp(app *storage.App)
-	GetAppById(id int) *storage.App
+	GetApps() []*App
+	NewApp(app *App)
+	GetAppById(id int) *App
 }

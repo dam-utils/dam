@@ -15,16 +15,16 @@
 package registry_v2
 
 import (
+	"dam/driver/db"
 	"encoding/json"
 	"net/http"
 	"time"
 
 	"dam/config"
-	"dam/driver/db/storage"
 	"dam/driver/logger"
 )
 
-func GetAppVersions(repo *storage.Repo, appName string) *[]string {
+func GetAppVersions(repo *db.Repo, appName string) *[]string {
 	tr := &http.Transport{
 		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
 		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,

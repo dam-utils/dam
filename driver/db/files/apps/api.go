@@ -14,7 +14,9 @@
 //
 package apps
 
-import "dam/driver/db/storage"
+import (
+	"dam/driver/db"
+)
 
 type provider struct {
 	//GetApps() []*storage.App
@@ -26,14 +28,14 @@ func NewProvider() *provider {
 	return &provider{}
 }
 
-func (p *provider) GetApps() []*storage.App {
+func (p *provider) GetApps() []*db.App {
 	return GetApps()
 }
 
-func (p *provider) NewApp(app *storage.App) {
+func (p *provider) NewApp(app *db.App) {
 	NewApp(app)
 }
 
-func (p *provider) GetAppById(id int) *storage.App {
+func (p *provider) GetAppById(id int) *db.App {
 	return GetAppById(id)
 }

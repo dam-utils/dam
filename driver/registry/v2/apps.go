@@ -15,13 +15,13 @@
 package registry_v2
 
 import (
+	"dam/driver/db"
 	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
 
 	"dam/config"
-	"dam/driver/db/storage"
 	"dam/driver/logger"
 )
 
@@ -29,7 +29,7 @@ type ResponseGetAppNames struct {
 	Repositories []string `json:"repositories"`
 }
 
-func GetAppNames(repo *storage.Repo) *[]string {
+func GetAppNames(repo *db.Repo) *[]string {
 	tr := &http.Transport{
 		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
 		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,

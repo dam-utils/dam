@@ -21,7 +21,6 @@ import (
 
 	"dam/config"
 	"dam/driver/db"
-	"dam/driver/db/storage"
 )
 
 var defAppColumnSize = map[string]int {
@@ -64,7 +63,7 @@ func PrintAppsList(){
 	}
 }
 
-func prepareAppsColumnSize(apps []*storage.App){
+func prepareAppsColumnSize(apps []*db.App){
 	for _, app := range apps {
 		if param := checkStrFieldSize(app.ImageName); param > defAppColumnSize["Name"] {
 			defAppColumnSize["Name"] = param
@@ -87,7 +86,7 @@ func printAppsTitle(fsize int) {
 	fmt.Println()
 }
 
-func getRepoNameByApp(app *storage.App) string {
+func getRepoNameByApp(app *db.App) string {
 	name := config.UNKNOWN_REPO_NAME
 	repo := db.RDriver.GetRepoById(app.RepoID)
 	if repo != nil {
@@ -110,7 +109,7 @@ func printAppsLineSeparator(fieldSize int) {
 	fmt.Println()
 }
 
-func printApp(app *storage.App, limitSize int) {
+func printApp(app *db.App, limitSize int) {
 	printField(app.ImageName, limitSize, defAppColumnSize["Name"])
 	fmt.Print(ColumnSeparator)
 	printField(app.ImageVersion, limitSize, defAppColumnSize["Version"])
@@ -119,7 +118,7 @@ func printApp(app *storage.App, limitSize int) {
 	fmt.Println()
 }
 
-func PrintAppList(title string, appSkipList []*storage.ImportApp, c string) {
+func PrintAppList(title string, appSkipList []*db.ImportApp, c string) {
 	if len(appSkipList) == 0 {
 		return
 	}

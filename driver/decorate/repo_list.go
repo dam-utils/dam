@@ -20,7 +20,6 @@ import (
 
 	"dam/config"
 	"dam/driver/db"
-	"dam/driver/db/storage"
 )
 
 func PrintRAWReposList() {
@@ -65,7 +64,7 @@ func PrintReposList(){
 	}
 }
 
-func prepareReposColumnSize(repos []*storage.Repo){
+func prepareReposColumnSize(repos []*db.Repo){
 	for _, repo := range repos {
 		if param := checkIntFieldSize(repo.Id); param > defRepoColumnSize["Num"] {
 			defRepoColumnSize["Num"] = param
@@ -106,7 +105,7 @@ func printReposLineSeparator(fieldSize int) {
 	fmt.Println()
 }
 
-func printRepo(repo *storage.Repo, limitSize int) {
+func printRepo(repo *db.Repo, limitSize int) {
 	printField(strconv.Itoa(repo.Id), limitSize, defRepoColumnSize["Num"])
 	fmt.Print(ColumnSeparator)
 	printField(bool2Str(repo.Default), limitSize, defRepoColumnSize["Def"])

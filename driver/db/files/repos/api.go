@@ -15,7 +15,7 @@
 package repos
 
 import (
-	"dam/driver/db/storage"
+	"dam/driver/db"
 )
 
 type provider struct {
@@ -33,24 +33,24 @@ func NewProvider() *provider {
 	return &provider{}
 }
 
-func (p *provider) GetRepos() []*storage.Repo {
+func (p *provider) GetRepos() []*db.Repo {
 	return GetRepos()
 }
 
-func (p *provider) GetRepoById(id int) *storage.Repo {
+func (p *provider) GetRepoById(id int) *db.Repo {
 	return GetRepoById(id)
 
 }
 
-func (p *provider) GetDefaultRepo() *storage.Repo {
+func (p *provider) GetDefaultRepo() *db.Repo {
 	return GetDefaultRepo()
 }
 
-func (p *provider) NewRepo(repo *storage.Repo) {
+func (p *provider) NewRepo(repo *db.Repo) {
 	NewRepo(repo)
 }
 
-func (p *provider) ModifyRepo(repo *storage.Repo) {
+func (p *provider) ModifyRepo(repo *db.Repo) {
 	ModifyRepo(repo)
 }
 

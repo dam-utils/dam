@@ -14,12 +14,14 @@
 //
 package engine
 
-import "dam/driver/db/storage"
+import (
+	"dam/driver/db"
+)
 
 type VProvider interface {
 	SearchAppNames(mask string) *[]string
 	LoadImage(file string)
-	Pull(tag string, repo *storage.Repo)
+	Pull(tag string, repo *db.Repo)
 	GetImageID(tag string) string
 	GetImageLabel(tag, labelName string) string
 	SaveImage(imageId, filePath string)

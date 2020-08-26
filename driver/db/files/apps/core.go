@@ -16,21 +16,21 @@ package apps
 
 import (
 	"bufio"
+	"dam/driver/db"
 
 	"os"
 	"strconv"
 	"strings"
 
 	"dam/config"
-	"dam/driver/db/storage"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/validate"
 )
 
 
-func GetApps() []*storage.App {
-	var apps []*storage.App
+func GetApps() []*db.App {
+	var apps []*db.App
 
 	f, err := os.Open(config.FILES_DB_APPS)
 	defer func() {
@@ -50,7 +50,7 @@ func GetApps() []*storage.App {
 	return apps
 }
 
-func GetAppById(id int) *storage.App {
+func GetAppById(id int) *db.App {
 	apps := GetApps()
 	for _, app := range apps {
 		if app.Id == id {
@@ -60,8 +60,8 @@ func GetAppById(id int) *storage.App {
 	return nil
 }
 
-func str2app(str string) *storage.App {
-	app := new(storage.App)
+func str2app(str string) *db.App {
+	app := new(db.App)
 	strArray := strings.Split(str, config.FILES_DB_SEPARATOR)
 
 	if validate.CheckAppID(strArray[0]) != nil {
@@ -98,7 +98,7 @@ func str2app(str string) *storage.App {
 	return app
 }
 
-func NewApp(app *storage.App) {
+func NewApp(app *db.App) {
 	apps := GetApps()
 	app.Id = getNewAppID(apps)
 
@@ -106,7 +106,7 @@ func NewApp(app *storage.App) {
 	saveApps(newApps)
 }
 
-func getNewAppID(apps []*storage.App) int {
+func getNewAppID(apps []*db.App) int {
 	res := 0
 
 	if len(apps) == 0 {
@@ -120,7 +120,7 @@ func getNewAppID(apps []*storage.App) int {
 	return res + 1
 }
 
-func saveApps(apps []*storage.App) {
+func saveApps(apps []*db.App) {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
@@ -151,7 +151,7 @@ func saveApps(apps []*storage.App) {
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_APPS)
 }
 
-func app2str(app *storage.App) *string {
+func app2str(app *db.App) *string {
 	var appStr string
 	sep := config.FILES_DB_SEPARATOR
 
