@@ -16,16 +16,20 @@ package run
 
 import (
 	"bufio"
-	"dam/driver/structures"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
+	"dam/driver/engine/docker"
+	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/logger/color"
+	"dam/driver/structures"
 )
 
 type ImportSettings struct {
@@ -36,6 +40,8 @@ type ImportSettings struct {
 var ImportFlags = new(ImportSettings)
 
 func Import(arg string) {
+	var appImportList []*structures.ImportApp
+
 	var appSkipList []*structures.ImportApp
 	var appDeleteList []*structures.ImportApp
 	var appInstallList []*structures.ImportApp
@@ -46,8 +52,16 @@ func Import(arg string) {
 	logger.Debug("Getting appAllList ...")
 	appAllList := getListFromApps(db.ADriver.GetApps())
 
-	logger.Debug("Getting appImportList ...")
-	appImportList := appsFromFile(arg)
+	if fs.IsTar(arg) {
+		logger.Debug("Preparing app images from archive ...")
+		appImportList = loadAppsFromArchive(arg)
+	} else {
+		logger.Debug("Getting the import list of apps ...")
+		appImportList = appsFromFile(arg)
+		loadAppFromRegistry(appImportList)
+	}
+
+	validateExistingImages(appImportList)
 
 	logger.Debug("Preparing change list ...")
 	if ImportFlags.Restore {
@@ -82,6 +96,75 @@ func Import(arg string) {
 	}
 
 	logger.Success("Import was successful.")
+}
+
+func validateExistingImages(apps []*structures.ImportApp) {
+	getPrefixRepo()
+	for _, a := range apps {
+		_ = docker.GetImageID(getPrefixRepo()+a.CurrentName())
+	}
+}
+
+func loadAppFromRegistry(apps []*structures.ImportApp) {
+	repo := db.RDriver.GetDefaultRepo()
+	for _, a := range apps {
+		docker.Pull(getPrefixRepo()+a.CurrentName(), repo)
+	}
+}
+
+func getPrefixRepo() string {
+	var prefixRepo string
+	repo := db.RDriver.GetDefaultRepo()
+	if repo.Id != structures.OfficialRepo.Id {
+		prefixRepo = repo.Name + "/"
+	}
+	return prefixRepo
+}
+
+func loadAppsFromArchive(arch string) []*structures.ImportApp {
+	tmpDir := fs.Untar(arch)
+	defer fs.Remove(tmpDir)
+
+	appList := getAppFilesList(tmpDir)
+	for _, a := range appList {
+		validateCheckSumArch(a)
+		docker.LoadImage(a)
+	}
+
+	apps := appsFromFile(tmpDir+string(filepath.Separator)+config.EXPORT_APPS_FILE_NAME)
+
+	return apps
+}
+
+func getAppFilesList(tmpDir string) []string {
+	resultFiles := make([]string,0)
+
+	for _, f := range fs.Ls(tmpDir) {
+		if strings.HasSuffix(f, config.SAVE_FILE_POSTFIX) {
+			resultFiles = append(resultFiles, f)
+		}
+	}
+
+	return resultFiles
+}
+
+func validateCheckSumArch(appFile string) {
+	hash := fs.HashFileCRC32(appFile)
+	size := fs.FileSize(appFile)
+
+	result1 := strings.TrimRight(appFile, config.SAVE_FILE_POSTFIX)
+	arrWithSize := strings.Split(result1, config.SAVE_FILE_SEPARATOR)
+	fileSize := arrWithSize[len(arrWithSize)-1]
+	if fileSize != size {
+		logger.Fatal("File size '%s' not equal size '%s' in file name '%s'", size, fileSize, appFile)
+	}
+	result2 := strings.TrimRight(result1, fileSize)
+	result3 := strings.TrimRight(result2, config.SAVE_FILE_SEPARATOR)
+	arrWithHash := strings.Split(result3, config.SAVE_OPTIONAL_SEPARATOR)
+	fileHash := arrWithHash[len(arrWithHash)-1]
+	if fileHash != hash {
+		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", hash, fileHash, appFile)
+	}
 }
 
 func getListFromApps(apps []*structures.App) []*structures.ImportApp {

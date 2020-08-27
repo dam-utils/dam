@@ -16,17 +16,16 @@ package filesystem
 
 import (
 	"bytes"
-	"dam/config"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
 
+	"dam/config"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/pkg/system"
@@ -55,21 +54,6 @@ func IsExistFile(path string) bool {
 		return false
 	}
 	return !info.IsDir()
-}
-
-func GetBaseName(path string) string {
-	return filepath.Base(path)
-}
-
-func GetFileList(path string, agg []string) []string {
-	if IsExistDir(path) {
-		for _, p := range Ls(path) {
-			return append(agg, GetFileList(p, agg)...)
-		}
-	} else {
-		return append(agg, path)
-	}
-	return agg
 }
 
 func Ls(dir string) []string {
@@ -104,18 +88,6 @@ func MoveFile(oldLocation, newLocation string) {
 	err := os.Rename(oldLocation, newLocation)
 	if err != nil {
 		logger.Fatal("Cannot move file '%s' to '%s' with error: %s", oldLocation, newLocation, err)
-	}
-}
-
-func CopyFile(sourceFile, destFile string) {
-	input, err := ioutil.ReadFile(sourceFile)
-	if err != nil {
-		logger.Fatal("Cannot read file '%s' with error: %s", sourceFile, err)
-	}
-
-	err = ioutil.WriteFile(destFile, input, 0644)
-	if err != nil {
-		logger.Fatal("Cannot write to tmp file '%s' with error: %s", destFile, err)
 	}
 }
 
@@ -210,9 +182,31 @@ func FileSize(filePath string) string {
 	return strconv.FormatInt(fi.Size(), 10)
 }
 
-func EraceDataCreation(path string) {
+func EraseDataCreation(path string) {
 	// https://github.com/moby/moby/blob/e9b4655bc98563602d961c72fc62cb20cc143515/image/tarexport/save.go#L187
 	if err := system.Chtimes(path, time.Unix(0, 0), time.Unix(0, 0)); err != nil {
 		logger.Fatal("Cannot erase metadata for manifest file with error: %s", err)
 	}
+}
+
+func IsTar(path string) bool {
+	f, err := os.Open(path)
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open file '%s' with error: %s", path, err)
+	}
+
+	var header [2]byte
+	_, err = io.ReadFull(f, header[:])
+	if err != nil {
+		logger.Fatal("Cannot read two first bytes from file '%s' with error: %s", path, err)
+	}
+
+	return  header[0] == 47 && header[1] == 97
+	// gzip
+	// return  header[0] == 31 && header[1] == 139
 }

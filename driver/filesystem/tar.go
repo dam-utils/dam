@@ -78,7 +78,7 @@ func Untar(source string) string {
 				logger.Fatal("Cannot sync file '%s' with error: %s", target, err)
 			}
 
-			EraceDataCreation(target)
+			EraseDataCreation(target)
 			err = f.Close()
 			if err != nil {
 				logger.Fatal("Cannot close file '%s' with error: %s", target, err)
