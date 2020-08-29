@@ -30,7 +30,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
-func loadImage(file string) {
+func (p *provider) LoadImage(file string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -67,7 +67,7 @@ func loadImage(file string) {
 	}
 }
 
-func pull(tag string, repo *structures.Repo) {
+func (p *provider) Pull(tag string, repo *structures.Repo) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -110,7 +110,7 @@ func pull(tag string, repo *structures.Repo) {
 }
 
 // TODO refactoring
-func getImageID(tag string) string {
+func (p *provider) GetImageID(tag string) string {
 	imageSum := internal.GetImagesSum()
 
 	for _, img := range imageSum {
@@ -124,7 +124,7 @@ func getImageID(tag string) string {
 	return ""
 }
 
-func images() *[]string {
+func (p *provider) Images() *[]string {
 	result := make([]string, 0)
 	imageSum := internal.GetImagesSum()
 
@@ -138,7 +138,7 @@ func images() *[]string {
 }
 
 // TODO refactoring
-func getImageLabel(tag, labelName string) string {
+func (p *provider) GetImageLabel(tag, labelName string) string {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -171,7 +171,7 @@ func getImageLabel(tag, labelName string) string {
 	return ""
 }
 
-func saveImage(imageId, filePath string) {
+func (p *provider) SaveImage(imageId, filePath string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {

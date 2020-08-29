@@ -14,10 +14,6 @@
 //
 package apps
 
-import (
-	"dam/driver/structures"
-)
-
 type provider struct {
 	//GetApps() []*storage.App
 	//NewApp(app *storage.App)
@@ -28,24 +24,4 @@ type provider struct {
 
 func NewProvider() *provider {
 	return &provider{}
-}
-
-func (p *provider) GetApps() []*structures.App {
-	return getApps()
-}
-
-func (p *provider) NewApp(app *structures.App) {
-	newApp(app)
-}
-
-func (p *provider) GetAppById(id int) *structures.App {
-	return getAppById(id)
-}
-
-func (p *provider) ExistFamily(family string) bool {
-	return existFamily(family)
-}
-
-func (p *provider) RemoveAppById(id int) {
-	removeAppById(id)
 }

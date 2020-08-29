@@ -29,7 +29,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
-func containerCreate(image string, name string) string {
+func (p *provider) ContainerCreate(image string, name string) string {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -54,7 +54,7 @@ func containerCreate(image string, name string) string {
 	return (resp.ID)[:12]
 }
 
-func copyFromContainer(containerID, sourcePath, destPath string) {
+func (p *provider) CopyFromContainer(containerID, sourcePath, destPath string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -129,7 +129,7 @@ func copyFromContainer(containerID, sourcePath, destPath string) {
 
 }
 
-func containerRemove(id string) {
+func (p *provider) ContainerRemove(id string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {

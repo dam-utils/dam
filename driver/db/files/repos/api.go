@@ -14,10 +14,6 @@
 //
 package repos
 
-import (
-	"dam/driver/structures"
-)
-
 type provider struct {
 	//GetRepos() []*storage.Repo
 	//GetRepoById(id int) *storage.Repo
@@ -31,37 +27,4 @@ type provider struct {
 
 func NewProvider() *provider {
 	return &provider{}
-}
-
-func (p *provider) GetRepos() []*structures.Repo {
-	return GetRepos()
-}
-
-func (p *provider) GetRepoById(id int) *structures.Repo {
-	return GetRepoById(id)
-
-}
-
-func (p *provider) GetDefaultRepo() *structures.Repo {
-	return GetDefaultRepo()
-}
-
-func (p *provider) NewRepo(repo *structures.Repo) {
-	NewRepo(repo)
-}
-
-func (p *provider) ModifyRepo(repo *structures.Repo) {
-	ModifyRepo(repo)
-}
-
-func (p *provider) RemoveRepoById(id int) {
-	RemoveRepoById(id)
-}
-
-func (p *provider) GetRepoIdByName(name *string) int {
-	return GetRepoIdByName(name)
-}
-
-func (p *provider) ClearRepos() {
-	ClearRepos()
 }

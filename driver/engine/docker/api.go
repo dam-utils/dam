@@ -14,10 +14,6 @@
 //
 package docker
 
-import (
-	"dam/driver/structures"
-)
-
 type provider struct {
 	//Build(imageTag, projectDir string)
 	//LoadImage(file string)
@@ -34,48 +30,4 @@ type provider struct {
 
 func NewProvider() *provider {
 	return &provider{}
-}
-
-func (p *provider) SearchAppNames(mask string) *[]string {
-	return searchAppNames(mask)
-}
-
-func (p *provider) LoadImage(file string) {
-	loadImage(file)
-}
-
-func (p *provider) Pull(tag string, repo *structures.Repo) {
-	pull(tag, repo)
-}
-
-func (p *provider) GetImageID(tag string) string {
-	return getImageID(tag)
-}
-
-func (p *provider) GetImageLabel(tag, labelName string) string {
-	return getImageLabel(tag, labelName)
-}
-
-func (p *provider) SaveImage(imageId, filePath string) {
-	saveImage(imageId, filePath)
-}
-
-func (p *provider) ContainerCreate(image string, name string) string {
-	return containerCreate(image, name)
-}
-
-func (p *provider) CopyFromContainer(containerID, sourcePath, destPath string) {
-	copyFromContainer(containerID, sourcePath, destPath)
-}
-
-func (p *provider) ContainerRemove(id string) {
-	containerRemove(id)
-}
-
-func (p *provider) Build(imageTag, projectDir string) {
-	build(imageTag, projectDir)
-}
-
-func (p *provider) Images() *[]string {
-	return images()
 }

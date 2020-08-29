@@ -25,8 +25,8 @@ import (
 	"dam/driver/structures"
 )
 
-func NewRepo(repo *structures.Repo) {
-	repos := GetRepos()
+func (p *provider) NewRepo(repo *structures.Repo) {
+	repos := p.GetRepos()
 	//preparedRepo := preparePassword(repo)
 	repo.Id = internal.GetNewRepoID(repos)
 	if len(repos) == 0 {
@@ -43,9 +43,9 @@ func NewRepo(repo *structures.Repo) {
 	internal.SaveRepos(newRepos)
 }
 
-func ModifyRepo(mRepo *structures.Repo) {
-	cleanRepos := internal.CleanReposDefault(GetRepos())
-	defRepo := GetDefaultRepo()
+func (p *provider) ModifyRepo(mRepo *structures.Repo) {
+	cleanRepos := internal.CleanReposDefault(p.GetRepos())
+	defRepo := p.GetDefaultRepo()
 
 	if mRepo.Default {
 		if mRepo.Id == defRepo.Id {
@@ -82,7 +82,7 @@ func ModifyRepo(mRepo *structures.Repo) {
 	internal.SaveRepos(prepNewRepos)
 }
 
-func ClearRepos() {
+func (p *provider) ClearRepos() {
 	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
@@ -110,7 +110,7 @@ func ClearRepos() {
 	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
 }
 
-func GetRepos() []*structures.Repo {
+func (p *provider) GetRepos() []*structures.Repo {
 	// Ex: 2||auto_repo|packages.test.com|admin|YWRtaW4K|
 	var repos []*structures.Repo
 	f, err := os.Open(config.FILES_DB_REPOS)
@@ -141,8 +141,8 @@ func GetRepos() []*structures.Repo {
 	return repos
 }
 
-func GetRepoById(id int) *structures.Repo {
-	for _, repo := range GetRepos() {
+func (p *provider) GetRepoById(id int) *structures.Repo {
+	for _, repo := range p.GetRepos() {
 		if repo.Id == id {
 			return repo
 		}
@@ -150,8 +150,8 @@ func GetRepoById(id int) *structures.Repo {
 	return nil
 }
 
-func GetDefaultRepo() *structures.Repo {
-	for _, repo := range GetRepos() {
+func (p *provider) GetDefaultRepo() *structures.Repo {
+	for _, repo := range p.GetRepos() {
 		if repo.Default {
 			return repo
 		}
@@ -159,14 +159,14 @@ func GetDefaultRepo() *structures.Repo {
 	return nil
 }
 
-func RemoveRepoById(id int) {
+func (p *provider) RemoveRepoById(id int) {
 	var newRepos []*structures.Repo
 
 	if id == 1 {
 		logger.Fatal("Cannot remove official Repository. This is base repository in DB")
 	}
 
-	repos := GetRepos()
+	repos := p.GetRepos()
 	for _, repo := range repos {
 		if repo.Id != id {
 			newRepos = append(newRepos, repo)
@@ -180,8 +180,8 @@ func RemoveRepoById(id int) {
 	}
 }
 
-func GetRepoIdByName(name *string) int {
-	for _, repo := range GetRepos() {
+func (p *provider) GetRepoIdByName(name *string) int {
+	for _, repo := range p.GetRepos() {
 		if repo.Name == *name {
 			return repo.Id
 		}

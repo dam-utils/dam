@@ -24,8 +24,7 @@ import (
 	"dam/driver/structures"
 )
 
-
-func getApps() []*structures.App {
+func (p *provider) GetApps() []*structures.App {
 	var apps []*structures.App
 
 	f, err := os.Open(config.FILES_DB_APPS)
@@ -46,8 +45,8 @@ func getApps() []*structures.App {
 	return apps
 }
 
-func getAppById(id int) *structures.App {
-	apps := getApps()
+func (p *provider) GetAppById(id int) *structures.App {
+	apps := p.GetApps()
 	for _, app := range apps {
 		if app.Id == id {
 			return app
@@ -56,16 +55,16 @@ func getAppById(id int) *structures.App {
 	return nil
 }
 
-func newApp(app *structures.App) {
-	apps := getApps()
+func (p *provider) NewApp(app *structures.App) {
+	apps := p.GetApps()
 	app.Id = internal.GetNewAppID(apps)
 
 	newApps := append(apps, app)
 	internal.SaveApps(newApps)
 }
 
-func existFamily(family string) bool {
-	apps := getApps()
+func (p *provider) ExistFamily(family string) bool {
+	apps := p.GetApps()
 	for _, a := range apps {
 		if a.Family == family {
 			return true
@@ -74,10 +73,10 @@ func existFamily(family string) bool {
 	return false
 }
 
-func removeAppById(id int) {
+func (p *provider) RemoveAppById(id int) {
 	newApps := make([]*structures.App, 0)
 
-	apps := getApps()
+	apps := p.GetApps()
 	for _, a := range apps {
 		if a.Id != id {
 			newApps = append(newApps, a)
