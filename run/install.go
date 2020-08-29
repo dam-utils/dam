@@ -56,21 +56,20 @@ func InstallApp(appCurrentName string) {
 	isExistFamily(tag)
 
 	logger.Debug("Getting meta ...")
-	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+	defer fs.Remove(tmpDir)
+
 	containerId := engine.VDriver.ContainerCreate(tag, "")
-	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
+	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpDir)
 	engine.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Printing description ...")
-	decorate.PrintDescription(filepath.Join(tmpMeta, config.DESCRIPTION_FILE_NAME))
+	decorate.PrintDescription(filepath.Join(tmpDir, config.META_DIR_NAME, config.DESCRIPTION_FILE_NAME))
 
-	logger.Debug("Installing meta ...")
-	installMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
+	logger.Debug("Installing image ...")
+	installMeta := filepath.Join(tmpDir, config.META_DIR_NAME)
 	install := getInstall(installMeta)
-
-	logger.Debug("Removing tmp files ...")
 	fs.RunFile(install)
-	fs.Remove(tmpMeta)
 
 	logger.Debug("Saving to DB ...")
 	saveAppToDB(tag)

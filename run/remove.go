@@ -47,6 +47,7 @@ func RemoveApp(name string) {
 
 	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+	defer fs.Remove(tmpMeta)
 
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
 	containerId := engine.VDriver.ContainerCreate(tag, "")
@@ -59,9 +60,6 @@ func RemoveApp(name string) {
 
 	logger.Debug("Running uninstall ...")
 	fs.RunFile(uninstall)
-
-	logger.Debug("Clearing tmp ...")
-	fs.Remove(tmpMeta)
 
 	logger.Debug("Removing app from DB ...")
 	db.ADriver.RemoveAppById(app.Id)
