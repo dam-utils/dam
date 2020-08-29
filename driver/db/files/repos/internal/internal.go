@@ -15,15 +15,16 @@
 package internal
 
 import (
+	"encoding/base64"
+	"os"
+	"strconv"
+	"strings"
+
 	"dam/config"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/structures"
 	"dam/driver/validate"
-	"encoding/base64"
-	"os"
-	"strconv"
-	"strings"
 )
 
 func CleanDefaults(repos []*structures.Repo) []*structures.Repo {
