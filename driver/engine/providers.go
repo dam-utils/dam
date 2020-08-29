@@ -19,15 +19,16 @@ import (
 )
 
 type VProvider interface {
-	SearchAppNames(mask string) *[]string
+	Build(imageTag, projectDir string)
 	LoadImage(file string)
 	Pull(tag string, repo *structures.Repo)
+	Images() *[]string
 	GetImageID(tag string) string
 	GetImageLabel(tag, labelName string) string
 	SaveImage(imageId, filePath string)
 	ContainerCreate(image string, name string) string
 	CopyFromContainer(containerID, sourcePath, destPath string)
 	ContainerRemove(id string)
-	Build(imageTag, projectDir string)
+	SearchAppNames(mask string) *[]string
 }
 

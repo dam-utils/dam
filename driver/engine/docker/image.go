@@ -113,6 +113,33 @@ func Pull(tag string, repo *structures.Repo) {
 
 // TODO refactoring
 func GetImageID(tag string) string {
+	imageSum := getImagesSum()
+
+	for _, img := range imageSum {
+		for _, sourceTag := range img.RepoTags {
+			if sourceTag == tag {
+				return prepareImageID(img.ID)
+			}
+		}
+	}
+	logger.Fatal("Cannot found images tag '%s' in images list", tag)
+	return ""
+}
+
+func Images() *[]string {
+	result := make([]string, 0)
+	imageSum := getImagesSum()
+
+	for _, img := range imageSum {
+		result = append(result, prepareImageID(img.ID))
+	}
+
+	preparedResult := removeDuplicates(result)
+
+	return &preparedResult
+}
+
+func getImagesSum() []types.ImageSummary {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -128,15 +155,23 @@ func GetImageID(tag string) string {
 	if err != nil {
 		logger.Fatal("Cannot get images list")
 	}
-	for _, img := range imageSum {
-		for _, sourceTag := range img.RepoTags {
-			if sourceTag == tag {
-				return prepareImageID(img.ID)
-			}
+
+	return imageSum
+}
+
+// From https://www.dotnetperls.com/duplicates-go
+func removeDuplicates(elements []string) []string {
+	encountered := map[string]bool{}
+	result := make([]string, 0)
+
+	for v := range elements {
+		if encountered[elements[v]] != true {
+			encountered[elements[v]] = true
+			result = append(result, elements[v])
 		}
 	}
-	logger.Fatal("Cannot found images tag '%s' in images list", tag)
-	return ""
+
+	return result
 }
 
 // Incoming format: 'sha256:767d33...'
