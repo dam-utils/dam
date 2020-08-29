@@ -31,21 +31,21 @@ func NewProvider() *provider {
 }
 
 func (p *provider) GetApps() []*structures.App {
-	return GetApps()
+	return getApps()
 }
 
 func (p *provider) NewApp(app *structures.App) {
-	NewApp(app)
+	newApp(app)
 }
 
 func (p *provider) GetAppById(id int) *structures.App {
-	return GetAppById(id)
+	return getAppById(id)
 }
 
 func (p *provider) ExistFamily(family string) bool {
-	return ExistFamily(family)
+	return existFamily(family)
 }
 
 func (p *provider) RemoveAppById(id int) {
-	RemoveAppById(id)
+	removeAppById(id)
 }

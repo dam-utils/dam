@@ -16,47 +16,34 @@ package repos
 
 import (
 	"bufio"
-	"dam/driver/structures"
-	"encoding/base64"
-	"os"
-	"strconv"
-	"strings"
-
 	"dam/config"
+	"dam/driver/db/files/repos/internal"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
-	"dam/driver/validate"
+	"dam/driver/structures"
+	"os"
 )
 
 func NewRepo(repo *structures.Repo) {
 	repos := GetRepos()
 	//preparedRepo := preparePassword(repo)
-	repo.Id = getNewRepoID(repos)
+	repo.Id = internal.GetNewRepoID(repos)
 	if len(repos) == 0 {
 		repo.Default = true
 		repo.Id = 2
 	}
 	var preparedRepos []*structures.Repo
 	if repo.Default {
-		preparedRepos = cleanDefaults(repos)
+		preparedRepos = internal.CleanDefaults(repos)
 	} else {
 		preparedRepos = repos
 	}
 	newRepos := append(preparedRepos, repo)
-	saveRepos(newRepos)
-}
-
-func cleanDefaults(repos []*structures.Repo) []*structures.Repo {
-	var newRepo []*structures.Repo
-	for _, repo := range repos {
-		repo.Default = false
-		newRepo = append(newRepo, repo)
-	}
-	return newRepo
+	internal.SaveRepos(newRepos)
 }
 
 func ModifyRepo(mRepo *structures.Repo) {
-	cleanRepos := cleanReposDefault(GetRepos())
+	cleanRepos := internal.CleanReposDefault(GetRepos())
 	defRepo := GetDefaultRepo()
 
 	if mRepo.Default {
@@ -89,88 +76,9 @@ func ModifyRepo(mRepo *structures.Repo) {
 		}
 	}
 
-	prepNewRepos := prepareClearRepos(newRepos)
+	prepNewRepos := internal.PrepareClearRepos(newRepos)
 	logger.Debug("ModifyRepo():prepareClearRepos(&newRepos): '%v'", prepNewRepos)
-	saveRepos(prepNewRepos)
-}
-
-func prepareClearRepos(repos []*structures.Repo) []*structures.Repo {
-	existingDefault := false
-	for _, repo := range repos {
-		if repo.Default {
-			existingDefault = true
-		}
-	}
-	if !existingDefault {
-		newRepos := repos
-		newRepos[0].Default = true
-		return newRepos
-	}
-	return repos
-}
-
-func cleanReposDefault(repos []*structures.Repo) []*structures.Repo {
-	var newRepos []*structures.Repo
-
-	for _, repo := range repos {
-			repo.Default = false
-			newRepos = append(newRepos, repo)
-	}
-	return newRepos
-}
-
-func repo2str(repo *structures.Repo) *string {
-	var def string
-	if repo.Default {
-		def = config.FILES_DB_BOOL_FLAG
-	} else {
-		def = ""
-	}
-
-	var repoStr string
-	sep := config.FILES_DB_SEPARATOR
-	fields := []string{strconv.Itoa(repo.Id), def, repo.Name, repo.Server, repo.Username, repo.Password}
-	lenF := len(fields)
-	for i, field := range fields {
-		if i == lenF - 1 {
-			repoStr = repoStr + field + "\n"
-		} else {
-			repoStr = repoStr + field + sep
-		}
-	}
-	return &repoStr
-}
-
-func saveRepos(repos []*structures.Repo) {
-	newRepos := preparePasswordRepos(repos)
-
-	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
-	defer func() {
-		if f != nil {
-			f.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err)
-	}
-
-	for _, repo := range newRepos {
-		newLine := repo2str(repo)
-		_, err := f.WriteString(*newLine)
-		if err != nil {
-			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err)
-		}
-	}
-	err = f.Sync()
-	if err != nil {
-		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err)
-	}
-	err = f.Close()
-	if err != nil {
-		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err)
-	}
-
-	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
+	internal.SaveRepos(prepNewRepos)
 }
 
 func ClearRepos() {
@@ -218,16 +126,16 @@ func GetRepos() []*structures.Repo {
 	fileScanner := bufio.NewScanner(f)
 	for fileScanner.Scan() {
 		NewLine := fileScanner.Text()
-		repos = append(repos, str2Repo(NewLine))
+		repos = append(repos, internal.Str2Repo(NewLine))
 	}
 
 	offRepo := structures.OfficialRepo
 	if len(repos) == 0 {
 		repos = append(repos, &offRepo)
-		saveRepos(repos)
+		internal.SaveRepos(repos)
 	}
 
-	internalValidatingReposDB(repos)
+	internal.ValidatingReposDB(repos)
 
 	return repos
 }
@@ -264,8 +172,8 @@ func RemoveRepoById(id int) {
 		}
 	}
 	if len(newRepos) < len(repos) {
-		preparedRepos := prepareDefaultInRepos(newRepos)
-		saveRepos(preparedRepos)
+		preparedRepos := internal.PrepareDefaultInRepos(newRepos)
+		internal.SaveRepos(preparedRepos)
 	} else {
 		logger.Fatal("Not found Id or Name of Repository")
 	}
@@ -281,119 +189,3 @@ func GetRepoIdByName(name *string) int {
 	logger.Fatal("Internal error. Not found repo ID for name '%s'", *name)
 	return -1
 }
-
-func prepareDefaultInRepos(repos []*structures.Repo) []*structures.Repo {
-	def := false
-	for _, repo := range repos {
-		if repo.Default {
-			def = true
-		}
-	}
-	if !def {
-		repos[0].Default = true
-	}
-
-	return repos
-}
-
-func getNewRepoID(repos []*structures.Repo) int {
-	Res := 0
-
-	if len(repos) == 0 {
-		return 0
-	}
-	for _, repo := range repos {
-		if repo.Id >= Res {
-			Res = repo.Id
-		}
-	}
-	return Res +1
-}
-
-func str2Repo(str string) *structures.Repo {
-	repoArray := new(structures.Repo)
-	strRepo := strings.Split(str, config.FILES_DB_SEPARATOR)
-
-	pass, err := base64ToStr(strRepo[5])
-	if err != nil {
-		logger.Fatal("Internal error. Cannot read the password of user '%s' in line '%s'", repoArray.Username, str)
-	}
-
-	if validate.CheckRepoID(strRepo[0]) != nil {
-		logger.Fatal("Internal error. Cannot parse the repo id in line '%s'", str)
-	}
-	if validate.CheckBool(strRepo[1]) != nil {
-		logger.Fatal("Internal error. Cannot parse the default flag in line '%s'", str)
-	}
-	if validate.CheckRepoName(strRepo[2]) != nil {
-		logger.Fatal("Internal error. Cannot parse the repo name in line '%s'", str)
-	}
-	if validate.CheckServer(strRepo[3]) != nil {
-		logger.Fatal("Internal error. Cannot parse the server in line '%s'", str)
-	}
-	if validate.CheckLogin(strRepo[4]) != nil {
-		logger.Fatal("Internal error. Cannot parse the username in line '%s'", str)
-	}
-	if validate.CheckPassword(pass) != nil {
-		logger.Fatal("Internal error. Cannot parse the password in line '%s'", str)
-	}
-
-
-	repoArray.Id, _ = strconv.Atoi(strRepo[0])
-	if strRepo[1] == config.FILES_DB_BOOL_FLAG {
-		repoArray.Default = true
-	}
-	repoArray.Name = strRepo[2]
-	repoArray.Server = strRepo[3]
-	repoArray.Username = strRepo[4]
-	repoArray.Password = pass
-
-	return repoArray
-}
-
-func preparePasswordRepos(repos []*structures.Repo) []*structures.Repo {
-	var newRepos []*structures.Repo
-
-	for _, repo := range repos {
-		repo.Password = strToBase64(repo.Password)
-		newRepos = append(newRepos, repo)
-	}
-	return newRepos
-}
-
-func strToBase64(str string) string {
-	return base64.StdEncoding.EncodeToString([]byte(str))
-}
-
-func base64ToStr(str string) (string, error) {
-	sDec, err := base64.StdEncoding.DecodeString(str)
-	return string(sDec), err
-}
-
-func internalValidatingReposDB(repos []*structures.Repo) {
-	defRepo := false
-	for _, repo := range repos{
-		if repo.Default {
-			if defRepo {
-				logger.Fatal("Internal error. Found many default repositories in DB. Default repository must be only one")
-			} else {
-				defRepo = true
-			}
-		}
-
-		if validate.CheckRepoName(repo.Name) != nil {
-			logger.Fatal("Internal error. Repo name '%s' is invalid in DB", repo.Name)
-		}
-		if validate.CheckLogin(repo.Username) != nil {
-			logger.Fatal("Internal error. Repo login '%s' is invalid in DB", repo.Username)
-		}
-		if validate.CheckServer(repo.Server) != nil {
-			logger.Fatal("Internal error. Repo server '%s' is invalid in DB", repo.Server)
-		}
-
-	}
-	if !defRepo {
-		logger.Fatal("Internal error. Not found default repository in DB")
-	}
-}
-
