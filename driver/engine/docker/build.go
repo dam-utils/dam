@@ -28,7 +28,7 @@ import (
 	"github.com/docker/docker/pkg/term"
 )
 
-func Build(imageTag, projectDir string) {
+func build(imageTag, projectDir string) {
 	buildCtx, err := archive.TarWithOptions(projectDir, &archive.TarOptions{})
 	if err != nil {
 		logger.Fatal("Cannot create docker context (project files directory) with error: %s", err)

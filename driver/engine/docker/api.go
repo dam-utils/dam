@@ -37,45 +37,45 @@ func NewProvider() *provider {
 }
 
 func (p *provider) SearchAppNames(mask string) *[]string {
-	return SearchAppNames(mask)
+	return searchAppNames(mask)
 }
 
 func (p *provider) LoadImage(file string) {
-	LoadImage(file)
+	loadImage(file)
 }
 
 func (p *provider) Pull(tag string, repo *structures.Repo) {
-	Pull(tag, repo)
+	pull(tag, repo)
 }
 
 func (p *provider) GetImageID(tag string) string {
-	return GetImageID(tag)
+	return getImageID(tag)
 }
 
 func (p *provider) GetImageLabel(tag, labelName string) string {
-	return GetImageLabel(tag, labelName)
+	return getImageLabel(tag, labelName)
 }
 
 func (p *provider) SaveImage(imageId, filePath string) {
-	SaveImage(imageId, filePath)
+	saveImage(imageId, filePath)
 }
 
 func (p *provider) ContainerCreate(image string, name string) string {
-	return ContainerCreate(image, name)
+	return containerCreate(image, name)
 }
 
 func (p *provider) CopyFromContainer(containerID, sourcePath, destPath string) {
-	CopyFromContainer(containerID, sourcePath, destPath)
+	copyFromContainer(containerID, sourcePath, destPath)
 }
 
 func (p *provider) ContainerRemove(id string) {
-	ContainerRemove(id)
+	containerRemove(id)
 }
 
 func (p *provider) Build(imageTag, projectDir string) {
-	Build(imageTag, projectDir)
+	build(imageTag, projectDir)
 }
 
 func (p *provider) Images() *[]string {
-	return Images()
+	return images()
 }

@@ -16,6 +16,7 @@ package run
 
 import (
 	"bufio"
+	"dam/driver/engine"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,7 +25,6 @@ import (
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
-	"dam/driver/engine/docker"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
@@ -101,14 +101,14 @@ func Import(arg string) {
 func validateExistingImages(apps []*structures.ImportApp) {
 	getPrefixRepo()
 	for _, a := range apps {
-		_ = docker.GetImageID(getPrefixRepo()+a.CurrentName())
+		_ = engine.VDriver.GetImageID(getPrefixRepo()+a.CurrentName())
 	}
 }
 
 func loadAppFromRegistry(apps []*structures.ImportApp) {
 	repo := db.RDriver.GetDefaultRepo()
 	for _, a := range apps {
-		docker.Pull(getPrefixRepo()+a.CurrentName(), repo)
+		engine.VDriver.Pull(getPrefixRepo()+a.CurrentName(), repo)
 	}
 }
 
@@ -128,7 +128,7 @@ func loadAppsFromArchive(arch string) []*structures.ImportApp {
 	appList := getAppFilesList(tmpDir)
 	for _, a := range appList {
 		validateCheckSumArch(a)
-		docker.LoadImage(a)
+		engine.VDriver.LoadImage(a)
 	}
 
 	apps := appsFromFile(tmpDir+string(filepath.Separator)+config.EXPORT_APPS_FILE_NAME)

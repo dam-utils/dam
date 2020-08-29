@@ -25,7 +25,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
-func SearchAppNames(mask string) *[]string {
+func searchAppNames(mask string) *[]string {
 	if len(mask) <2 || len(mask)> 100 {
 		logger.Fatal("Search mask for official registry not valid. It must be 2-24 symbols")
 	}

@@ -16,23 +16,21 @@ package docker
 
 import (
 	"context"
+	"dam/driver/engine/docker/internal"
 	"dam/driver/structures"
 	"encoding/base64"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"os"
-	"strings"
 
 	"dam/config"
-	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 )
 
-func LoadImage(file string) {
+func loadImage(file string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -69,7 +67,7 @@ func LoadImage(file string) {
 	}
 }
 
-func Pull(tag string, repo *structures.Repo) {
+func pull(tag string, repo *structures.Repo) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -112,13 +110,13 @@ func Pull(tag string, repo *structures.Repo) {
 }
 
 // TODO refactoring
-func GetImageID(tag string) string {
-	imageSum := getImagesSum()
+func getImageID(tag string) string {
+	imageSum := internal.GetImagesSum()
 
 	for _, img := range imageSum {
 		for _, sourceTag := range img.RepoTags {
 			if sourceTag == tag {
-				return prepareImageID(img.ID)
+				return internal.PrepareImageID(img.ID)
 			}
 		}
 	}
@@ -126,62 +124,21 @@ func GetImageID(tag string) string {
 	return ""
 }
 
-func Images() *[]string {
+func images() *[]string {
 	result := make([]string, 0)
-	imageSum := getImagesSum()
+	imageSum := internal.GetImagesSum()
 
 	for _, img := range imageSum {
-		result = append(result, prepareImageID(img.ID))
+		result = append(result, internal.PrepareImageID(img.ID))
 	}
 
-	preparedResult := removeDuplicates(result)
+	preparedResult := internal.RemoveDuplicates(result)
 
 	return &preparedResult
 }
 
-func getImagesSum() []types.ImageSummary {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
-
-	var opts = types.ImageListOptions{}
-	imageSum, err := cli.ImageList(context.Background(),opts)
-	if err != nil {
-		logger.Fatal("Cannot get images list")
-	}
-
-	return imageSum
-}
-
-// From https://www.dotnetperls.com/duplicates-go
-func removeDuplicates(elements []string) []string {
-	encountered := map[string]bool{}
-	result := make([]string, 0)
-
-	for v := range elements {
-		if encountered[elements[v]] != true {
-			encountered[elements[v]] = true
-			result = append(result, elements[v])
-		}
-	}
-
-	return result
-}
-
-// Incoming format: 'sha256:767d33...'
-func prepareImageID(id string) string {
-	arr := strings.Split(id, ":")
-	return arr[1][0:12]
-}
-
 // TODO refactoring
-func GetImageLabel(tag, labelName string) string {
+func getImageLabel(tag, labelName string) string {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -214,7 +171,7 @@ func GetImageLabel(tag, labelName string) string {
 	return ""
 }
 
-func SaveImage(imageId, filePath string) {
+func saveImage(imageId, filePath string) {
 	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
 	defer func() {
 		if cli != nil {
@@ -235,19 +192,6 @@ func SaveImage(imageId, filePath string) {
 		logger.Fatal("Cannot save image with id '%s' with error: '%s'", imageId, err)
 	}
 
-	saveToFile(filePath, readCloser)
+	internal.SaveToFile(filePath, readCloser)
 }
 
-func saveToFile(srcFile string, r io.ReadCloser) {
-	fs.Touch(srcFile)
-
-	content, err := ioutil.ReadAll(r)
-	if err != nil {
-		logger.Fatal("Cannot open reader for file '%s' with error: '%s'", srcFile, err)
-	}
-
-	err = ioutil.WriteFile(srcFile, content, 0644)
-	if err != nil {
-		logger.Fatal("Cannot write image to file '%s' with error: '%s'", srcFile, err)
-	}
-}
