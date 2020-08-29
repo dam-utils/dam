@@ -15,6 +15,7 @@
 package run
 
 import (
+	"dam/driver/decorate"
 	"dam/driver/engine"
 	"dam/driver/structures"
 	"encoding/json"
@@ -52,11 +53,16 @@ func InstallApp(appCurrentName string) {
 		tag = dockerPull(appCurrentName)
 	}
 
+	isExistFamily(tag)
+
 	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 	containerId := engine.VDriver.ContainerCreate(tag, "")
 	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
 	engine.VDriver.ContainerRemove(containerId)
+
+	logger.Debug("Printing description ...")
+	decorate.PrintDescription(filepath.Join(tmpMeta, config.DESCRIPTION_FILE_NAME))
 
 	logger.Debug("Installing meta ...")
 	installMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
@@ -69,6 +75,14 @@ func InstallApp(appCurrentName string) {
 	logger.Debug("Saving to DB ...")
 	saveAppToDB(tag)
 	logger.Success("App '%s' was installed.", appCurrentName)
+}
+
+func isExistFamily(tag string) {
+	imageFamily := internal.GetFamily(tag)
+
+	if db.ADriver.ExistFamily(imageFamily) {
+		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily )
+	}
 }
 
 func dockerPull(app string) string {
@@ -105,15 +119,7 @@ func saveAppToDB(tag string) {
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
-	imageFamily := engine.VDriver.GetImageLabel(tag, config.APP_FAMILY_ENV)
-	if imageFamily == "" {
-		imageFamily = imageName
-	}
-	app.Family = imageFamily
-
-	if db.ADriver.ExistFamily(app.Family) {
-		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", app.Family )
-	}
+	app.Family = internal.GetFamily(tag)
 
 	db.ADriver.NewApp(&app)
 }
