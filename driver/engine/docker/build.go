@@ -18,11 +18,9 @@ import (
 	"context"
 	"os"
 
-	"dam/config"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
@@ -44,17 +42,10 @@ func (p *provider) Build(imageTag, projectDir string) {
 		//Platform: string,
 	}
 
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
-	resp, err := cli.ImageBuild(context.Background(), buildCtx, opts)
+	resp, err := p.client.ImageBuild(context.Background(), buildCtx, opts)
 	defer func() {
 		if resp.Body != nil {
 			resp.Body.Close()

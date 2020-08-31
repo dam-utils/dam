@@ -21,31 +21,22 @@ import (
 	"os"
 	"path/filepath"
 
-	"dam/config"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
 )
 
 func (p *provider) ContainerCreate(image string, name string) string {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
 	var conf = container.Config{
 		Image: image,
 		Cmd:   []string{""},
 		Tty:   true, //TODO check it
 	}
-	resp, err := cli.ContainerCreate(context.Background(), &conf,  nil, nil, name)
+	resp, err := p.client.ContainerCreate(context.Background(), &conf,  nil, nil, name)
 	if err != nil {
 		logger.Fatal("Cannot build docker image with error: %s", err)
 	}
@@ -55,17 +46,10 @@ func (p *provider) ContainerCreate(image string, name string) string {
 }
 
 func (p *provider) CopyFromContainer(containerID, sourcePath, destPath string) {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
-	reader, _, err := cli.CopyFromContainer(context.Background(), containerID, sourcePath)
+	reader, _, err := p.client.CopyFromContainer(context.Background(), containerID, sourcePath)
 	if err != nil {
 		logger.Fatal("Cannot copy from the container with ID '%s' with error: %s", containerID, err)
 	}
@@ -121,7 +105,7 @@ func (p *provider) CopyFromContainer(containerID, sourcePath, destPath string) {
 				logger.Fatal("Cannot write to target file '%s' from containerID '%s' with error: %s", header.Name, containerID, err)
 			}
 
-			// manually close here after each file operation; defering would cause each file close
+			// manually close here after each file operation; deferring would cause each file close
 			// to wait until all operations have completed.
 			f.Close()
 		}
@@ -130,21 +114,14 @@ func (p *provider) CopyFromContainer(containerID, sourcePath, destPath string) {
 }
 
 func (p *provider) ContainerRemove(id string) {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
 	var opts = types.ContainerRemoveOptions{
 		RemoveVolumes: true,
 		Force:         true,
 	}
-	err = cli.ContainerRemove(context.Background(), id, opts)
+	err := p.client.ContainerRemove(context.Background(), id, opts)
 	if err != nil {
 		logger.Fatal("Cannot remove the container with ID '%s' with error: %s", id, err)
 	}

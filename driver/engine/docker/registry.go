@@ -22,7 +22,6 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/registry"
-	"github.com/docker/docker/client"
 )
 
 func (p *provider) SearchAppNames(mask string) *[]string {
@@ -30,20 +29,13 @@ func (p *provider) SearchAppNames(mask string) *[]string {
 		logger.Fatal("Search mask for official registry not valid. It must be 2-24 symbols")
 	}
 
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
 	searchOpts := types.ImageSearchOptions {}
 	searchOpts.Limit = config.OFFICIAL_REPO_SEARCH_APPS_LIMIT
 	var results []registry.SearchResult
-	results, err = cli.ImageSearch(context.Background(), mask,  searchOpts)
+	results, err := p.client.ImageSearch(context.Background(), mask,  searchOpts)
 	if err != nil {
 		logger.Fatal("Cannot get results of docker search with error: %s", err)
 	}

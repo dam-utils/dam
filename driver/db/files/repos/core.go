@@ -113,18 +113,11 @@ func (p *provider) ClearRepos() {
 func (p *provider) GetRepos() []*structures.Repo {
 	// Ex: 2||auto_repo|packages.test.com|admin|YWRtaW4K|
 	var repos []*structures.Repo
-	f, err := os.Open(config.FILES_DB_REPOS)
-	defer func() {
-		if f != nil {
-			f.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot open file '%s'", config.FILES_DB_REPOS)
-	}
 
+	p.connect()
+	fileScanner := bufio.NewScanner(p.client)
+	defer p.close()
 
-	fileScanner := bufio.NewScanner(f)
 	for fileScanner.Scan() {
 		NewLine := fileScanner.Text()
 		repos = append(repos, internal.Str2Repo(NewLine))

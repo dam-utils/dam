@@ -12,23 +12,28 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package repos
+package docker
 
-import "os"
+import (
+	"dam/config"
+	"dam/driver/logger"
 
-type provider struct {
-	//GetRepos() []*storage.Repo
-	//GetRepoById(id int) *storage.Repo
-	//GetDefaultRepo() *storage.Repo
-	//NewRepo(repo *storage.Repo)
-	//ModifyRepo(repo *storage.Repo)
-	//RemoveRepoById(id int)
-	//GetRepoIdByName(name *string) int
-	//ClearRepos()
+	"github.com/docker/docker/client"
+)
 
-	client *os.File
+func (p *provider) connect() {
+	var err error
+	p.client, err = client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	if err != nil {
+		logger.Fatal("Cannot create a new docker client with error: %s", err)
+	}
 }
 
-func NewProvider() *provider {
-	return &provider{}
+func (p *provider) close() {
+	if p.client != nil {
+		err := p.client.Close()
+		if err != nil {
+			logger.Fatal("Cannot close for docker client with error: %s", err)
+		}
+	}
 }

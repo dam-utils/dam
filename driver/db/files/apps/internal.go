@@ -12,23 +12,27 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package repos
+package apps
 
-import "os"
+import (
+	"dam/config"
+	"dam/driver/logger"
+	"os"
+)
 
-type provider struct {
-	//GetRepos() []*storage.Repo
-	//GetRepoById(id int) *storage.Repo
-	//GetDefaultRepo() *storage.Repo
-	//NewRepo(repo *storage.Repo)
-	//ModifyRepo(repo *storage.Repo)
-	//RemoveRepoById(id int)
-	//GetRepoIdByName(name *string) int
-	//ClearRepos()
-
-	client *os.File
+func (p *provider) connect() {
+	var err error
+	p.client, err = os.Open(config.FILES_DB_APPS)
+	if err != nil {
+		logger.Fatal("Cannot open db file '%s' with error: %s", config.FILES_DB_APPS, err)
+	}
 }
 
-func NewProvider() *provider {
-	return &provider{}
+func (p *provider) close() {
+	if p.client != nil {
+		err := p.client.Close()
+		if err != nil {
+			logger.Fatal("Cannot close db file '%s' with error: %s", config.FILES_DB_APPS, err)
+		}
+	}
 }

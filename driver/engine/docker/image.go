@@ -23,23 +23,14 @@ import (
 	"io"
 	"os"
 
-	"dam/config"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 )
 
 func (p *provider) LoadImage(file string) {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
 	f, err := os.Open(file)
 	defer func() {
@@ -51,7 +42,7 @@ func (p *provider) LoadImage(file string) {
 		logger.Fatal("Cannot open the loaded file '%s' with error: %s", file, err)
 	}
 
-	out, err := cli.ImageLoad(context.Background(), f, false)
+	out, err := p.client.ImageLoad(context.Background(), f, false)
 	defer func() {
 		if out.Body != nil {
 			out.Body.Close()
@@ -68,15 +59,8 @@ func (p *provider) LoadImage(file string) {
 }
 
 func (p *provider) Pull(tag string, repo *structures.Repo) {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
 	authConfig := types.AuthConfig{
 		Username: repo.Username,
@@ -92,7 +76,7 @@ func (p *provider) Pull(tag string, repo *structures.Repo) {
 		//Platform TODO ?
 		RegistryAuth: authStr,
 	}
-	out, err := cli.ImagePull(context.Background(), tag, pullOpts)
+	out, err := p.client.ImagePull(context.Background(), tag, pullOpts)
 	defer func() {
 		if out != nil {
 			out.Close()
@@ -139,18 +123,11 @@ func (p *provider) Images() *[]string {
 
 // TODO refactoring
 func (p *provider) GetImageLabel(tag, labelName string) string {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client")
-	}
+	p.connect()
+	defer p.close()
 
 	var opts = types.ImageListOptions{}
-	imageSum, err := cli.ImageList(context.Background(),opts)
+	imageSum, err := p.client.ImageList(context.Background(),opts)
 	if err != nil {
 		logger.Fatal("Cannot get images list")
 	}
@@ -172,17 +149,10 @@ func (p *provider) GetImageLabel(tag, labelName string) string {
 }
 
 func (p *provider) SaveImage(imageId, filePath string) {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
-	defer func() {
-		if cli != nil {
-			cli.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot create new docker client with error: '%s'")
-	}
+	p.connect()
+	defer p.close()
 
-	readCloser, err := cli.ImageSave(context.Background(), []string{imageId})
+	readCloser, err := p.client.ImageSave(context.Background(), []string{imageId})
 	defer func() {
 		if readCloser != nil {
 			readCloser.Close()

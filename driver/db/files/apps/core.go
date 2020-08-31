@@ -16,9 +16,6 @@ package apps
 
 import (
 	"bufio"
-	"os"
-
-	"dam/config"
 	"dam/driver/db/files/apps/internal"
 	"dam/driver/logger"
 	"dam/driver/structures"
@@ -27,17 +24,10 @@ import (
 func (p *provider) GetApps() []*structures.App {
 	var apps []*structures.App
 
-	f, err := os.Open(config.FILES_DB_APPS)
-	defer func() {
-		if f != nil {
-			f.Close()
-		}
-	}()
-	if err != nil {
-		logger.Fatal("Cannot open file '%s' with error: %s", config.FILES_DB_APPS, err)
-	}
+	p.connect()
+	fileScanner := bufio.NewScanner(p.client)
+	defer p.close()
 
-	fileScanner := bufio.NewScanner(f)
 	for fileScanner.Scan() {
 		newLine := fileScanner.Text()
 		apps = append(apps, internal.Str2app(newLine))
