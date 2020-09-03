@@ -15,6 +15,7 @@
 package run
 
 import (
+	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
 	"dam/driver/engine"
@@ -22,7 +23,7 @@ import (
 )
 
 type PurgeSettings struct {
-	All    bool
+	All bool
 }
 
 var PurgeFlags = new(PurgeSettings)
@@ -33,10 +34,14 @@ func Purge() {
 		for _, a := range *engine.VDriver.Images() {
 			allApps[a] = true
 		}
-
-		for _, a := range db.ADriver.GetApps() {
-			allApps[a.DockerID] = false
+	} else {
+		for _, a := range *engine.VDriver.Images() {
+			_, allApps[a] = engine.VDriver.GetImageLabel(a, config.APP_FAMILY_ENV)
 		}
+	}
+
+	for _, a := range db.ADriver.GetApps() {
+		allApps[a.DockerID] = false
 	}
 
 	var stats structures.Stats
@@ -45,12 +50,12 @@ func Purge() {
 	for key, value := range allApps {
 		if value {
 			if engine.VDriver.ImageRemove(key) {
-				stats.Deleted ++
+				stats.Deleted++
 			} else {
-				stats.CanNotDeleted ++
+				stats.CanNotDeleted++
 			}
 		} else {
-			stats.Skip ++
+			stats.Skip++
 		}
 	}
 

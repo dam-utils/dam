@@ -122,30 +122,28 @@ func (p *provider) Images() *[]string {
 }
 
 // TODO refactoring
-func (p *provider) GetImageLabel(tag, labelName string) string {
+func (p *provider) GetImageLabel(id, labelName string) (string, bool) {
 	p.connect()
 	defer p.close()
 
 	var opts = types.ImageListOptions{}
-	imageSum, err := p.client.ImageList(context.Background(),opts)
+	imageSum, err := p.client.ImageList(context.Background(), opts)
 	if err != nil {
 		logger.Fatal("Cannot get images list")
 	}
 	for _, img := range imageSum {
-		for _, sourceTag := range img.RepoTags {
-			if sourceTag == tag {
-				for key, value := range img.Labels {
-					if key == labelName {
-						return value
-					}
+		if internal.PrepareImageID(img.ID) == id {
+			for key, value := range img.Labels {
+				if key == labelName {
+					return value, true
 				}
-				logger.Warn("Cannot found image label '%s'", labelName)
-				return ""
 			}
+			logger.Warn("Cannot found image label '%s'", labelName)
+			return "", false
 		}
 	}
-	logger.Warn("Cannot found image label '%s'", labelName)
-	return ""
+	logger.Warn("Cannot found image id='%s' with label '%s'", id, labelName)
+	return "", false
 }
 
 func (p *provider) SaveImage(imageId, filePath string) {
@@ -170,16 +168,15 @@ func (p *provider) ImageRemove(imageID string) bool {
 	defer p.close()
 
 	var opts = types.ImageRemoveOptions{
-		Force:true,
-		PruneChildren:true,
+		Force:         true,
+		PruneChildren: true,
 	}
 
 	// response: ([]types.ImageDeleteResponseItem, error)
-	_, err  := p.client.ImageRemove(context.Background(), imageID, opts)
+	_, err := p.client.ImageRemove(context.Background(), imageID, opts)
 	if err != nil {
 		logger.Warn("Cannot remove image with id '%s' with error: '%s'", imageID, err)
 		return false
 	}
 	return true
 }
-

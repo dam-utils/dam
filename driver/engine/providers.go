@@ -24,7 +24,7 @@ type VProvider interface {
 	Pull(tag string, repo *structures.Repo)
 	Images() *[]string
 	GetImageID(tag string) string
-	GetImageLabel(tag, labelName string) string
+	GetImageLabel(imageId, labelName string) (string, bool)
 	SaveImage(imageId, filePath string)
 	ContainerCreate(image string, name string) string
 	CopyFromContainer(containerID, sourcePath, destPath string)

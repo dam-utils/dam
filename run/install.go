@@ -32,13 +32,13 @@ import (
 )
 
 func InstallApp(appCurrentName string) {
-	var isFileInstalling bool
+	var isInstallingFromFile bool
 
 	if fs.IsExistFile(appCurrentName) {
-		isFileInstalling = true
+		isInstallingFromFile = true
 		flag.ValidateFilePath(appCurrentName)
 	} else {
-		isFileInstalling = false
+		isInstallingFromFile = false
 		flag.ValidateAppPlusVersion(appCurrentName)
 	}
 	logger.Debug("Flags validated with success")
@@ -46,14 +46,16 @@ func InstallApp(appCurrentName string) {
 
 	logger.Debug("Preparing docker image ...")
 	var tag string
-	if isFileInstalling {
+	if isInstallingFromFile {
 		tag = getTagFromArchiveManifest(appCurrentName)
 		engine.VDriver.LoadImage(appCurrentName)
 	} else {
 		tag = dockerPull(appCurrentName)
 	}
 
-	isExistFamily(tag)
+	logger.Debug("Preparing family label ...")
+	familyLabel := internal.GetFamily(tag)
+	isExistFamily(familyLabel)
 
 	logger.Debug("Getting meta ...")
 	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
@@ -72,13 +74,11 @@ func InstallApp(appCurrentName string) {
 	fs.RunFile(install)
 
 	logger.Debug("Saving to DB ...")
-	saveAppToDB(tag)
+	saveAppToDB(tag, familyLabel)
 	logger.Success("App '%s' was installed.", appCurrentName)
 }
 
-func isExistFamily(tag string) {
-	imageFamily := internal.GetFamily(tag)
-
+func isExistFamily(imageFamily string) {
 	if db.ADriver.ExistFamily(imageFamily) {
 		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily )
 	}
@@ -106,7 +106,7 @@ func dockerPull(app string) string {
 	return tag
 }
 
-func saveAppToDB(tag string) {
+func saveAppToDB(tag, familyLabel string) {
 	repo := db.RDriver.GetDefaultRepo()
 	if repo == nil {
 		logger.Fatal("Internal error. Not found default repo")
@@ -118,7 +118,7 @@ func saveAppToDB(tag string) {
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
-	app.Family = internal.GetFamily(tag)
+	app.Family = familyLabel
 
 	db.ADriver.NewApp(&app)
 }

@@ -19,10 +19,12 @@ func SplitTag(tag string) (string, string, string) {
 }
 
 func GetFamily(tag string) string {
-	imageFamily := engine.VDriver.GetImageLabel(tag, config.APP_FAMILY_ENV)
+	imageId := engine.VDriver.GetImageID(tag)
+
+	imageFamily, ok := engine.VDriver.GetImageLabel(imageId, config.APP_FAMILY_ENV)
 	_, imageName, _ := SplitTag(tag)
 
-	if imageFamily == "" {
+	if !ok {
 		imageFamily = imageName
 	}
 
