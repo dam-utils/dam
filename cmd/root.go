@@ -61,6 +61,7 @@ func init() {
 	rootCmd.AddCommand(importCmd)
 	rootCmd.AddCommand(saveAppCmd)
 	rootCmd.AddCommand(purgeAppCmd)
+	rootCmd.AddCommand(infoAppCmd)
 
 	//if pFlagDebug && config.DISABLE_DEBUG == false {
 	//if debug {
