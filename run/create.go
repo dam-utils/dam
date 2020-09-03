@@ -30,6 +30,7 @@ import (
 type CreateAppSettings struct {
 	Name   string
 	Version string
+	Family string
 }
 
 var CreateAppFlags = new(CreateAppSettings)
@@ -40,6 +41,16 @@ func CreateApp(path string) {
 	flag.ValidateAppVersion(CreateAppFlags.Version)
 	logger.Debug("Flags validated with success")
 
+	logger.Debug("Preparing labels ...")
+	labels := make(map[string]string)
+	if CreateAppFlags.Family == "" {
+		labels[config.APP_FAMILY_ENV]=CreateAppFlags.Name
+	} else {
+		flag.ValidateFamily(CreateAppFlags.Family)
+		labels[config.APP_FAMILY_ENV]=CreateAppFlags.Family
+	}
+
+	logger.Debug("Preparing envs ...")
 	projectDir := fs.GetAbsolutePath(path)
 	metaDir, dockerFile, envFile := project.Prepare(projectDir)
 
@@ -58,7 +69,7 @@ func CreateApp(path string) {
 	project.ValidateTag(tag)
 
 	logger.Debug("Building image ...")
-	engine.VDriver.Build(getImageTag(preparedEnvs), projectDir)
+	engine.VDriver.Build(getImageTag(preparedEnvs), projectDir, labels)
 
 	logger.Success("App '%s' was created.", tag)
 }

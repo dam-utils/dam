@@ -20,16 +20,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var saveAppCmd = &cobra.Command{
-	Use:   "save <app>:<version> [-f <file path>]",
-	Short: "Save app to an archive.",
+var purgeAppCmd = &cobra.Command{
+	Use:   "purge",
+	Short: "Remove docker images not attached to apps.",
 	Long:  ``,
-	Args:  cobra.RangeArgs(1, 1),
+	Args:  cobra.RangeArgs(0, 0),
 	Run: func(cmd *cobra.Command, args []string) {
-		run.Save(args[0])
+		run.Purge()
 	},
 }
 
 func init() {
-	saveAppCmd.Flags().StringVar(&run.SaveFlags.FilePath, "f", "", "Set file name for saving archive.")
+	purgeAppCmd.Flags().BoolVar(&run.PurgeFlags.All, "all", false, "Remove all not used docker images.")
 }

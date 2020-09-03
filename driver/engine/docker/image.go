@@ -165,3 +165,21 @@ func (p *provider) SaveImage(imageId, filePath string) {
 	internal.SaveToFile(filePath, readCloser)
 }
 
+func (p *provider) ImageRemove(imageID string) bool {
+	p.connect()
+	defer p.close()
+
+	var opts = types.ImageRemoveOptions{
+		Force:true,
+		PruneChildren:true,
+	}
+
+	// response: ([]types.ImageDeleteResponseItem, error)
+	_, err  := p.client.ImageRemove(context.Background(), imageID, opts)
+	if err != nil {
+		logger.Warn("Cannot remove image with id '%s' with error: '%s'", imageID, err)
+		return false
+	}
+	return true
+}
+

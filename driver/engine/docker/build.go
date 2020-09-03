@@ -26,7 +26,7 @@ import (
 	"github.com/docker/docker/pkg/term"
 )
 
-func (p *provider) Build(imageTag, projectDir string) {
+func (p *provider) Build(imageTag, projectDir string, labels map[string]string) {
 	buildCtx, err := archive.TarWithOptions(projectDir, &archive.TarOptions{})
 	if err != nil {
 		logger.Fatal("Cannot create docker context (project files directory) with error: %s", err)
@@ -34,11 +34,11 @@ func (p *provider) Build(imageTag, projectDir string) {
 	opts := types.ImageBuildOptions{
 		Tags: []string{imageTag},
 		Context : buildCtx,
+		Labels: labels,
 
 		//может пригодиться
 		//PullParent: true,
 		//BuildArgs: map[string]*string,
-		//Labels: map[string]string,
 		//Platform: string,
 	}
 

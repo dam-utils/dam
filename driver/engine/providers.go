@@ -19,7 +19,7 @@ import (
 )
 
 type VProvider interface {
-	Build(imageTag, projectDir string)
+	Build(imageTag, projectDir string, labels map[string]string)
 	LoadImage(file string)
 	Pull(tag string, repo *structures.Repo)
 	Images() *[]string
@@ -30,5 +30,6 @@ type VProvider interface {
 	CopyFromContainer(containerID, sourcePath, destPath string)
 	ContainerRemove(id string)
 	SearchAppNames(mask string) *[]string
+	ImageRemove(dockerID string) bool
 }
 

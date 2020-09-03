@@ -12,24 +12,23 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //
-package cmd
+package decorate
 
 import (
-	"dam/run"
+	"fmt"
 
-	"github.com/spf13/cobra"
+	"dam/driver/structures"
 )
 
-var saveAppCmd = &cobra.Command{
-	Use:   "save <app>:<version> [-f <file path>]",
-	Short: "Save app to an archive.",
-	Long:  ``,
-	Args:  cobra.RangeArgs(1, 1),
-	Run: func(cmd *cobra.Command, args []string) {
-		run.Save(args[0])
-	},
-}
+func PrintGarbageStatistic(stats structures.Stats) {
+	fmt.Printf(`
+    Statistic:
 
-func init() {
-	saveAppCmd.Flags().StringVar(&run.SaveFlags.FilePath, "f", "", "Set file name for saving archive.")
+Skip docker images: %v
+Removed docker images: %v
+Cannot removed docker images: %v
+All docker images: %v
+
+`,
+	stats.Skip, stats.Deleted, stats.CanNotDeleted, stats.All)
 }

@@ -28,3 +28,11 @@ func ValidateAppPlusVersion(s string) {
 		logger.Fatal("<app>:<version> flag is not valid.")
 	}
 }
+
+func ValidateFamily(s string) {
+	err := validate.CheckLabel(s)
+	if err != nil {
+		logger.Error(err.Error())
+		logger.Fatal("App family flag is not valid.")
+	}
+}
