@@ -14,7 +14,10 @@
 //
 package internal
 
-import fs "dam/driver/filesystem"
+import (
+	"dam/config"
+	fs "dam/driver/filesystem"
+)
 
 func PrepareTmpMetaPath(meta string) string {
 	path := fs.GetAbsolutePath(meta)
@@ -22,3 +25,9 @@ func PrepareTmpMetaPath(meta string) string {
 	return path
 }
 
+func BoolToString(b bool) string {
+	if b {
+		return config.MULTIVERSION_TRUE_FLAG
+	}
+	return config.MULTIVERSION_FALSE_FLAG
+}

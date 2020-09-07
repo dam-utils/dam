@@ -30,3 +30,16 @@ func GetFamily(tag string) string {
 
 	return imageFamily
 }
+
+func GetMultiVersion(tag string) bool {
+	imageId := engine.VDriver.GetImageID(tag)
+
+	imageMultiVersion, ok := engine.VDriver.GetImageLabel(imageId, config.APP_MULTIVERSION_ENV)
+
+	if !ok {
+		imageMultiVersion = config.MULTIVERSION_FALSE_FLAG
+	}
+
+	return imageMultiVersion == config.MULTIVERSION_TRUE_FLAG
+}
+

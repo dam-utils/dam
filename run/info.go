@@ -40,5 +40,20 @@ func InfoApp(tag string) {
 	engine.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Printing description ...")
+	decorate.Println()
 	decorate.PrintDescription(filepath.Join(tmpDir, config.META_DIR_NAME, config.DESCRIPTION_FILE_NAME))
+	decorate.Println()
+
+	logger.Debug("Printing family label ...")
+	family := internal.GetFamily(tag)
+	decorate.PrintLabel(family)
+
+	logger.Debug("Printing multiversion label ...")
+	imageId := engine.VDriver.GetImageID(tag)
+	multiVersion, _ := engine.VDriver.GetImageLabel(imageId, config.APP_MULTIVERSION_ENV)
+	if multiVersion != config.MULTIVERSION_TRUE_FLAG {
+		multiVersion = config.MULTIVERSION_FALSE_FLAG
+	}
+	decorate.PrintLabel(multiVersion)
+	decorate.Println()
 }

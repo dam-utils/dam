@@ -142,7 +142,7 @@ func (p *provider) GetImageLabel(id, labelName string) (string, bool) {
 			return "", false
 		}
 	}
-	logger.Warn("Cannot found image id='%s' with label '%s'", id, labelName)
+	logger.Warn("Cannot get image '%s' with label '%s'", id, labelName)
 	return "", false
 }
 

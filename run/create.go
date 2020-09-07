@@ -25,12 +25,14 @@ import (
 	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/structures"
+	"dam/run/internal"
 )
 
 type CreateAppSettings struct {
 	Name   string
 	Version string
 	Family string
+	MultiVersion bool
 }
 
 var CreateAppFlags = new(CreateAppSettings)
@@ -49,6 +51,8 @@ func CreateApp(path string) {
 		flag.ValidateFamily(CreateAppFlags.Family)
 		labels[config.APP_FAMILY_ENV]=CreateAppFlags.Family
 	}
+
+	labels[config.APP_MULTIVERSION_ENV]=internal.BoolToString(CreateAppFlags.MultiVersion)
 
 	logger.Debug("Preparing envs ...")
 	projectDir := fs.GetAbsolutePath(path)

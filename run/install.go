@@ -15,9 +15,6 @@
 package run
 
 import (
-	"dam/driver/decorate"
-	"dam/driver/engine"
-	"dam/driver/structures"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -25,9 +22,12 @@ import (
 
 	"dam/config"
 	"dam/driver/db"
+	"dam/driver/decorate"
+	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
+	"dam/driver/structures"
 	"dam/run/internal"
 )
 
@@ -55,7 +55,12 @@ func InstallApp(appCurrentName string) {
 
 	logger.Debug("Preparing family label ...")
 	familyLabel := internal.GetFamily(tag)
-	isExistFamily(familyLabel)
+
+	logger.Debug("Preparing multiversion label ...")
+	if !internal.GetMultiVersion(tag) {
+		logger.Warn("Not set multiversion flag for this app")
+		isExistFamily(familyLabel)
+	}
 
 	logger.Debug("Getting meta ...")
 	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)

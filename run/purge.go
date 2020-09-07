@@ -31,12 +31,12 @@ var PurgeFlags = new(PurgeSettings)
 func Purge() {
 	allApps := make(map[string]bool)
 	if PurgeFlags.All {
-		for _, a := range *engine.VDriver.Images() {
-			allApps[a] = true
+		for _, id := range *engine.VDriver.Images() {
+			allApps[id] = true
 		}
 	} else {
-		for _, a := range *engine.VDriver.Images() {
-			_, allApps[a] = engine.VDriver.GetImageLabel(a, config.APP_FAMILY_ENV)
+		for _, id := range *engine.VDriver.Images() {
+			_, allApps[id] = engine.VDriver.GetImageLabel(id, config.APP_FAMILY_ENV)
 		}
 	}
 

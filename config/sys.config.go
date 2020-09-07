@@ -52,20 +52,24 @@ var (
 	SORT_APP_TYPE     = "alphabetic"       // TODO create new sorting
 	SORT_VERSION_TYPE = "semantic_version" // TODO create new sorting
 	//Creating
-	META_DIR_NAME         = "meta"
-	DOCKERFILE_NAME       = "Dockerfile"
-	ENV_FILE_NAME         = "ENVIRONMENT"
-	INSTALL_FILE_NAME     = "install"
-	UNINSTALL_FILE_NAME   = "uninstall"
-	DESCRIPTION_FILE_NAME = "DESCRIPTION"
-	OS_ENV_PREFIX         = "DAM_"
-	EXPAND_META_FILE      = ".exp"
+	META_DIR_NAME          = "meta"
+	DOCKERFILE_NAME        = "Dockerfile"
+	ENV_FILE_NAME          = "ENVIRONMENT"
+	INSTALL_FILE_NAME      = "install"
+	UNINSTALL_FILE_NAME    = "uninstall"
+	DESCRIPTION_FILE_NAME  = "DESCRIPTION"
+	OS_ENV_PREFIX          = "DAM_"
+	EXPAND_META_FILE       = ".exp"
+	//Multiversion
+	MULTIVERSION_TRUE_FLAG = "true"
+	MULTIVERSION_FALSE_FLAG = "false"
 	//Reserved ENVs
-	APP_NAME_ENV   = "DAM_APP_NAME"
-	DEF_APP_NAME   = "unknown"
-	APP_VERS_ENV   = "DAM_APP_VERSION"
-	DEF_APP_VERS   = "SNAPSHOT"
-	APP_FAMILY_ENV = "DAM_APP_FAMILY"
+	APP_NAME_ENV         = "DAM_APP_NAME"
+	DEF_APP_NAME         = "unknown"
+	APP_VERS_ENV         = "DAM_APP_VERSION"
+	DEF_APP_VERS         = "SNAPSHOT"
+	APP_FAMILY_ENV       = "DAM_APP_FAMILY"
+	APP_MULTIVERSION_ENV = "DAM_APP_MULTIVERSION"
 	//Install app
 	TMP_META_PATH = "./.tmp.meta"
 	//Export
