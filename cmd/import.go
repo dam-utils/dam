@@ -21,7 +21,8 @@ import (
 )
 
 var importCmd = &cobra.Command{
-	Use:   "import [<file path>]",
+	Use:   "import <file path>",
+	Aliases: []string{"im"},
 	Short: "Import apps from file.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),

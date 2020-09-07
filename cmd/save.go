@@ -21,7 +21,7 @@ import (
 )
 
 var saveAppCmd = &cobra.Command{
-	Use:   "save <app>:<version> [-f <file path>]",
+	Use:   "save <app>:<version>",
 	Short: "Save app to an archive.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),

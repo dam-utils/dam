@@ -32,5 +32,5 @@ var listReposCmd = &cobra.Command{
 }
 
 func init() {
-	listReposCmd.Flags().BoolVar(&run.ListReposFlags.Raw, "raw", false, "List all defined repositories in RAW format")
+	listReposCmd.Flags().BoolVar(&run.ListReposFlags.Raw, "raw", false, "List all defined repositories in RAW format.")
 }

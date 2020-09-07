@@ -21,7 +21,8 @@ import (
 )
 
 var removeRepoCmd = &cobra.Command{
-	Use:   "removerepo (rr) <id>|<name>",
+	Use:   "removerepo <id>|<name>",
+	Aliases: []string{"rm"},
 	Short: "Remove registry specified by name or number.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),

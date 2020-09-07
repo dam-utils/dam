@@ -31,6 +31,5 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	listCmd.Flags().BoolVar(&run.ListFlags.Raw, "raw", false, "List all installed your applications in RAW format")
-	//	listCmd.Flags().StringVar(&run.ListFlags.Labels, "labels", "", "List all installed applications with labels.")
+	listCmd.Flags().BoolVar(&run.ListFlags.Raw, "raw", false, "List all installed your applications in RAW format.")
 }

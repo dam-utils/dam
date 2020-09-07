@@ -30,8 +30,3 @@ var removeAppCmd = &cobra.Command{
 		run.RemoveApp(args[0])
 	},
 }
-
-func init() {
-	// TODO "-f" flag
-	//removeAppCmd.Flags().BoolVar(&run.RemoveAppFlags.Force, "force", false, "Removing applications from the database with ignoring errors.")
-}
