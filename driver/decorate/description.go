@@ -38,6 +38,6 @@ func Println() {
 	fmt.Println()
 }
 
-func PrintLabel(s string) {
-	fmt.Printf("Label %s: '%s'\n", config.APP_FAMILY_ENV, s)
+func PrintLabel(name, s string) {
+	fmt.Printf("Label %s: '%s'\n", name, s)
 }

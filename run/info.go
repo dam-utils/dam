@@ -32,7 +32,7 @@ func InfoApp(tag string) {
 
 	logger.Debug("Printing family label ...")
 	family := internal.GetFamily(tag)
-	decorate.PrintLabel(family)
+	decorate.PrintLabel(config.APP_FAMILY_ENV, family)
 
 	logger.Debug("Printing multiversion label ...")
 	imageId := engine.VDriver.GetImageID(tag)
@@ -40,6 +40,6 @@ func InfoApp(tag string) {
 	if multiVersion != config.MULTIVERSION_TRUE_FLAG {
 		multiVersion = config.MULTIVERSION_FALSE_FLAG
 	}
-	decorate.PrintLabel(multiVersion)
+	decorate.PrintLabel(config.APP_MULTIVERSION_ENV, multiVersion)
 	decorate.Println()
 }
