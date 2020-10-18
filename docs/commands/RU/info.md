@@ -29,4 +29,8 @@ ERROR: <app>:<version> flag is not valid.
 exit status 1
 ```
 Следует сделать отдельно проверку введенного тега на существование такого образа и что он не dam образ
-- делать `dam info` по docker id ()
+- делать `dam info` по docker id
+- Странная ошибка, если тэг не указываешь:
+```
+ERROR: Internal error. Cannot execute root command
+```
