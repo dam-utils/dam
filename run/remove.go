@@ -1,17 +1,17 @@
 package run
 
 import (
-	"dam/driver/engine"
-	"dam/driver/structures"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"dam/config"
 	"dam/driver/db"
+	"dam/driver/engine"
 	fs "dam/driver/filesystem"
-	"dam/driver/flag"
 	"dam/driver/logger"
+	"dam/driver/structures"
+	"dam/driver/validate"
 	"dam/run/internal"
 )
 
@@ -21,13 +21,22 @@ type RemoveAppSettings struct {
 
 var RemoveAppFlags = new(RemoveAppSettings)
 
-func RemoveApp(name string) {
-	flag.ValidateAppName(name)
-	logger.Debug("Flags validated with success")
+func RemoveApp(arg string) {
+	var app *structures.App
+	var tag string
 
-	logger.Debug("Getting app tag ...")
-	app := getAppIdByName(name)
-	tag := getTagFormApp(app)
+	if validate.CheckApp(arg) == nil {
+		app = getAppIdByTag(arg)
+		tag = arg
+	} else {
+		if validate.CheckAppName(arg) == nil {
+			app = getAppIdByName(arg)
+			tag = getTagFormApp(app)
+		} else {
+			logger.Fatal("Cannot parse the command argument. It is not a tag or an app name.")
+		}
+	}
+	logger.Debug("Flags validated with success")
 
 	logger.Success("Start app '%s:%s' removing from the system.", app.ImageName, app.ImageVersion)
 
@@ -54,24 +63,55 @@ func RemoveApp(name string) {
 }
 
 func getAppIdByName(name string) *structures.App {
-	id := -1
+	ids := make([]int,0)
 
 	apps := db.ADriver.GetApps()
 	for _, app := range apps {
-		logger.Info("app.Name:'%s', name:'%s'", app.ImageName, name)
 		if app.ImageName == name {
+			ids = append(ids, app.Id)
+		}
+	}
+
+	var resultID int
+
+	switch len(ids) {
+	case 0:
+		logger.Fatal("Not found app with name '%s' in DB", name)
+	case 1:
+		resultID = ids[0]
+	default:
+		logger.Fatal("Found many apps with name '%s' in DB. You need remove by <name>:<version>", name)
+	}
+
+	app := db.ADriver.GetAppById(resultID)
+	logger.Debug("Remove app '%s'", app)
+	if app == nil {
+		logger.Fatal("Not found app with name '%s' and id '%v' in DB", name, resultID)
+	}
+
+	return app
+}
+
+func getAppIdByTag(tag string) *structures.App {
+	id := -1
+	_, name, version := internal.SplitTag(tag)
+
+	apps := db.ADriver.GetApps()
+	for _, app := range apps {
+		if app.ImageName == name && app.ImageVersion == version {
+			// Не делаю проверку, вдруг с таким тэгом приложений в базе несколько
 			id = app.Id
 		}
 	}
 
 	if id == -1 {
-		logger.Fatal("Not found app with name '%s' in DB", name)
+		logger.Fatal("Not found app with tag '%s'", tag)
 	}
 
 	app := db.ADriver.GetAppById(id)
 	logger.Debug("Remove app '%s'", app)
 	if app == nil {
-		logger.Fatal("Not found app with name '%s' in DB", name)
+		logger.Fatal("Not found app with tag '%s' and id '%v' in DB", tag, id)
 	}
 
 	return app
