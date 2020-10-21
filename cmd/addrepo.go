@@ -13,6 +13,7 @@ var addRepoCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		setDebugMode()
 		run.AddRepo()
 	},
 }

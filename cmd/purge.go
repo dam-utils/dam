@@ -12,6 +12,7 @@ var purgeAppCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.RangeArgs(0, 0),
 	Run: func(cmd *cobra.Command, args []string) {
+		setDebugMode()
 		run.Purge()
 	},
 }

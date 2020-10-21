@@ -13,6 +13,7 @@ var searchCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		setDebugMode()
 		if len(args) == 0 {
 			run.Search("")
 		} else {

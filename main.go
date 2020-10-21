@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	cmd.Init()
 	// чтобы успеть закрыть все f.Close и соединения перед выходом
 	defer func() {
 		_ = recover()

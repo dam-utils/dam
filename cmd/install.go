@@ -13,6 +13,7 @@ var installAppCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		setDebugMode()
 		run.InstallApp(args[0])
 	},
 }

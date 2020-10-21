@@ -3,21 +3,20 @@ package cmd
 import (
 	"dam/config"
 	"dam/driver/logger"
-
 	"github.com/spf13/cobra"
 )
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   config.PROJECT_NAME,
+		Use: config.PROJECT_NAME,
 		Short: `Docker Application Manager
 
 Version:
-  `+config.PROJECT_VERSION,
-		Long:  `Docker Application Manager
+  ` + config.PROJECT_VERSION,
+		Long: `Docker Application Manager
 
 Version:
-  `+config.PROJECT_VERSION,
+  ` + config.PROJECT_VERSION,
 	}
 )
 
@@ -31,8 +30,8 @@ func Execute() {
 
 var debug bool
 
-func init() {
-	rootCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Enable debug mode")
+func Init() {
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "x", false, "Enable debug mode")
 
 	rootCmd.AddCommand(removeAppCmd)
 	rootCmd.AddCommand(installAppCmd)
@@ -48,9 +47,10 @@ func init() {
 	rootCmd.AddCommand(saveAppCmd)
 	rootCmd.AddCommand(purgeAppCmd)
 	rootCmd.AddCommand(infoAppCmd)
+}
 
-	//if pFlagDebug && config.DISABLE_DEBUG == false {
-	//if debug {
+func setDebugMode() {
+	if debug {
 		logger.DebugMode = true
-	//}
+	}
 }

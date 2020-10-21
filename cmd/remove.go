@@ -13,6 +13,7 @@ var removeAppCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		setDebugMode()
 		run.RemoveApp(args[0])
 	},
 }
