@@ -25,12 +25,13 @@ var CreateAppFlags = new(CreateAppSettings)
 
 func CreateApp(path string) {
 	flag.ValidateProjectDirectory(path)
-	flag.ValidateAppName(CreateAppFlags.Name)
-	flag.ValidateAppVersion(CreateAppFlags.Version)
+	//flag.ValidateAppName(CreateAppFlags.Name)
+	//flag.ValidateAppVersion(CreateAppFlags.Version)
 	logger.Debug("Flags validated with success")
 
 	logger.Debug("Preparing labels ...")
 	labels := make(map[string]string)
+
 	if CreateAppFlags.Family == "" {
 		labels[config.APP_FAMILY_ENV]=CreateAppFlags.Name
 	} else {
@@ -49,7 +50,9 @@ func CreateApp(path string) {
 	preparedEnvs := env.PrepareProjectEnvs(envs)
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_NAME_ENV, CreateAppFlags.Name)
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_VERS_ENV, CreateAppFlags.Version)
+	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_FAMILY_ENV, labels[config.APP_FAMILY_ENV])
 
+	logger.Debug("Was prepare environments: %s", preparedEnvs)
 	logger.Debug("Preparing metaDir ...")
 	meta.PrepareExpFiles(metaDir, preparedEnvs)
 	meta.PrepareExecFiles(metaDir)

@@ -7,17 +7,16 @@ import (
 )
 
 func PrepareExpString(s string, envs map[string]string) string {
-	var newString string
 	for envKey, envVal := range envs {
-		newString = strings.ReplaceAll(s, "${"+envKey+"}", envVal)
+		s = strings.ReplaceAll(s, "${"+envKey+"}", envVal)
 	}
-	return newString
+	return s
 }
 
 func PrepareProjectEnvs(envs map[string]string) map[string]string {
 	envs = setDefaultEnv(envs, config.APP_NAME_ENV, config.DEF_APP_NAME)
 	envs = setDefaultEnv(envs, config.APP_VERS_ENV, config.DEF_APP_VERS)
-	envs = setDefaultEnv(envs, config.APP_FAMILY_ENV, config.APP_NAME_ENV)
+	envs = setDefaultEnv(envs, config.APP_FAMILY_ENV, config.DEF_APP_NAME)
 	return envs
 }
 

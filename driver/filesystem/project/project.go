@@ -12,18 +12,18 @@ import (
 func Prepare(path string)(string, string, string){
 	meta := path+string(os.PathSeparator)+config.META_DIR_NAME
 	if !fs.IsExistDir(meta) {
-		logger.Fatal("Cannot found 'meta' for path '%s'", meta)
+		logger.Fatal("Cannot find '%s' for path '%s'", config.META_DIR_NAME, meta)
 	}
 
 	dockerFile := path+string(os.PathSeparator)+config.DOCKERFILE_NAME
 	if !fs.IsExistFile(dockerFile) {
-		logger.Fatal("Cannot found 'meta' for path '%s'", dockerFile)
+		logger.Fatal("Cannot find '%s' for path '%s'", config.DOCKERFILE_NAME, dockerFile)
 	}
 
 	install := meta+string(os.PathSeparator)+config.INSTALL_FILE_NAME
 	if !fs.IsExistFile(install) {
 		if !fs.IsExistFile(install+config.EXPAND_META_FILE) {
-			logger.Fatal("Cannot found '%s' or '%s%s' files in meta directory", install, install, config.EXPAND_META_FILE)
+			logger.Fatal("Cannot find  '%s' or '%s%s' files in meta directory", install, install, config.EXPAND_META_FILE)
 		}
 	}
 

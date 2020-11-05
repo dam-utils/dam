@@ -49,6 +49,7 @@ func GetDockerFileEnv(file string) map[string]string {
 	for scanner.Scan() {
 		eKey, eVar, ok := convertDockerFileLIne(scanner.Text())
 		if ok {
+			logger.Debug("Found Env in Dockerfile: %s=%s", eKey, eVar)
 			envMap[eKey] = eVar
 		}
 	}
