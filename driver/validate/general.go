@@ -158,6 +158,9 @@ func FilePath(path string) error {
 }
 
 func CheckMask(mask string) error {
+	if mask == "" {
+		return nil
+	}
 	regexPattern := "[A-Za-z0-9-_.]"
 	matched, err := regexp.Match(regexPattern, []byte(mask))
 	if err != nil {
