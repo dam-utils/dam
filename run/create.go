@@ -78,7 +78,7 @@ func getImageTag(envs map[string]string) string {
 	if r.Id == structures.OfficialRepo.Id {
 		tag = envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
 	} else {
-		tag = r.Name+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
+		tag = r.Server+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
 	}
 	return tag
 }
