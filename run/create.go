@@ -50,35 +50,40 @@ func CreateApp(path string) {
 	preparedEnvs := env.PrepareProjectEnvs(envs)
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_NAME_ENV, CreateAppFlags.Name)
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_VERS_ENV, CreateAppFlags.Version)
+	// Если все флаги не заданы, то family надо чем-то заполнить
+	if labels[config.APP_FAMILY_ENV] == "" {
+		labels[config.APP_FAMILY_ENV] = labels[config.APP_NAME_ENV]
+	}
 	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_FAMILY_ENV, labels[config.APP_FAMILY_ENV])
 
+	logger.Debug("Preparing tag ...")
+	tag := getImageTag(preparedEnvs[config.APP_NAME_ENV], preparedEnvs[config.APP_VERS_ENV])
+	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_TAG_ENV, tag)
+	project.ValidateTag(tag)
+
 	logger.Debug("Was prepare environments: %s", preparedEnvs)
+	logger.Debug("Was prepare labels: %s", labels)
 	logger.Debug("Preparing metaDir ...")
 	meta.PrepareExpFiles(metaDir, preparedEnvs)
 	meta.PrepareExecFiles(metaDir)
 
-	logger.Debug("Preparing tag ...")
-	tag := getImageTag(preparedEnvs)
-	project.ValidateTag(tag)
-
 	logger.Debug("Building image ...")
-	engine.VDriver.Build(getImageTag(preparedEnvs), projectDir, labels)
+	engine.VDriver.Build(tag, projectDir, labels)
 
 	logger.Success("App '%s' was created.", tag)
 }
 
-func getImageTag(envs map[string]string) string {
-	var tag string
-
+func getImageTag(name, version string) string {
 	r := db.RDriver.GetDefaultRepo()
 	if r == nil {
 		logger.Fatal("Internal error. Not found default repo")
 	}
 
+	var tag string
 	if r.Id == structures.OfficialRepo.Id {
-		tag = envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
+		tag = name+":"+version
 	} else {
-		tag = r.Server+"/"+envs[config.APP_NAME_ENV]+":"+envs[config.APP_VERS_ENV]
+		tag = r.Server+"/"+name+":"+version
 	}
 	return tag
 }
