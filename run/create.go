@@ -12,6 +12,7 @@ import (
 	"dam/driver/logger"
 	"dam/driver/structures"
 	"dam/run/internal"
+	createEnvs "dam/run/internal/create/envs"
 )
 
 type CreateAppSettings struct {
@@ -25,21 +26,11 @@ var CreateAppFlags = new(CreateAppSettings)
 
 func CreateApp(path string) {
 	flag.ValidateProjectDirectory(path)
-	//flag.ValidateAppName(CreateAppFlags.Name)
-	//flag.ValidateAppVersion(CreateAppFlags.Version)
+
 	logger.Debug("Flags validated with success")
-
-	logger.Debug("Preparing labels ...")
-	labels := make(map[string]string)
-
-	if CreateAppFlags.Family == "" {
-		labels[config.APP_FAMILY_ENV]=CreateAppFlags.Name
-	} else {
+	if CreateAppFlags.Family != "" {
 		flag.ValidateFamily(CreateAppFlags.Family)
-		labels[config.APP_FAMILY_ENV]=CreateAppFlags.Family
 	}
-
-	labels[config.APP_MULTIVERSION_ENV]=internal.BoolToString(CreateAppFlags.MultiVersion)
 
 	logger.Debug("Preparing envs ...")
 	projectDir := fs.GetAbsolutePath(path)
@@ -47,45 +38,36 @@ func CreateApp(path string) {
 
 	// Create environment map
 	envs := combineEnvs(envFile, dockerFile)
-	preparedEnvs := env.PrepareProjectEnvs(envs)
-	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_NAME_ENV, CreateAppFlags.Name)
-	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_VERS_ENV, CreateAppFlags.Version)
-	// Если все флаги не заданы, то family надо чем-то заполнить
-	if labels[config.APP_FAMILY_ENV] == "" {
-		labels[config.APP_FAMILY_ENV] = labels[config.APP_NAME_ENV]
-	}
-	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_FAMILY_ENV, labels[config.APP_FAMILY_ENV])
+	logger.Debug("Envs: '%v'", envs)
+	envStorage := createEnvs.NewStorage(envs)
+	// Строгая последовательность инициализации
+	envStorage.InitAppName(config.DEF_APP_NAME, CreateAppFlags.Name)
+	envStorage.InitAppVersion(config.DEF_APP_VERS, CreateAppFlags.Version)
+	envStorage.InitAppFamily(CreateAppFlags.Family)
+	envStorage.InitAppMultiversion(internal.BoolToString(CreateAppFlags.MultiVersion))
+	envStorage.InitAppTag(getRepo())
 
-	logger.Debug("Preparing tag ...")
-	tag := getImageTag(preparedEnvs[config.APP_NAME_ENV], preparedEnvs[config.APP_VERS_ENV])
-	preparedEnvs = setEnvFlag(preparedEnvs, config.APP_TAG_ENV, tag)
-	project.ValidateTag(tag)
-
-	logger.Debug("Was prepare environments: %s", preparedEnvs)
-	logger.Debug("Was prepare labels: %s", labels)
 	logger.Debug("Preparing metaDir ...")
-	meta.PrepareExpFiles(metaDir, preparedEnvs)
+	meta.PrepareExpFiles(metaDir, envStorage.Envs())
 	meta.PrepareExecFiles(metaDir)
 
 	logger.Debug("Building image ...")
-	engine.VDriver.Build(tag, projectDir, labels)
+	engine.VDriver.Build(envStorage.Tag(), projectDir, envStorage.Labels())
 
-	logger.Success("App '%s' was created.", tag)
+	logger.Success("App '%s' was created.", envStorage.Tag())
 }
 
-func getImageTag(name, version string) string {
+func getRepo() string {
 	r := db.RDriver.GetDefaultRepo()
 	if r == nil {
 		logger.Fatal("Internal error. Not found default repo")
 	}
 
-	var tag string
 	if r.Id == structures.OfficialRepo.Id {
-		tag = name+":"+version
+		return ""
 	} else {
-		tag = r.Server+"/"+name+":"+version
+		return r.Server
 	}
-	return tag
 }
 
 // Приоритеты замещения переменных по убыванию:
@@ -102,11 +84,4 @@ func combineEnvs(envFile string, dockerFile string) map[string]string {
 
 	fEnv := env.GetFileEnv(envFile)
 	return env.MergeEnvs(env.MergeEnvs(osEnv, dfEnv), fEnv)
-}
-
-func setEnvFlag(envs map[string]string, env, envFlag string) map[string]string {
-	if envFlag != "" {
-		envs[env] = envFlag
-	}
-	return envs
 }

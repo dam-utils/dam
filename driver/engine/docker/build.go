@@ -13,6 +13,7 @@ import (
 )
 
 func (p *provider) Build(imageTag, projectDir string, labels map[string]string) {
+	logger.Debug("Building image with parameters: imageTag '%s', projectDir '%s', labels '%v'", imageTag, projectDir, labels)
 	buildCtx, err := archive.TarWithOptions(projectDir, &archive.TarOptions{})
 	if err != nil {
 		logger.Fatal("Cannot create docker context (project files directory) with error: %s", err)

@@ -8,7 +8,6 @@ import (
 
 	"dam/config"
 	fs "dam/driver/filesystem"
-	"dam/driver/filesystem/env"
 	"dam/driver/logger"
 )
 
@@ -61,7 +60,7 @@ func prepareExpFile(path string, envs map[string]string) {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		newString := env.PrepareExpString(scanner.Text(), envs)
+		newString := prepareExpString(scanner.Text(), envs)
 		_, err = newf.WriteString(newString+"\n")
 		if err != nil {
 			logger.Fatal("Cannot write string to file '%s' with error: %s", newPath, err)
@@ -77,6 +76,13 @@ func prepareExpFile(path string, envs map[string]string) {
 	if err != nil {
 		logger.Fatal("Cannot close of writable file '%s' with error: %s", newPath, err)
 	}
+}
+
+func prepareExpString(s string, envs map[string]string) string {
+	for envKey, envVal := range envs {
+		s = strings.ReplaceAll(s, "${"+envKey+"}", envVal)
+	}
+	return s
 }
 
 func PrepareExecFiles(meta string) {
