@@ -102,7 +102,7 @@ func getPrefixRepo() string {
 	var prefixRepo string
 	repo := db.RDriver.GetDefaultRepo()
 	if repo.Id != structures.OfficialRepo.Id {
-		prefixRepo = repo.Name + "/"
+		prefixRepo = repo.Server + "/"
 	}
 	return prefixRepo
 }
