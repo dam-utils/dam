@@ -66,10 +66,12 @@ func Warn(message string, args ...interface{}) {
 		message = color.Yellow + message + color.Reset
 	}
 
-	if len(args) == 0 {
-		log.Println(message)
-	} else {
-		log.Printf(message, args...)
+	if DebugMode {
+		if len(args) == 0 {
+			log.Println(message)
+		} else {
+			log.Printf(message, args...)
+		}
 	}
 }
 
