@@ -3,6 +3,7 @@ package run
 import (
 	"bufio"
 	"dam/driver/engine"
+	"dam/run/internal"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -85,26 +86,16 @@ func Import(arg string) {
 }
 
 func validateExistingImages(apps []*structures.ImportApp) {
-	getPrefixRepo()
 	for _, a := range apps {
-		_ = engine.VDriver.GetImageID(getPrefixRepo()+a.CurrentName())
+		_ = engine.VDriver.GetImageID(internal.GetPrefixRepo()+a.CurrentName())
 	}
 }
 
 func loadAppFromRegistry(apps []*structures.ImportApp) {
 	repo := db.RDriver.GetDefaultRepo()
 	for _, a := range apps {
-		engine.VDriver.Pull(getPrefixRepo()+a.CurrentName(), repo)
+		engine.VDriver.Pull(internal.GetPrefixRepo()+a.CurrentName(), repo)
 	}
-}
-
-func getPrefixRepo() string {
-	var prefixRepo string
-	repo := db.RDriver.GetDefaultRepo()
-	if repo.Id != structures.OfficialRepo.Id {
-		prefixRepo = repo.Server + "/"
-	}
-	return prefixRepo
 }
 
 func loadAppsFromArchive(arch string) []*structures.ImportApp {

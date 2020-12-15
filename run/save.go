@@ -34,7 +34,7 @@ func Save(appFullName string) {
 		filePath = SaveFlags.FilePath
 
 		logger.Debug("Saving archive ...")
-		imageId := engine.VDriver.GetImageID(appFullName)
+		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
 		engine.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
@@ -47,7 +47,7 @@ func Save(appFullName string) {
 		resultPrefixPath = baseName + config.SAVE_OPTIONAL_SEPARATOR
 
 		logger.Debug("Saving archive ...")
-		imageId := engine.VDriver.GetImageID(appFullName)
+		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
 		engine.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
