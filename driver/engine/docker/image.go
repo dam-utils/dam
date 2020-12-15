@@ -90,7 +90,7 @@ func (p *provider) GetImageID(tag string) string {
 			}
 		}
 	}
-	logger.Fatal("Cannot found images tag '%s' in images list", tag)
+	logger.Fatal("Cannot find images tag '%s' in images list", tag)
 	return ""
 }
 
@@ -124,7 +124,7 @@ func (p *provider) GetImageLabel(id, labelName string) (string, bool) {
 					return value, true
 				}
 			}
-			logger.Warn("Cannot found image label '%s'", labelName)
+			logger.Warn("Cannot find image label '%s'", labelName)
 			return "", false
 		}
 	}

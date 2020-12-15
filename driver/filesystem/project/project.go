@@ -30,7 +30,7 @@ func Prepare(path string)(string, string, string){
 	uninstall := meta+string(os.PathSeparator)+config.UNINSTALL_FILE_NAME
 	if !fs.IsExistFile(uninstall) {
 		if !fs.IsExistFile(uninstall+config.EXPAND_META_FILE) {
-			logger.Fatal("Cannot found '%s' or '%s%s' files in meta directory", uninstall, uninstall, config.EXPAND_META_FILE)
+			logger.Fatal("Cannot find '%s' or '%s%s' files in meta directory", uninstall, uninstall, config.EXPAND_META_FILE)
 		}
 	}
 
