@@ -46,9 +46,9 @@ func Export(arg string) {
 
 func exportImagesToDir(tmpDir string) {
 	for _, app := range db.ADriver.GetApps() {
-		logger.Debug("Export image %s:%s", app.ImageName, app.ImageVersion)
 		tmpFilePath := tmpDir+string(os.PathSeparator)+config.SAVE_TMP_FILE_POSTFIX
 		tag := internal.GetPrefixRepo()+app.ImageName+":"+app.ImageVersion
+		logger.Info("Preparing image %s ...", tag)
 
 		imageId := engine.VDriver.GetImageID(tag)
 		engine.VDriver.SaveImage(imageId, tmpFilePath)
