@@ -14,7 +14,7 @@ import (
 )
 
 func InfoApp(tag string) {
-	flag.ValidateAppPlusVersion(tag)
+	validateTag(tag)
 	logger.Debug("Flags validated with success")
 
 	logger.Debug("Getting meta ...")
@@ -42,4 +42,11 @@ func InfoApp(tag string) {
 	}
 	decorate.PrintLabel(config.APP_MULTIVERSION_ENV, multiVersion)
 	decorate.Println()
+}
+
+func validateTag(tag string) {
+	_, name, version := internal.SplitTag(tag)
+	logger.Debug("Validating tag '%s' ...", tag)
+	flag.ValidateAppName(name)
+	flag.ValidateAppVersion(version)
 }
