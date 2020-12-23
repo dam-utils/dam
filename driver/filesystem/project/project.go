@@ -44,8 +44,3 @@ func Prepare(path string)(string, string, string){
 
 	return meta, dockerFile, path+string(os.PathSeparator)+config.ENV_FILE_NAME
 }
-
-func ValidateTag(tag string) {
-	// TODO
-}
-
