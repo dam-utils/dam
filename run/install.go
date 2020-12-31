@@ -65,8 +65,6 @@ func InstallApp(appCurrentName string) {
 	fs.RunFile(install)
 
 	logger.Debug("Saving to DB ...")
-	newRepo, _, _ := internal.SplitTag(tag)
-	internal.PrepareRepo(newRepo)
 	saveAppToDB(tag, familyLabel)
 	logger.Success("App '%s' was installed.", appCurrentName)
 }
@@ -100,14 +98,15 @@ func dockerPull(app string) string {
 }
 
 func saveAppToDB(tag, familyLabel string) {
-	repo := db.RDriver.GetDefaultRepo()
-	if repo == nil {
-		logger.Fatal("Internal error. Not found default repo")
+	newRepo, imageName, imageVersion := internal.SplitTag(tag)
+
+	newId := structures.OfficialRepo.Id
+	if newRepo == "" {
+		newId = internal.PrepareRepo(newRepo)
 	}
-	_, imageName, imageVersion := internal.SplitTag(tag)
 
 	var app structures.App
-	app.RepoID = repo.Id
+	app.RepoID = newId
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
