@@ -11,7 +11,7 @@ import (
 	"dam/driver/structures"
 )
 
-func (p *provider) NewRepo(repo *structures.Repo) {
+func (p *provider) NewRepo(repo *structures.Repo) int {
 	repos := p.GetRepos()
 	//preparedRepo := preparePassword(repo)
 	repo.Id = internal.GetNewRepoID(repos)
@@ -27,6 +27,8 @@ func (p *provider) NewRepo(repo *structures.Repo) {
 	}
 	newRepos := append(preparedRepos, repo)
 	internal.SaveRepos(newRepos)
+
+	return repo.Id
 }
 
 func (p *provider) ModifyRepo(mRepo *structures.Repo) {

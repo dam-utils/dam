@@ -65,6 +65,8 @@ func InstallApp(appCurrentName string) {
 	fs.RunFile(install)
 
 	logger.Debug("Saving to DB ...")
+	newRepo, _, _ := internal.SplitTag(tag)
+	internal.PrepareRepo(newRepo)
 	saveAppToDB(tag, familyLabel)
 	logger.Success("App '%s' was installed.", appCurrentName)
 }

@@ -29,6 +29,9 @@ var (
 	OFFICIAL_REGISTRY_URL      = "https://registry-1.docker.io/"
 	OFFICIAL_REGISTRY_NAME     = "official"                // TODO delete hardcode in tests
 	UNKNOWN_REPO_NAME          = "~unknown~"
+	NEW_REPO_PREFIX            = "auto"
+	NEW_REPO_POSTFIX_LIMIT     = 999
+
 	//Docker
 	DOCKER_API_VERSION = "1.40"
 	//Search
