@@ -101,7 +101,7 @@ func saveAppToDB(tag, familyLabel string) {
 	newRepo, imageName, imageVersion := internal.SplitTag(tag)
 
 	newId := structures.OfficialRepo.Id
-	if newRepo == "" {
+	if newRepo != "" {
 		newId = internal.PrepareRepo(newRepo)
 	}
 

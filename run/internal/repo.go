@@ -23,8 +23,12 @@ func PrepareRepo(newRepo string) int {
 			return r.Id
 		}
 	}
+
+	newRepoName := generateNewRepoName()
+	logger.Info("Add new repository '%s'", newRepoName)
+
 	return db.RDriver.NewRepo(&structures.Repo{
-		Name: generateNewRepoName(),
+		Name: newRepoName,
 		Server: newRepo,
 		Username: "",
 		Password: "",
