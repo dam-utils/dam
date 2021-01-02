@@ -37,6 +37,11 @@ func InstallApp(appCurrentName string) {
 		engine.VDriver.LoadImage(appCurrentName)
 	} else {
 		tag = dockerPull(appCurrentName)
+		repo, _, _ := internal.SplitTag(tag)
+		defServer := db.RDriver.GetDefaultRepo().Server
+		if repo != defServer {
+			logger.Fatal("Prefix tag '%s' not equal server '%s' from the default repository. Check an appropriate repo in the util.", repo, defServer)
+		}
 	}
 
 	logger.Debug("Preparing family label ...")
@@ -71,7 +76,7 @@ func InstallApp(appCurrentName string) {
 
 func isExistFamily(imageFamily string) {
 	if db.ADriver.ExistFamily(imageFamily) {
-		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily )
+		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily)
 	}
 }
 
@@ -98,14 +103,15 @@ func dockerPull(app string) string {
 }
 
 func saveAppToDB(tag, familyLabel string) {
-	repo := db.RDriver.GetDefaultRepo()
-	if repo == nil {
-		logger.Fatal("Internal error. Not found default repo")
+	newRepo, imageName, imageVersion := internal.SplitTag(tag)
+
+	newRepoId := structures.OfficialRepo.Id
+	if newRepo != "" {
+		newRepoId = internal.PrepareRepo(newRepo)
 	}
-	_, imageName, imageVersion := internal.SplitTag(tag)
 
 	var app structures.App
-	app.RepoID = repo.Id
+	app.RepoID = newRepoId
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion
