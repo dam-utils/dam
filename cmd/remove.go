@@ -17,3 +17,7 @@ var removeAppCmd = &cobra.Command{
 		run.RemoveApp(args[0])
 	},
 }
+
+func init() {
+	removeAppCmd.Flags().BoolVar(&run.RemoveAppFlags.Force, "force", false, "If deletion fails, force delete from database.")
+}

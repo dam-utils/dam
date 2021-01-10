@@ -24,7 +24,7 @@ func (p *provider) ContainerCreate(image string, name string) string {
 	}
 	resp, err := p.client.ContainerCreate(context.Background(), &conf,  nil, nil, name)
 	if err != nil {
-		logger.Fatal("Cannot build docker image with error: %s", err)
+		logger.Fatal("Cannot create container with error: %s", err)
 	}
 
 	logger.Debug("Response ContainerCreate('%s'): %v", name, resp)
