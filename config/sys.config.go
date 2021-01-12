@@ -60,6 +60,7 @@ var (
 	APP_FAMILY_ENV       = "DAM_APP_FAMILY"
 	APP_MULTIVERSION_ENV = "DAM_APP_MULTIVERSION"
 	APP_TAG_ENV          = "DAM_APP_TAG"
+	APP_SERVERS			 = "DAM_APP_SERVERS"
 	//Install app
 	TMP_META_PATH = "./.tmp.meta"
 	//Export

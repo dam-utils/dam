@@ -60,6 +60,12 @@ func (e *env) InitAppTag(repo string) {
 	e.data[config.APP_TAG_ENV]=repo+"/"+e.data[config.APP_NAME_ENV]+":"+e.data[config.APP_VERS_ENV]
 }
 
+func (e *env) InitAppServers(def string) {
+	if e.data[config.APP_SERVERS] == "" {
+		e.data[config.APP_SERVERS] = def
+	}
+}
+
 func (e *env) Envs() map[string]string {
 	return e.data
 }
