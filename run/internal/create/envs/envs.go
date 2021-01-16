@@ -1,6 +1,9 @@
 package envs
 
-import "dam/config"
+import (
+	"dam/config"
+	"dam/run/internal"
+)
 
 type env struct {
 	data map[string]string
@@ -61,8 +64,10 @@ func (e *env) InitAppTag(repo string) {
 }
 
 func (e *env) InitAppServers(def string) {
-	if e.data[config.APP_SERVERS] == "" {
-		e.data[config.APP_SERVERS] = def
+	if e.data[config.APP_SERVERS_ENV] == "" {
+		e.data[config.APP_SERVERS_ENV] = def
+	} else {
+		internal.ValidateReposLabelString(e.data[config.APP_SERVERS_ENV])
 	}
 }
 

@@ -36,6 +36,9 @@ func InfoApp(tag string) {
 
 	logger.Debug("Printing multiversion label ...")
 	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Image with tag '%s' not exist in the system", tag)
+	}
 	multiVersion, _ := engine.VDriver.GetImageLabel(imageId, config.APP_MULTIVERSION_ENV)
 	if multiVersion != config.MULTIVERSION_TRUE_FLAG {
 		multiVersion = config.MULTIVERSION_FALSE_FLAG

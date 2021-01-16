@@ -35,6 +35,9 @@ func Save(appFullName string) {
 
 		logger.Debug("Saving archive ...")
 		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
+		if imageId == "" {
+			logger.Fatal("Image with tag '%s' not exist in the system", internal.GetPrefixRepo()+appFullName)
+		}
 		engine.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")
@@ -48,6 +51,9 @@ func Save(appFullName string) {
 
 		logger.Debug("Saving archive ...")
 		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
+		if imageId == "" {
+			logger.Fatal("Image with tag '%s' not exist in the system", internal.GetPrefixRepo()+appFullName)
+		}
 		engine.VDriver.SaveImage(imageId, filePath)
 
 		logger.Debug("Preparing manifest ...")

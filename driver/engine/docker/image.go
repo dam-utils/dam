@@ -90,7 +90,7 @@ func (p *provider) GetImageID(tag string) string {
 			}
 		}
 	}
-	logger.Fatal("Cannot find images tag '%s' in images list", tag)
+	logger.Warn("Cannot find images tag '%s' in images list", tag)
 	return ""
 }
 

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"dam/config"
 	"dam/driver/db"
@@ -53,6 +54,11 @@ func InstallApp(appCurrentName string) {
 		isExistFamily(familyLabel)
 	}
 
+	logger.Debug("Preparing servers label ...")
+	serversLabel := internal.GetServers(tag)
+	internal.ValidateReposLabelString(serversLabel)
+	createTagImages(tag, serversLabel)
+
 	logger.Debug("Getting meta ...")
 	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
 	defer fs.Remove(tmpDir)
@@ -72,6 +78,51 @@ func InstallApp(appCurrentName string) {
 	logger.Debug("Saving to DB ...")
 	saveAppToDB(tag, familyLabel)
 	logger.Success("App '%s' was installed.", appCurrentName)
+}
+
+// Create tags different from the given one
+func createTagImages(tag, serversLabel string) {
+	repo, name, version := internal.SplitTag(tag)
+	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Image with tag '%s' not exist in the system", tag)
+	}
+
+	reposList, official := string2reposList(serversLabel)
+	for key, _ := range reposList {
+		if key != repo {
+			prepareImageTag(imageId, key + "/" + name + ":" + version)
+		}
+	}
+
+	if official && repo != "" {
+		prepareImageTag(imageId, name + ":" + version)
+	}
+}
+
+func prepareImageTag(imageId, tag string) {
+	newId := engine.VDriver.GetImageID(tag)
+	if newId != "" {
+		if !engine.VDriver.ImageRemove(newId) {
+			logger.Fatal("Cannot create and remove images tag '%s'. This tag already is existing in the system", tag)
+		}
+	}
+	engine.VDriver.CreateTag(imageId, tag)
+}
+
+func string2reposList(serversLabel string) (map[string]bool, bool) {
+	result := make(map[string]bool)
+	officialRepo := false
+
+	for _, tag := range strings.Split(serversLabel, config.LABEL_REPOS_SEPARATOR) {
+		if tag == "" {
+			officialRepo = true
+			continue
+		}
+		result[tag] = true
+	}
+
+	return result, officialRepo
 }
 
 func isExistFamily(imageFamily string) {
