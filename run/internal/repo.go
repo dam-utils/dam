@@ -1,13 +1,12 @@
 package internal
 
 import (
+	"strconv"
+
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/logger"
 	"dam/driver/structures"
-	"dam/driver/validate"
-	"strconv"
-	"strings"
 )
 
 func GetPrefixRepo() string {
@@ -52,16 +51,4 @@ func generateNewRepoName() string {
 	}
 	logger.Fatal("Cannot create auto repo. Limit generated name is full. See util config.")
 	return ""
-}
-
-func ValidateReposLabelString(value string) {
-	str  := strings.Split(value, config.LABEL_REPOS_SEPARATOR)
-	for _, s := range str {
-		if s != "" {
-			err := validate.CheckServer(s)
-			if err != nil {
-				logger.Fatal("Not validate registry server '%s' in string '%s' with error: %s", s, value, err)
-			}
-		}
-	}
 }

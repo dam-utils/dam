@@ -1,12 +1,6 @@
 package run
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
@@ -16,6 +10,11 @@ import (
 	"dam/driver/logger"
 	"dam/driver/structures"
 	"dam/run/internal"
+	"dam/run/internal/label/servers"
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 func InstallApp(appCurrentName string) {
@@ -56,7 +55,6 @@ func InstallApp(appCurrentName string) {
 
 	logger.Debug("Preparing servers label ...")
 	serversLabel := internal.GetServers(tag)
-	internal.ValidateReposLabelString(serversLabel)
 	createTagImages(tag, serversLabel)
 
 	logger.Debug("Getting meta ...")
@@ -82,20 +80,27 @@ func InstallApp(appCurrentName string) {
 
 // Create tags different from the given one
 func createTagImages(tag, serversLabel string) {
-	repo, name, version := internal.SplitTag(tag)
+	defRepo, name, version := internal.SplitTag(tag)
 	imageId := engine.VDriver.GetImageID(tag)
 	if imageId == "" {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
 	}
 
-	reposList, official := string2reposList(serversLabel)
-	for key, _ := range reposList {
-		if key != repo {
-			prepareImageTag(imageId, key + "/" + name + ":" + version)
+	storage := servers.NewLabel(serversLabel)
+	err := storage.ValidateRepos()
+	if err != nil {
+		logger.Fatal("Failed validating servers label '%s' with error: %s", storage.String(), err)
+	}
+	storage.AddRepo(defRepo)
+
+	reposList, official := storage.ReposList()
+	for _, repo := range reposList {
+		if repo != defRepo {
+			prepareImageTag(imageId, repo + "/" + name + ":" + version)
 		}
 	}
 
-	if official && repo != "" {
+	if official && defRepo != "" {
 		prepareImageTag(imageId, name + ":" + version)
 	}
 }
@@ -108,21 +113,6 @@ func prepareImageTag(imageId, tag string) {
 		}
 	}
 	engine.VDriver.CreateTag(imageId, tag)
-}
-
-func string2reposList(serversLabel string) (map[string]bool, bool) {
-	result := make(map[string]bool)
-	officialRepo := false
-
-	for _, tag := range strings.Split(serversLabel, config.LABEL_REPOS_SEPARATOR) {
-		if tag == "" {
-			officialRepo = true
-			continue
-		}
-		result[tag] = true
-	}
-
-	return result, officialRepo
 }
 
 func isExistFamily(imageFamily string) {

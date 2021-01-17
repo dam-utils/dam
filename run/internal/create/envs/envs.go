@@ -2,7 +2,8 @@ package envs
 
 import (
 	"dam/config"
-	"dam/run/internal"
+	"dam/driver/logger"
+	"dam/run/internal/label/servers"
 )
 
 type env struct {
@@ -64,11 +65,16 @@ func (e *env) InitAppTag(repo string) {
 }
 
 func (e *env) InitAppServers(def string) {
-	if e.data[config.APP_SERVERS_ENV] == "" {
-		e.data[config.APP_SERVERS_ENV] = def
-	} else {
-		internal.ValidateReposLabelString(e.data[config.APP_SERVERS_ENV])
+	storage := servers.NewLabel(e.data[config.APP_SERVERS_ENV])
+
+	storage.AddRepo(def)
+
+	err := storage.ValidateRepos()
+	if err != nil {
+		logger.Fatal("Failed validating servers label '%s' with error: %s", storage.String(), err)
 	}
+
+	e.data[config.APP_SERVERS_ENV] = storage.String()
 }
 
 func (e *env) Envs() map[string]string {
