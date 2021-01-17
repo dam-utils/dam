@@ -2,14 +2,14 @@ package docker
 
 import (
 	"context"
-	"dam/driver/engine/docker/internal"
-	"dam/driver/structures"
 	"encoding/base64"
 	"encoding/json"
 	"io"
 	"os"
 
+	"dam/driver/engine/docker/internal"
 	"dam/driver/logger"
+	"dam/driver/structures"
 
 	"github.com/docker/docker/api/types"
 )
@@ -165,4 +165,14 @@ func (p *provider) ImageRemove(imageID string) bool {
 		return false
 	}
 	return true
+}
+
+func (p *provider) CreateTag(imageId, tag string) {
+	p.connect()
+	defer p.close()
+
+	err := p.client.ImageTag(context.Background(), imageId, tag)
+	if err != nil {
+		logger.Warn("Cannot create tag '%s' for image id '%s' with error: '%s'", tag, imageId, err)
+	}
 }
