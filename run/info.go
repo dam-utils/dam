@@ -44,6 +44,11 @@ func InfoApp(tag string) {
 		multiVersion = config.MULTIVERSION_FALSE_FLAG
 	}
 	decorate.PrintLabel(config.APP_MULTIVERSION_ENV, multiVersion)
+
+	logger.Debug("Printing servers label ...")
+	servers := internal.GetServers(tag)
+	decorate.PrintLabel(config.APP_SERVERS_ENV, servers)
+
 	decorate.Println()
 }
 
