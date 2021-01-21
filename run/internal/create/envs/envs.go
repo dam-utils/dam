@@ -85,6 +85,7 @@ func (e *env) Labels() map[string]string {
 	labels := make(map[string]string)
 	labels[config.APP_FAMILY_ENV] = e.data[config.APP_FAMILY_ENV]
 	labels[config.APP_MULTIVERSION_ENV] = e.data[config.APP_MULTIVERSION_ENV]
+	labels[config.APP_SERVERS_ENV] = e.data[config.APP_SERVERS_ENV]
 
 	return labels
 }
