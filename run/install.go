@@ -37,11 +37,12 @@ func InstallApp(appCurrentName string) {
 		engine.VDriver.LoadImage(appCurrentName)
 	} else {
 		tag = dockerPull(appCurrentName)
-		repo, _, _ := internal.SplitTag(tag)
-		defServer := db.RDriver.GetDefaultRepo().Server
-		if repo != defServer {
-			logger.Fatal("Prefix tag '%s' not equal server '%s' from the default repository. Check an appropriate repo in the util.", repo, defServer)
-		}
+	}
+
+	logger.Debug("Validate existing the image in the docker cache...")
+	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Stop installing image with tag '%s'. Cannot find image in the docker cache.", tag)
 	}
 
 	logger.Debug("Preparing family label ...")
