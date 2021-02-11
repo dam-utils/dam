@@ -3,7 +3,7 @@ package config
 var (
 	//Global options
 	PROJECT_NAME    = "dam"
-	PROJECT_VERSION = "1.0.1"
+	PROJECT_VERSION = "1.1.1"
 
 	//Decorating options
 	COLLOR_ON                  = true
