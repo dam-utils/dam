@@ -2,8 +2,6 @@ package run
 
 import (
 	"bufio"
-	"dam/driver/engine"
-	"dam/run/internal"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,11 +10,13 @@ import (
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
+	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/driver/logger/color"
 	"dam/driver/structures"
+	"dam/run/internal"
 )
 
 type ImportSettings struct {
@@ -87,7 +87,11 @@ func Import(arg string) {
 
 func validateExistingImages(apps []*structures.ImportApp) {
 	for _, a := range apps {
-		_ = engine.VDriver.GetImageID(internal.GetPrefixRepo()+a.CurrentName())
+		tag := internal.GetPrefixRepo()+a.CurrentName()
+		id := engine.VDriver.GetImageID(tag)
+		if id == "" {
+			logger.Fatal("Image with tag '%s' not exist in the system", tag)
+		}
 	}
 }
 

@@ -17,5 +17,6 @@ type VProvider interface {
 	ContainerRemove(id string)
 	SearchAppNames(mask string) *[]string
 	ImageRemove(dockerID string) bool
+	CreateTag(imageId, tag string)
 }
 

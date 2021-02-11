@@ -39,6 +39,13 @@ func RemoveApp(arg string) {
 	logger.Debug("Flags validated with success")
 
 	logger.Success("Start app '%s:%s' removing from the system.", app.ImageName, app.ImageVersion)
+	defer func() {
+		if RemoveAppFlags.Force {
+			logger.Debug("Forced app removing from DB ...")
+			db.ADriver.RemoveAppById(app.Id)
+			logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)
+		}
+	}()
 
 	logger.Debug("Getting meta ...")
 	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
@@ -56,10 +63,12 @@ func RemoveApp(arg string) {
 	logger.Debug("Running uninstall ...")
 	fs.RunFile(uninstall)
 
-	logger.Debug("Removing app from DB ...")
-	db.ADriver.RemoveAppById(app.Id)
+	if !RemoveAppFlags.Force {
+		logger.Debug("App removing from DB ...")
+		db.ADriver.RemoveAppById(app.Id)
 
-	logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)
+		logger.Success("App '%s:%s' was removed.", app.ImageName, app.ImageVersion)
+	}
 }
 
 func getAppIdByName(name string) *structures.App {

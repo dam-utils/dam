@@ -1,11 +1,6 @@
 package run
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-
 	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
@@ -15,6 +10,11 @@ import (
 	"dam/driver/logger"
 	"dam/driver/structures"
 	"dam/run/internal"
+	"dam/run/internal/label/servers"
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 func InstallApp(appCurrentName string) {
@@ -39,6 +39,12 @@ func InstallApp(appCurrentName string) {
 		tag = dockerPull(appCurrentName)
 	}
 
+	logger.Debug("Validate existing the image in the docker cache...")
+	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Stop installing image with tag '%s'. Cannot find image in the docker cache.", tag)
+	}
+
 	logger.Debug("Preparing family label ...")
 	familyLabel := internal.GetFamily(tag)
 
@@ -47,6 +53,10 @@ func InstallApp(appCurrentName string) {
 		logger.Warn("Not set multiversion flag for this app")
 		isExistFamily(familyLabel)
 	}
+
+	logger.Debug("Preparing servers label ...")
+	serversLabel := internal.GetServers(tag)
+	createTagImages(tag, serversLabel)
 
 	logger.Debug("Getting meta ...")
 	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
@@ -69,9 +79,46 @@ func InstallApp(appCurrentName string) {
 	logger.Success("App '%s' was installed.", appCurrentName)
 }
 
+// Create tags different from the given one
+func createTagImages(tag, serversLabel string) {
+	defRepo, name, version := internal.SplitTag(tag)
+	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Image with tag '%s' not exist in the system", tag)
+	}
+
+	storage := servers.NewLabel(serversLabel)
+	err := storage.ValidateRepos()
+	if err != nil {
+		logger.Fatal("Failed validating servers label '%s' with error: %s", storage.String(), err)
+	}
+	storage.AddRepo(defRepo)
+
+	reposList, official := storage.ReposList()
+	for _, repo := range reposList {
+		if repo != defRepo {
+			prepareImageTag(imageId, repo + "/" + name + ":" + version)
+		}
+	}
+
+	if official && defRepo != "" {
+		prepareImageTag(imageId, name + ":" + version)
+	}
+}
+
+func prepareImageTag(imageId, tag string) {
+	newId := engine.VDriver.GetImageID(tag)
+	if newId != "" {
+		if !engine.VDriver.ImageRemove(newId) {
+			logger.Fatal("Cannot create and remove images tag '%s'. This tag already is existing in the system", tag)
+		}
+	}
+	engine.VDriver.CreateTag(imageId, tag)
+}
+
 func isExistFamily(imageFamily string) {
 	if db.ADriver.ExistFamily(imageFamily) {
-		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily )
+		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily)
 	}
 }
 
@@ -98,14 +145,15 @@ func dockerPull(app string) string {
 }
 
 func saveAppToDB(tag, familyLabel string) {
-	repo := db.RDriver.GetDefaultRepo()
-	if repo == nil {
-		logger.Fatal("Internal error. Not found default repo")
+	newRepo, imageName, imageVersion := internal.SplitTag(tag)
+
+	newRepoId := structures.OfficialRepo.Id
+	if newRepo != "" {
+		newRepoId = internal.PrepareRepo(newRepo)
 	}
-	_, imageName, imageVersion := internal.SplitTag(tag)
 
 	var app structures.App
-	app.RepoID = repo.Id
+	app.RepoID = newRepoId
 	app.DockerID = engine.VDriver.GetImageID(tag)
 	app.ImageName = imageName
 	app.ImageVersion = imageVersion

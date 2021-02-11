@@ -29,6 +29,9 @@ var (
 	OFFICIAL_REGISTRY_URL      = "https://registry-1.docker.io/"
 	OFFICIAL_REGISTRY_NAME     = "official"                // TODO delete hardcode in tests
 	UNKNOWN_REPO_NAME          = "~unknown~"
+	NEW_REPO_PREFIX            = "auto"
+	NEW_REPO_POSTFIX_LIMIT     = 999
+
 	//Docker
 	DOCKER_API_VERSION = "1.40"
 	//Search
@@ -46,6 +49,7 @@ var (
 	DESCRIPTION_FILE_NAME = "DESCRIPTION"
 	OS_ENV_PREFIX         = "DAM_"
 	EXPAND_META_FILE      = ".exp"
+	LABEL_REPOS_SEPARATOR = ","
 	//Multiversion
 	MULTIVERSION_TRUE_FLAG  = "true"
 	MULTIVERSION_FALSE_FLAG = "false"
@@ -57,6 +61,7 @@ var (
 	APP_FAMILY_ENV       = "DAM_APP_FAMILY"
 	APP_MULTIVERSION_ENV = "DAM_APP_MULTIVERSION"
 	APP_TAG_ENV          = "DAM_APP_TAG"
+	APP_SERVERS_ENV		 = "DAM_APP_SERVERS"
 	//Install app
 	TMP_META_PATH = "./.tmp.meta"
 	//Export

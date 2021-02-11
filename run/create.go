@@ -45,7 +45,9 @@ func CreateApp(path string) {
 	envStorage.InitAppVersion(config.DEF_APP_VERS, CreateAppFlags.Version)
 	envStorage.InitAppFamily(CreateAppFlags.Family)
 	envStorage.InitAppMultiversion(internal.BoolToString(CreateAppFlags.MultiVersion))
-	envStorage.InitAppTag(getRepo())
+	defRepo := getRepo()
+	envStorage.InitAppTag(defRepo)
+	envStorage.InitAppServers(defRepo)
 
 	logger.Debug("Preparing metaDir ...")
 	meta.PrepareExpFiles(metaDir, envStorage.Envs())

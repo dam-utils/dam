@@ -15,6 +15,7 @@ type provider struct {
 	//ContainerRemove(id string)
 	//SearchAppNames(mask string) *[]string
 	//ImageRemove(dockerID string) bool
+	//CreateTag(imageId, tag string)
 
 	client *client.Client
 }
