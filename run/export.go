@@ -51,6 +51,9 @@ func exportImagesToDir(tmpDir string) {
 		logger.Info("Preparing image %s ...", tag)
 
 		imageId := engine.VDriver.GetImageID(tag)
+		if imageId == "" {
+			logger.Fatal("Image with tag '%s' not exist in the system", tag)
+		}
 		engine.VDriver.SaveImage(imageId, tmpFilePath)
 
 		modifyManifest(tmpFilePath, tag)

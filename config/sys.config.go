@@ -49,6 +49,7 @@ var (
 	DESCRIPTION_FILE_NAME = "DESCRIPTION"
 	OS_ENV_PREFIX         = "DAM_"
 	EXPAND_META_FILE      = ".exp"
+	LABEL_REPOS_SEPARATOR = ","
 	//Multiversion
 	MULTIVERSION_TRUE_FLAG  = "true"
 	MULTIVERSION_FALSE_FLAG = "false"
@@ -60,6 +61,7 @@ var (
 	APP_FAMILY_ENV       = "DAM_APP_FAMILY"
 	APP_MULTIVERSION_ENV = "DAM_APP_MULTIVERSION"
 	APP_TAG_ENV          = "DAM_APP_TAG"
+	APP_SERVERS_ENV		 = "DAM_APP_SERVERS"
 	//Install app
 	TMP_META_PATH = "./.tmp.meta"
 	//Export

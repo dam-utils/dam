@@ -1,9 +1,11 @@
 package internal
 
 import (
+	"strings"
+
 	"dam/config"
 	"dam/driver/engine"
-	"strings"
+	"dam/driver/logger"
 )
 
 func SplitTag(tag string) (string, string, string) {
@@ -20,6 +22,9 @@ func SplitTag(tag string) (string, string, string) {
 
 func GetFamily(tag string) string {
 	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Image with tag '%s' not exist in the system", tag)
+	}
 
 	imageFamily, ok := engine.VDriver.GetImageLabel(imageId, config.APP_FAMILY_ENV)
 	_, imageName, _ := SplitTag(tag)
@@ -33,6 +38,9 @@ func GetFamily(tag string) string {
 
 func GetMultiVersion(tag string) bool {
 	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Image with tag '%s' not exist in the system", tag)
+	}
 
 	imageMultiVersion, ok := engine.VDriver.GetImageLabel(imageId, config.APP_MULTIVERSION_ENV)
 
@@ -43,3 +51,18 @@ func GetMultiVersion(tag string) bool {
 	return imageMultiVersion == config.MULTIVERSION_TRUE_FLAG
 }
 
+func GetServers(tag string) string {
+	imageId := engine.VDriver.GetImageID(tag)
+	if imageId == "" {
+		logger.Fatal("Image with tag '%s' not exist in the system", tag)
+	}
+
+	servers, ok := engine.VDriver.GetImageLabel(imageId, config.APP_SERVERS_ENV)
+
+	if !ok {
+		logger.Warn("Label APP_SERVERS")
+		servers = ""
+	}
+
+	return servers
+}
