@@ -22,6 +22,8 @@ func (p *provider) Build(imageTag, projectDir string, labels map[string]string) 
 		Tags: []string{imageTag},
 		Context : buildCtx,
 		Labels: labels,
+		// Always remove intermediate containers
+		Remove: true,
 
 		//может пригодиться
 		//PullParent: true,
