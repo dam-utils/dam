@@ -50,24 +50,38 @@ test@home-pc ~/go/src/dam $ ./dam 1 official --default
 
 Более подробно по командам см. хелп:
 ```
-test@home-pc ~/go/src/dam $ ./dam help
-/--/
+test@home-pc ~/go/src/dam $ ./dam --help
+Docker Application Manager
+
+Version:
+  1.1.1
 
 Usage:
   dam [command]
 
 Available Commands:
-  addrepo     Add a registry to the system.
+  addrepo     Add an app registry to the system.
+  create      Create docker application.
+  export      Export apps to file.
   help        Help about any command
+  import      Import apps from file.
+  info        Information for your application.
+  install     Install docker application from a docker registry or a specific file archive.
+  list        List all installed your applications.
   listrepos   List all defined repositories.
   modifyrepo  Modify properties of repositories specified.
+  purge       Remove docker images not attached to apps.
+  remove      Remove docker application.
   removerepo  Remove registry specified by name or number.
-  search      Search application in remote registry.
+  save        Save app to an archive.
+  search      Search app in remote registry.
 
 Flags:
-  -h, --help   help for dam
+  -x, --debug   Enable debug mode
+  -h, --help    help for dam
 
 Use "dam [command] --help" for more information about a command.
+
 ```
 
 ## Подробнее для разработки
