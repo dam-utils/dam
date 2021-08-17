@@ -57,6 +57,10 @@ func MkDir(dir string) {
 	}
 }
 
+func GetDir(filePath string) string {
+	return filepath.Dir(filePath)
+}
+
 func Remove(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {

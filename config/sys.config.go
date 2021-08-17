@@ -3,7 +3,7 @@ package config
 var (
 	//Global options
 	PROJECT_NAME    = "dam"
-	PROJECT_VERSION = "1.1.1"
+	PROJECT_VERSION = "1.1.2"
 
 	//Decorating options
 	COLLOR_ON                  = true
@@ -13,13 +13,13 @@ var (
 	//DB types
 	DB_TYPE = "files" // TODO create new dbs
 	//FILES DB options. Type: "files"
-	// WARN: Use only absolutely files path
+	//WARN: Recomended to use only absolutely files path
 	FILES_DB_SEPARATOR = ";"
 	FILES_DB_BOOL_FLAG = "*"
-	FILES_DB_REPOS     = "/tmp/Repos"
-	FILES_DB_APPS      = "/tmp/Apps"
-	FILES_DB_TMP       = "/tmp/.db"
-	// ContainerD type
+	FILES_DB_REPOS     = "~/.dam/Repos"
+	FILES_DB_APPS      = "~/.dam/Apps"
+	FILES_DB_TMP       = "~/.dam/.db"
+	//ContainerD type
 	VIRTUALIZATION_TYPE = "docker"
 	//Repositories
 	SEARCH_PROTOCOL_STRATEGY   = []string{"https", "http"} // The order of the protocols is important.

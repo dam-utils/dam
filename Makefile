@@ -14,7 +14,7 @@ USE_GO_GET_CACHE		:= true
 #preparing
 include src/make/Makefile.funcs
 
-build:	build-windows build-linux
+build:build-windows build-linux
 
 build-windows:
 	$(call build_func,windows,amd64)
