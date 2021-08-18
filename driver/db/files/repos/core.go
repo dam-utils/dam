@@ -71,31 +71,31 @@ func (p *provider) ModifyRepo(mRepo *structures.Repo) {
 }
 
 func (p *provider) ClearRepos() {
-	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(config.FILES_DB_TMP_DIR, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
 			f.Close()
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
 	_, err = f.WriteString("")
 	if err != nil {
-		logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
-	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
+	fs.MoveFile(config.FILES_DB_TMP_DIR, config.FILES_DB_REPOS_FILENAME)
 }
 
 func (p *provider) GetRepos() []*structures.Repo {

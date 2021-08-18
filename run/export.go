@@ -96,10 +96,10 @@ func exportAppsListToFile(path string) {
 
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 }

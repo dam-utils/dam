@@ -20,7 +20,7 @@ func Fatal(message string, args ...interface{}) {
 	debug.SetTraceback("")
 
 	message = "ERROR: " + message
-	if config.COLLOR_ON == true {
+	if config.COLOR_ON == true {
 		message = color.Red + message + color.Reset
 	}
 
@@ -34,7 +34,7 @@ func Fatal(message string, args ...interface{}) {
 
 func Error(message string, args ...interface{}) {
 	message = "ERROR: " + message
-	if config.COLLOR_ON == true {
+	if config.COLOR_ON == true {
 		message = color.Red + message + color.Reset
 	}
 
@@ -47,7 +47,7 @@ func Error(message string, args ...interface{}) {
 
 func Debug(message string, args ...interface{}) {
 	message = "DEBUG: "+message
-	if config.COLLOR_ON == true {
+	if config.COLOR_ON == true {
 		message = color.White + message + color.Reset
 	}
 
@@ -62,7 +62,7 @@ func Debug(message string, args ...interface{}) {
 
 func Warn(message string, args ...interface{}) {
 	message = "WARN: "+message
-	if config.COLLOR_ON == true {
+	if config.COLOR_ON == true {
 		message = color.Yellow + message + color.Reset
 	}
 
@@ -84,7 +84,7 @@ func Info(message string, args ...interface{}) {
 }
 
 func Success(message string, args ...interface{}) {
-	if config.COLLOR_ON == true {
+	if config.COLOR_ON == true {
 		message = color.Green + message + color.Reset
 	}
 

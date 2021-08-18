@@ -12,7 +12,7 @@ import (
 
 func GetAppVersions(repo *structures.Repo, appName string) *[]string {
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
+		MaxIdleConns:    config.SEARCH_MAX_CONNECTIONS,
 		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
 	}
 	client := &http.Client{Transport: tr}

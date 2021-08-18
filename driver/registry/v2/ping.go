@@ -12,7 +12,7 @@ var SessionURL string
 
 func CheckRepo(repo *structures.Repo, protocol string) error {
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
+		MaxIdleConns:    config.SEARCH_MAX_CONNECTIONS,
 		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
 	}
 	client := &http.Client{Transport: tr}

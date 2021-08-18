@@ -13,34 +13,34 @@ import (
 )
 
 func SaveApps(apps []*structures.App) {
-	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(config.FILES_DB_TMP_DIR, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
 			f.Close()
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
 	for _, app := range apps {
 		newLine := app2str(app)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+			logger.Fatal("Cannot write to apps file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
-	logger.Debug("Move '%s' to '%s'", config.FILES_DB_TMP, config.FILES_DB_APPS)
-	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_APPS)
+	logger.Debug("Move '%s' to '%s'", config.FILES_DB_TMP_DIR, config.FILES_DB_APPS_FILENAME)
+	fs.MoveFile(config.FILES_DB_TMP_DIR, config.FILES_DB_APPS_FILENAME)
 }
 
 func app2str(app *structures.App) *string {
@@ -49,7 +49,7 @@ func app2str(app *structures.App) *string {
 
 	multiVers := ""
 	if app.MultiVersion {
-		multiVers = config.DECORATE_BOOL_FLAG
+		multiVers = config.DECORATE_BOOL_FLAG_SYMBOL
 	}
 
 	fields := []string{
@@ -117,7 +117,7 @@ func Str2app(str string) *structures.App {
 	app.ImageName = strArray[2]
 	app.ImageVersion = strArray[3]
 	app.RepoID, _ = strconv.Atoi(strArray[4])
-	if strArray[5] == config.FILES_DB_BOOL_FLAG {
+	if strArray[5] == config.FILES_DB_BOOL_FLAG_SYMBOL {
 		app.MultiVersion = true
 	}
 	app.Family = strArray[6]

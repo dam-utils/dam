@@ -17,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}()
 
-	config.Prepare()
+	conf.Prepare()
 	db.Init()
 	engine.Init()
 

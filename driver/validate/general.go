@@ -192,7 +192,7 @@ func CheckDockerID(id string) error {
 }
 
 func CheckBool(b string) error {
-	if b != config.FILES_DB_BOOL_FLAG && b != ""  {
+	if b != config.FILES_DB_BOOL_FLAG_SYMBOL && b != ""  {
 		return fmt.Errorf("Bool flag with value '%s' is bad", b)
 	}
 

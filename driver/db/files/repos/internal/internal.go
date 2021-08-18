@@ -50,7 +50,7 @@ func CleanReposDefault(repos []*structures.Repo) []*structures.Repo {
 func repo2str(repo *structures.Repo) *string {
 	var def string
 	if repo.Default {
-		def = config.FILES_DB_BOOL_FLAG
+		def = config.FILES_DB_BOOL_FLAG_SYMBOL
 	} else {
 		def = ""
 	}
@@ -72,33 +72,33 @@ func repo2str(repo *structures.Repo) *string {
 func SaveRepos(repos []*structures.Repo) {
 	newRepos := preparePasswordRepos(repos)
 
-	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(config.FILES_DB_TMP_DIR, os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
 			f.Close()
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
 	for _, repo := range newRepos {
 		newLine := repo2str(repo)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
 	}
 
-	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_REPOS)
+	fs.MoveFile(config.FILES_DB_TMP_DIR, config.FILES_DB_REPOS_FILENAME)
 }
 
 func PrepareDefaultInRepos(repos []*structures.Repo) []*structures.Repo {
@@ -159,7 +159,7 @@ func Str2Repo(str string) *structures.Repo {
 
 
 	repoArray.Id, _ = strconv.Atoi(strRepo[0])
-	if strRepo[1] == config.FILES_DB_BOOL_FLAG {
+	if strRepo[1] == config.FILES_DB_BOOL_FLAG_SYMBOL {
 		repoArray.Default = true
 	}
 	repoArray.Name = strRepo[2]

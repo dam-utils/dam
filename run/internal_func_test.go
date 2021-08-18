@@ -19,9 +19,9 @@ func setDefaultConfig() {
 	switch config.DB_TYPE {
 	case "files":
 		config.DECORATE_MAX_DISPLAY_WIDTH = 100
-		config.FILES_DB_REPOS = "Repos"
-		config.FILES_DB_APPS = "Apps"
-		config.FILES_DB_TMP = ".db"
+		config.FILES_DB_REPOS_FILENAME = "Repos"
+		config.FILES_DB_APPS_FILENAME = "Apps"
+		config.FILES_DB_TMP_DIR = ".db"
 		config.FILES_DB_SEPARATOR = "|"
 	default:
 		logger.Fatal("Cannot supported db '%s'", config.DB_TYPE)
@@ -31,7 +31,7 @@ func setDefaultConfig() {
 }
 
 func dropTestDB(t *testing.T) {
-	for _, path := range [...]string{config.FILES_DB_REPOS, config.FILES_DB_REPOS, config.FILES_DB_TMP}{
+	for _, path := range [...]string{config.FILES_DB_REPOS_FILENAME, config.FILES_DB_REPOS_FILENAME, config.FILES_DB_TMP_DIR}{
 		_, err := os.Stat(path)
 		if err == nil {
 			err = os.Remove(path)

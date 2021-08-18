@@ -14,7 +14,7 @@ func PrintRAWReposList() {
 	for _, repo := range repos {
 		var def string
 		if repo.Default {
-			def = config.DECORATE_BOOL_FLAG
+			def = config.DECORATE_BOOL_FLAG_SYMBOL
 		} else {
 			def = ""
 		}

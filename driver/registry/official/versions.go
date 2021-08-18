@@ -14,7 +14,7 @@ func GetAppVersions(app string) *[]string {
 	url := config.OFFICIAL_REGISTRY_URL+"/v2/"+app+"/tags/list"
 
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
+		MaxIdleConns:    config.SEARCH_MAX_CONNECTIONS,
 		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
 	}
 	client := &http.Client{Transport: tr}

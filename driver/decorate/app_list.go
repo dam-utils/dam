@@ -21,7 +21,7 @@ func PrintRAWAppsList() {
 	for _, app := range apps {
 		var multiVers string
 		if app.MultiVersion {
-			multiVers = config.DECORATE_BOOL_FLAG
+			multiVers = config.DECORATE_BOOL_FLAG_SYMBOL
 		} else {
 			multiVers = ""
 		}

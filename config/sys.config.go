@@ -1,30 +1,36 @@
 package config
 
-var (
+const (
 	//Global options
 	PROJECT_NAME    = "dam"
 	PROJECT_VERSION = "1.1.2"
 
 	//Decorating options
-	COLLOR_ON                  = true
+	COLOR_ON                   = true
 	DECORATE_MAX_DISPLAY_WIDTH = 100
 	DECORATE_RAW_SEPARATOR     = ";"
-	DECORATE_BOOL_FLAG         = "*"
+	DECORATE_BOOL_FLAG_SYMBOL  = "*"
+
 	//DB types
 	DB_TYPE = "files" // TODO create new dbs
+
 	//FILES DB options. Type: "files"
 	//WARN: Recomended to use only absolutely files path
-	FILES_DB_SEPARATOR = ";"
-	FILES_DB_BOOL_FLAG = "*"
-	FILES_DB_REPOS     = "~/.dam/Repos"
-	FILES_DB_APPS      = "~/.dam/Apps"
-	FILES_DB_TMP       = "~/.dam/.db"
-	//ContainerD type
+	FILES_DB_SEPARATOR        = ";"
+	FILES_DB_BOOL_FLAG_SYMBOL = "*"
+	FILES_DB_REPOS_FILENAME   = ".dam/Repos"
+	FILES_DB_APPS_FILENAME    = ".dam/Apps"
+	FILES_DB_TMP_DIR          = ".dam/.db"
+
+	//Virtualization type
 	VIRTUALIZATION_TYPE = "docker"
-	//Repositories
-	SEARCH_PROTOCOL_STRATEGY   = []string{"https", "http"} // The order of the protocols is important.
-	SEARCH_MAX_CONNECTS        = 1
-	SEARCH_TIMEOUT_MS          = 1000
+
+	//Search
+	SEARCH_PROTOCOL_STRATEGY = "https, http" // The order of the protocols is important.
+	SEARCH_MAX_CONNECTIONS   = 1
+	SEARCH_TIMEOUT_MS        = 1000
+
+	//Official
 	OFFICIAL_REGISTRY_AUTH_URL = "https://auth.docker.io/token?service=registry.docker.io"
 	OFFICIAL_REGISTRY_URL      = "https://registry-1.docker.io/"
 	OFFICIAL_REGISTRY_NAME     = "official"                // TODO delete hardcode in tests

@@ -31,7 +31,7 @@ func bool2Str(b bool) string {
 	if !b {
 		return SpaceSeparator
 	} else {
-		return config.DECORATE_BOOL_FLAG
+		return config.DECORATE_BOOL_FLAG_SYMBOL
 	}
 }
 
