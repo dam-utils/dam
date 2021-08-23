@@ -1,11 +1,12 @@
 package validate
 
 import (
-	"dam/config"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"dam/driver/conf/option"
 )
 
 func CheckRepoName(name string) error {
@@ -192,7 +193,7 @@ func CheckDockerID(id string) error {
 }
 
 func CheckBool(b string) error {
-	if b != config.FILES_DB_BOOL_FLAG_SYMBOL && b != ""  {
+	if b != option.Config.FilesDB.GetBoolFlagSymbol() && b != ""  {
 		return fmt.Errorf("Bool flag with value '%s' is bad", b)
 	}
 

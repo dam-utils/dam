@@ -1,26 +1,26 @@
 package conf
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 )
 
 func Prepare() {
-	switch config.DB_TYPE {
+	switch option.Config.DB.GetType() {
 	case "files":
-		reposDir := fs.GetDir(config.FILES_DB_REPOS_FILENAME)
+		reposDir := fs.GetDir(option.Config.FilesDB.GetReposFilename())
 		if !fs.IsExistDir(reposDir) {
-			fs.MkDir(fs.GetDir(config.FILES_DB_REPOS_FILENAME))
+			fs.MkDir(fs.GetDir(option.Config.FilesDB.GetReposFilename()))
 		}
-		fs.Touch(config.FILES_DB_REPOS_FILENAME)
+		fs.Touch(option.Config.FilesDB.GetReposFilename())
 
-		appDir := fs.GetDir(config.FILES_DB_APPS_FILENAME)
+		appDir := fs.GetDir(option.Config.FilesDB.GetAppsFilename())
 		if !fs.IsExistDir(appDir){
-			fs.MkDir(fs.GetDir(config.FILES_DB_APPS_FILENAME))
+			fs.MkDir(fs.GetDir(option.Config.FilesDB.GetAppsFilename()))
 		}
-		fs.Touch(config.FILES_DB_APPS_FILENAME)
+		fs.Touch(option.Config.FilesDB.GetAppsFilename())
 	default:
-		logger.Fatal("Cannot supported db '%s'", config.DB_TYPE)
+		logger.Fatal("Cannot supported db '%s'", option.Config.DB.GetType())
 	}
 }

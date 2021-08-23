@@ -3,7 +3,7 @@ package internal
 import (
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/engine"
 	"dam/driver/logger"
 )
@@ -26,7 +26,7 @@ func GetFamily(tag string) string {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
 	}
 
-	imageFamily, ok := engine.VDriver.GetImageLabel(imageId, config.APP_FAMILY_ENV)
+	imageFamily, ok := engine.VDriver.GetImageLabel(imageId, option.Config.ReservedEnvs.GetAppFamilyEnv())
 	_, imageName, _ := SplitTag(tag)
 
 	if !ok {
@@ -42,13 +42,13 @@ func GetMultiVersion(tag string) bool {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
 	}
 
-	imageMultiVersion, ok := engine.VDriver.GetImageLabel(imageId, config.APP_MULTIVERSION_ENV)
+	imageMultiVersion, ok := engine.VDriver.GetImageLabel(imageId, option.Config.ReservedEnvs.GetAppMultiversionEnv())
 
 	if !ok {
-		imageMultiVersion = config.MULTIVERSION_FALSE_FLAG
+		imageMultiVersion = option.Config.Multiversion.GetFalseFlag()
 	}
 
-	return imageMultiVersion == config.MULTIVERSION_TRUE_FLAG
+	return imageMultiVersion == option.Config.Multiversion.GetTrueFlag()
 }
 
 func GetServers(tag string) string {
@@ -57,7 +57,7 @@ func GetServers(tag string) string {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
 	}
 
-	servers, ok := engine.VDriver.GetImageLabel(imageId, config.APP_SERVERS_ENV)
+	servers, ok := engine.VDriver.GetImageLabel(imageId, option.Config.ReservedEnvs.GetAppServersEnv())
 
 	if !ok {
 		logger.Warn("Label APP_SERVERS")

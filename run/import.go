@@ -2,12 +2,12 @@ package run
 
 import (
 	"bufio"
+	"dam/driver/conf/option"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"dam/config"
 	"dam/driver/db"
 	"dam/driver/decorate"
 	"dam/driver/engine"
@@ -20,7 +20,7 @@ import (
 )
 
 type ImportSettings struct {
-	Yes bool
+	Yes     bool
 	Restore bool
 }
 
@@ -87,7 +87,7 @@ func Import(arg string) {
 
 func validateExistingImages(apps []*structures.ImportApp) {
 	for _, a := range apps {
-		tag := internal.GetPrefixRepo()+a.CurrentName()
+		tag := internal.GetPrefixRepo() + a.CurrentName()
 		id := engine.VDriver.GetImageID(tag)
 		if id == "" {
 			logger.Fatal("Image with tag '%s' not exist in the system", tag)
@@ -112,16 +112,16 @@ func loadAppsFromArchive(arch string) []*structures.ImportApp {
 		engine.VDriver.LoadImage(a)
 	}
 
-	apps := appsFromFile(tmpDir+string(filepath.Separator)+config.EXPORT_APPS_FILE_NAME)
+	apps := appsFromFile(tmpDir + string(filepath.Separator) + option.Config.Export.GetAppsFileName())
 
 	return apps
 }
 
 func getAppFilesList(tmpDir string) []string {
-	resultFiles := make([]string,0)
+	resultFiles := make([]string, 0)
 
 	for _, f := range fs.Ls(tmpDir) {
-		if strings.HasSuffix(f, config.SAVE_FILE_POSTFIX) {
+		if strings.HasSuffix(f, option.Config.Save.GetFilePostfix()) {
 			resultFiles = append(resultFiles, f)
 		}
 	}
@@ -133,15 +133,15 @@ func validateCheckSumArch(appFile string) {
 	hash := fs.HashFileCRC32(appFile)
 	size := fs.FileSize(appFile)
 
-	result1 := strings.TrimRight(appFile, config.SAVE_FILE_POSTFIX)
-	arrWithSize := strings.Split(result1, config.SAVE_FILE_SEPARATOR)
+	result1 := strings.TrimRight(appFile, option.Config.Save.GetFilePostfix())
+	arrWithSize := strings.Split(result1, option.Config.Save.GetFileSeparator())
 	fileSize := arrWithSize[len(arrWithSize)-1]
 	if fileSize != size {
 		logger.Fatal("File size '%s' not equal size '%s' in file name '%s'", size, fileSize, appFile)
 	}
 	result2 := strings.TrimRight(result1, fileSize)
-	result3 := strings.TrimRight(result2, config.SAVE_FILE_SEPARATOR)
-	arrWithHash := strings.Split(result3, config.SAVE_OPTIONAL_SEPARATOR)
+	result3 := strings.TrimRight(result2, option.Config.Save.GetFileSeparator())
+	arrWithHash := strings.Split(result3, option.Config.Save.GetOptionalSeparator())
 	fileHash := arrWithHash[len(arrWithHash)-1]
 	if fileHash != hash {
 		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", hash, fileHash, appFile)
@@ -236,7 +236,7 @@ func questionYesNo() bool {
 	fmt.Println()
 
 	switch char {
-	case 'Y','y':
+	case 'Y', 'y':
 		return true
 	case 'N', 'n':
 		return false

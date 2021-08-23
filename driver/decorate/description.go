@@ -2,7 +2,7 @@ package decorate
 
 import (
 	"bufio"
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/logger/color"
@@ -30,7 +30,7 @@ func PrintDescription(desc string) {
 			logger.Warn("Cannot read full description with error: %s", err)
 		}
 	} else {
-		logger.Warn("Not found %s file with the app description", config.DESCRIPTION_FILE_NAME)
+		logger.Warn("Not found %s file with the app description", option.Config.FileSystem.GetDescriptionFileName())
 	}
 }
 

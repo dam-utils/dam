@@ -20,7 +20,7 @@ func (o *FilesDB) GetAppsFilename() string {
 	return config.FILES_DB_APPS_FILENAME
 }
 
-func (o *FilesDB) GetTmpDir() string {
-	return config.FILES_DB_TMP_DIR
+func (o *FilesDB) GetTmp() string {
+	return config.FILES_DB_TMP
 }
 

@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"dam/cmd"
-	"dam/driver/config"
+	"dam/driver/conf"
 	"dam/driver/db"
 	"dam/driver/engine"
 )

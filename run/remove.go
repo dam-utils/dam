@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/db"
 	"dam/driver/engine"
 	fs "dam/driver/filesystem"
@@ -48,16 +48,16 @@ func RemoveApp(arg string) {
 	}()
 
 	logger.Debug("Getting meta ...")
-	tmpMeta := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+	tmpMeta := internal.PrepareTmpMetaPath(option.Config.FileSystem.GetTmpMetaPath())
 	defer fs.Remove(tmpMeta)
 
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
 	containerId := engine.VDriver.ContainerCreate(tag, "")
-	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpMeta)
+	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+option.Config.FileSystem.GetMetaDirName(), tmpMeta)
 	engine.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Uninstalling image ...")
-	uninstallMeta := filepath.Join(tmpMeta, config.META_DIR_NAME)
+	uninstallMeta := filepath.Join(tmpMeta, option.Config.FileSystem.GetMetaDirName())
 	uninstall := getUninstall(uninstallMeta)
 
 	logger.Debug("Running uninstall ...")
@@ -145,9 +145,9 @@ func getTagFormApp(app *structures.App) string {
 }
 
 func getUninstall(meta string) string {
-	uninst := filepath.Join(meta, config.UNINSTALL_FILE_NAME)
+	uninst := filepath.Join(meta, option.Config.FileSystem.GetUninstallFileName())
 	if !fs.IsExistFile(uninst) {
-		logger.Fatal("Not found '%s' file in meta '%s'", config.UNINSTALL_FILE_NAME, config.META_DIR_NAME)
+		logger.Fatal("Not found '%s' file in meta '%s'", option.Config.FileSystem.GetUninstallFileName(), option.Config.FileSystem.GetMetaDirName())
 	}
 	return uninst
 }

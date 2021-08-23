@@ -4,18 +4,17 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 )
 
 func GetAppVersions(app string) *[]string {
-	url := config.OFFICIAL_REGISTRY_URL+"/v2/"+app+"/tags/list"
+	url := option.Config.OfficialRepo.GetURL() + "/v2/" + app + "/tags/list"
 
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTIONS,
-		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
+		MaxIdleConns:    option.Config.Search.GetMaxConnections(),
+		IdleConnTimeout: option.Config.Search.GetTimeoutMs(),
 	}
 	client := &http.Client{Transport: tr}
 
@@ -44,4 +43,3 @@ func GetAppVersions(app string) *[]string {
 	vers := body.Tags
 	return &vers
 }
-

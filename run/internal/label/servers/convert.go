@@ -1,10 +1,10 @@
 package servers
 
 import (
+	"dam/driver/conf/option"
 	"sort"
 	"strings"
 
-	"dam/config"
 	"dam/driver/validate"
 )
 
@@ -21,7 +21,7 @@ func NewLabel(s string) *label {
 		return storage
 	}
 
-	str := strings.Split(s, config.LABEL_REPOS_SEPARATOR)
+	str := strings.Split(s, option.Config.DefaultRepo.GetLabelReposSeparator())
 	for _, repo := range str {
 		storage.AddRepo(repo)
 	}
@@ -60,12 +60,12 @@ func (l *label) String() string {
 	for i, repo := range repos {
 		result.WriteString(repo)
 		if i != len(repos) - 1 {
-			result.WriteString(config.LABEL_REPOS_SEPARATOR)
+			result.WriteString(option.Config.DefaultRepo.GetLabelReposSeparator())
 		}
 	}
 
 	if l.official {
-		result.WriteString(config.LABEL_REPOS_SEPARATOR)
+		result.WriteString(option.Config.DefaultRepo.GetLabelReposSeparator())
 	}
 
 	return result.String()

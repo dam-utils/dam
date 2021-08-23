@@ -3,7 +3,7 @@ package docker
 import (
 	"context"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/api/types"
@@ -19,7 +19,7 @@ func (p *provider) SearchAppNames(mask string) *[]string {
 	defer p.close()
 
 	searchOpts := types.ImageSearchOptions {}
-	searchOpts.Limit = config.OFFICIAL_REPO_SEARCH_APPS_LIMIT
+	searchOpts.Limit = option.Config.Search.GetOfficialRepoAppsLimit()
 	var results []registry.SearchResult
 	results, err := p.client.ImageSearch(context.Background(), mask,  searchOpts)
 	if err != nil {

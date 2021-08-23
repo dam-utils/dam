@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/run"
 
 	"github.com/spf13/cobra"
@@ -20,8 +20,8 @@ var createAppCmd = &cobra.Command{
 }
 
 func init(){
-	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Name, "name", "", "App name. Sets the value of the "+config.APP_NAME_ENV+" variable.")
-	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Version, "version", "", "App version. Sets the value of the "+config.APP_VERS_ENV+" variable.")
-	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Family, "family", "", "App family. Sets the value of the "+config.APP_FAMILY_ENV+" variable.")
-	createAppCmd.Flags().BoolVar(&run.CreateAppFlags.MultiVersion, "multiversion", false, "App multiversion. Sets the value of the "+config.APP_MULTIVERSION_ENV+" variable.")
+	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Name, "name", "", "App name. Sets the value of the "+option.Config.ReservedEnvs.GetAppNameEnv()+" variable.")
+	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Version, "version", "", "App version. Sets the value of the "+option.Config.ReservedEnvs.GetAppVersionEnv()+" variable.")
+	createAppCmd.Flags().StringVar(&run.CreateAppFlags.Family, "family", "", "App family. Sets the value of the "+option.Config.ReservedEnvs.GetAppFamilyEnv()+" variable.")
+	createAppCmd.Flags().BoolVar(&run.CreateAppFlags.MultiVersion, "multiversion", false, "App multiversion. Sets the value of the "+option.Config.ReservedEnvs.GetAppMultiversionEnv()+" variable.")
 }

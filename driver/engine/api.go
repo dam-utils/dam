@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/engine/docker"
 	"dam/driver/logger"
 )
@@ -11,10 +11,10 @@ var (
 )
 
 func Init() {
-	switch config.VIRTUALIZATION_TYPE {
+	switch option.Config.Virtualization.GetType() {
 	case "docker":
 		VDriver = docker.NewProvider()
 	default:
-		logger.Fatal("Config option VIRTUALIZATION_TYPE='%s' not valid. DB type is bad", config.VIRTUALIZATION_TYPE)
+		logger.Fatal("Config option VIRTUALIZATION_TYPE='%s' not valid. DB type is bad", option.Config.Virtualization.GetType())
 	}
 }

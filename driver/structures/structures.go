@@ -11,15 +11,13 @@ type Repo struct {
 	Password string
 }
 
-var OfficialRepo Repo
-
-func init(){
-	OfficialRepo.Id = 1
-	OfficialRepo.Name = config.OFFICIAL_REGISTRY_NAME
-	OfficialRepo.Default = true
-	OfficialRepo.Server=config.OFFICIAL_REGISTRY_URL
-	OfficialRepo.Username=""
-	OfficialRepo.Password=""
+var OfficialRepo = Repo{
+	Id : 1,
+	Default: true,
+	Name: config.OFFICIAL_REGISTRY_NAME,
+	Server: config.OFFICIAL_REGISTRY_URL,
+	Username: "",
+	Password: "",
 }
 
 type App struct {

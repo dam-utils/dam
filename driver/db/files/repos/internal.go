@@ -1,16 +1,16 @@
 package repos
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 	"os"
 )
 
 func (p *provider) connect() {
 	var err error
-	p.client, err = os.Open(config.FILES_DB_REPOS_FILENAME)
+	p.client, err = os.Open(option.Config.FilesDB.GetReposFilename())
 	if err != nil {
-		logger.Fatal("Cannot open db file '%s' with error: %s", config.FILES_DB_REPOS_FILENAME, err)
+		logger.Fatal("Cannot open db file '%s' with error: %s", option.Config.FilesDB.GetReposFilename(), err)
 	}
 }
 
@@ -18,7 +18,7 @@ func (p *provider) close() {
 	if p.client != nil {
 		err := p.client.Close()
 		if err != nil {
-			logger.Fatal("Cannot close db file '%s' with error: %s", config.FILES_DB_REPOS_FILENAME, err)
+			logger.Fatal("Cannot close db file '%s' with error: %s", option.Config.FilesDB.GetReposFilename(), err)
 		}
 	}
 }

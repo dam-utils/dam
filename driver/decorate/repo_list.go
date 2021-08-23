@@ -1,12 +1,12 @@
 package decorate
 
 import (
-	"dam/driver/structures"
 	"fmt"
 	"strconv"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/db"
+	"dam/driver/structures"
 )
 
 func PrintRAWReposList() {
@@ -14,7 +14,7 @@ func PrintRAWReposList() {
 	for _, repo := range repos {
 		var def string
 		if repo.Default {
-			def = config.DECORATE_BOOL_FLAG_SYMBOL
+			def = option.Config.Decoration.GetBoolFlagSymbol()
 		} else {
 			def = ""
 		}
@@ -40,7 +40,7 @@ func PrintReposList(){
 
 	prepareReposColumnSize(repos)
 	// general field size
-	fieldSize := (config.DECORATE_MAX_DISPLAY_WIDTH - len(ColumnSeparator)*(len(defRepoColumnSize)-1))/len(defRepoColumnSize)
+	fieldSize := (option.Config.Decoration.GetMaxDisplayWidth() - len(ColumnSeparator)*(len(defRepoColumnSize)-1))/len(defRepoColumnSize)
 	if len(repos) != 0 {
 		printReposTitle(fieldSize)
 		printReposLineSeparator(fieldSize)

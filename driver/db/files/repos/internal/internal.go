@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/structures"
@@ -50,17 +50,17 @@ func CleanReposDefault(repos []*structures.Repo) []*structures.Repo {
 func repo2str(repo *structures.Repo) *string {
 	var def string
 	if repo.Default {
-		def = config.FILES_DB_BOOL_FLAG_SYMBOL
+		def = option.Config.FilesDB.GetBoolFlagSymbol()
 	} else {
 		def = ""
 	}
 
 	var repoStr string
-	sep := config.FILES_DB_SEPARATOR
+	sep := option.Config.FilesDB.GetSeparator()
 	fields := []string{strconv.Itoa(repo.Id), def, repo.Name, repo.Server, repo.Username, repo.Password}
 	lenF := len(fields)
 	for i, field := range fields {
-		if i == lenF - 1 {
+		if i == lenF-1 {
 			repoStr = repoStr + field + "\n"
 		} else {
 			repoStr = repoStr + field + sep
@@ -72,33 +72,33 @@ func repo2str(repo *structures.Repo) *string {
 func SaveRepos(repos []*structures.Repo) {
 	newRepos := preparePasswordRepos(repos)
 
-	f, err := os.OpenFile(config.FILES_DB_TMP_DIR, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
 			f.Close()
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
+		logger.Fatal("Cannot open repo file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 
 	for _, repo := range newRepos {
 		newLine := repo2str(repo)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
+			logger.Fatal("Cannot write to repo file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
+		logger.Fatal("Cannot sync repo file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from repo file '%s' with error: %s", config.FILES_DB_TMP_DIR, err)
+		logger.Fatal("Cannot close from repo file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 
-	fs.MoveFile(config.FILES_DB_TMP_DIR, config.FILES_DB_REPOS_FILENAME)
+	fs.MoveFile(option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetReposFilename())
 }
 
 func PrepareDefaultInRepos(repos []*structures.Repo) []*structures.Repo {
@@ -126,12 +126,12 @@ func GetNewRepoID(repos []*structures.Repo) int {
 			Res = repo.Id
 		}
 	}
-	return Res +1
+	return Res + 1
 }
 
 func Str2Repo(str string) *structures.Repo {
 	repoArray := new(structures.Repo)
-	strRepo := strings.Split(str, config.FILES_DB_SEPARATOR)
+	strRepo := strings.Split(str, option.Config.FilesDB.GetSeparator())
 
 	pass, err := base64ToStr(strRepo[5])
 	if err != nil {
@@ -157,9 +157,8 @@ func Str2Repo(str string) *structures.Repo {
 		logger.Fatal("Internal error. Cannot parse the password in line '%s'", str)
 	}
 
-
 	repoArray.Id, _ = strconv.Atoi(strRepo[0])
-	if strRepo[1] == config.FILES_DB_BOOL_FLAG_SYMBOL {
+	if strRepo[1] == option.Config.FilesDB.GetBoolFlagSymbol() {
 		repoArray.Default = true
 	}
 	repoArray.Name = strRepo[2]
@@ -191,7 +190,7 @@ func base64ToStr(str string) (string, error) {
 
 func ValidatingReposDB(repos []*structures.Repo) {
 	defRepo := false
-	for _, repo := range repos{
+	for _, repo := range repos {
 		if repo.Default {
 			if defRepo {
 				logger.Fatal("Internal error. Found many default repositories in DB. Default repository must be only one")

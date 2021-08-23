@@ -2,6 +2,7 @@ package filesystem
 
 import (
 	"bytes"
+	"dam/driver/conf/option"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"time"
 
-	"dam/config"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/pkg/system"
@@ -154,7 +154,7 @@ func HashFileCRC32(filePath string) string {
 		logger.Fatal("Cannot open file '%s' with error: %s", filePath, err)
 	}
 
-	tablePolynomial := crc32.MakeTable(config.SAVE_POLYNOMIAL_CKSUM)
+	tablePolynomial := crc32.MakeTable(option.Config.Save.GetPolynomialCksum())
 	hash := crc32.New(tablePolynomial)
 	if _, err := io.Copy(hash, f); err != nil {
 		logger.Fatal("Cannot check hash file '%s' with error: %s", filePath, err)
