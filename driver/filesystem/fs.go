@@ -2,7 +2,6 @@ package filesystem
 
 import (
 	"bytes"
-	"dam/driver/conf/option"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
@@ -12,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/pkg/system"

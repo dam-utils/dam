@@ -12,15 +12,16 @@ var (
 	DECORATE_BOOL_FLAG_SYMBOL  = "*"
 
 	//DB types
-	DB_TYPE = "files" // TODO create new dbs
+	DB_TYPE = "files"
 
 	//FILES DB options. Type: "files"
-	//WARN: Recomended to use only absolutely files path
-	FILES_DB_SEPARATOR        = ";"
+	FILES_DB_SEPARATOR          = ";"
 	FILES_DB_BOOL_FLAG_SYMBOL = "*"
-	FILES_DB_REPOS_FILENAME   = ".dam/Repos"
-	FILES_DB_APPS_FILENAME    = ".dam/Apps"
-	FILES_DB_TMP              = ".dam/.db"
+	// If enabled this FilesDB option DAM will save db files to the user cache directory
+	FILES_DB_USE_USER_CACHE_DIR = true
+	FILES_DB_REPOS_FILENAME   = "dam/Repos"
+	FILES_DB_APPS_FILENAME    = "dam/Apps"
+	FILES_DB_TMP              = "dam/.db"
 
 	//Virtualization type
 	VIRTUALIZATION_TYPE = "docker"

@@ -1,6 +1,10 @@
 package option
 
-import "dam/config"
+import (
+	"dam/config"
+	"os"
+	"path/filepath"
+)
 
 type FilesDB struct {}
 
@@ -13,14 +17,25 @@ func (o *FilesDB) GetBoolFlagSymbol() string {
 }
 
 func (o *FilesDB) GetReposFilename() string {
-	return config.FILES_DB_REPOS_FILENAME
+	return getFullPath(config.FILES_DB_REPOS_FILENAME)
 }
 
 func (o *FilesDB) GetAppsFilename() string {
-	return config.FILES_DB_APPS_FILENAME
+	return getFullPath(config.FILES_DB_APPS_FILENAME)
 }
 
 func (o *FilesDB) GetTmp() string {
-	return config.FILES_DB_TMP
+	return getFullPath(config.FILES_DB_TMP)
+}
+
+func getFullPath(fullPath string) string {
+	if config.FILES_DB_USE_USER_CACHE_DIR {
+		dir, err := os.UserCacheDir()
+		if err != nil {
+			printFatal("Cannot get the user cache directory: %s", err)
+		}
+		fullPath = filepath.Join(dir, fullPath)
+	}
+	return fullPath
 }
 
