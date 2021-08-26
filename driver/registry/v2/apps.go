@@ -1,14 +1,13 @@
 package registry_v2
 
 import (
-	"dam/driver/structures"
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
+	"dam/driver/structures"
 )
 
 type ResponseGetAppNames struct {
@@ -17,12 +16,12 @@ type ResponseGetAppNames struct {
 
 func GetAppNames(repo *structures.Repo) *[]string {
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
-		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
+		MaxIdleConns:    option.Config.Search.GetMaxConnections(),
+		IdleConnTimeout: option.Config.Search.GetTimeoutMs(),
 	}
 	client := &http.Client{Transport: tr}
 
-	url := SessionURL + "v2/_catalog?n="+strconv.Itoa(config.INTERNAL_REPO_SEARCH_APPS_LIMIT)
+	url := SessionURL + "v2/_catalog?n="+strconv.Itoa(option.Config.Search.GetInternalRepoAppsLimit())
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		logger.Fatal("Cannot create new request for get URL '%s' with error: %s", url, err)

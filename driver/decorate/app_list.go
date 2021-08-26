@@ -1,13 +1,13 @@
 package decorate
 
 import (
-	"dam/driver/logger/color"
-	"dam/driver/structures"
 	"fmt"
 	"strconv"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/db"
+	"dam/driver/logger/color"
+	"dam/driver/structures"
 )
 
 var defAppColumnSize = map[string]int {
@@ -21,7 +21,7 @@ func PrintRAWAppsList() {
 	for _, app := range apps {
 		var multiVers string
 		if app.MultiVersion {
-			multiVers = config.DECORATE_BOOL_FLAG
+			multiVers = option.Config.Decoration.GetBoolFlagSymbol()
 		} else {
 			multiVers = ""
 		}
@@ -39,7 +39,7 @@ func PrintAppsList(){
 
 	prepareAppsColumnSize(apps)
 	// general field size
-	fieldSize := (config.DECORATE_MAX_DISPLAY_WIDTH - len(ColumnSeparator)*(len(defAppColumnSize)-1))/len(defAppColumnSize)
+	fieldSize := (option.Config.Decoration.GetMaxDisplayWidth() - len(ColumnSeparator)*(len(defAppColumnSize)-1))/len(defAppColumnSize)
 	if len(apps) != 0 {
 		printAppsTitle(fieldSize)
 		printAppsLineSeparator(fieldSize)
@@ -74,7 +74,7 @@ func printAppsTitle(fsize int) {
 }
 
 func getRepoNameByApp(app *structures.App) string {
-	name := config.UNKNOWN_REPO_NAME
+	name := option.Config.DefaultRepo.GetUnknownRepoName()
 	repo := db.RDriver.GetRepoById(app.RepoID)
 	if repo != nil {
 		name = repo.Name

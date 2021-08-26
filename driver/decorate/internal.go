@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"dam/config"
+	"dam/driver/conf/option"
 )
 
 const (
@@ -31,7 +31,7 @@ func bool2Str(b bool) string {
 	if !b {
 		return SpaceSeparator
 	} else {
-		return config.DECORATE_BOOL_FLAG
+		return option.Config.Decoration.GetBoolFlagSymbol()
 	}
 }
 
@@ -60,7 +60,7 @@ func checkIntFieldSize(i int) int {
 }
 
 func printRAWStr(fields []string){
-	sep := config.DECORATE_RAW_SEPARATOR
+	sep := option.Config.Decoration.GetRawSeparator()
 	lenF := len(fields)
 	str := ""
 	for j, field := range fields {

@@ -1,22 +1,23 @@
 package cmd
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
+
 	"github.com/spf13/cobra"
 )
 
 var (
 	rootCmd = &cobra.Command{
-		Use: config.PROJECT_NAME,
+		Use: option.Config.Global.GetProjectName(),
 		Short: `Docker Application Manager
 
 Version:
-  ` + config.PROJECT_VERSION,
+  ` + option.Config.Global.GetProjectVersion(),
 		Long: `Docker Application Manager
 
 Version:
-  ` + config.PROJECT_VERSION,
+  ` + option.Config.Global.GetProjectVersion(),
 	}
 )
 

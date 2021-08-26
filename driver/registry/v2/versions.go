@@ -1,19 +1,18 @@
 package registry_v2
 
 import (
-	"dam/driver/structures"
 	"encoding/json"
 	"net/http"
-	"time"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
+	"dam/driver/structures"
 )
 
 func GetAppVersions(repo *structures.Repo, appName string) *[]string {
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
-		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
+		MaxIdleConns:    option.Config.Search.GetMaxConnections(),
+		IdleConnTimeout: option.Config.Search.GetTimeoutMs(),
 	}
 	client := &http.Client{Transport: tr}
 

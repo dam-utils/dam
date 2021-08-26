@@ -1,7 +1,7 @@
 package envs
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 	"dam/run/internal/label/servers"
 )
@@ -18,54 +18,54 @@ func NewStorage(m map[string]string) *env {
 
 func (e *env) InitAppName(def, flag string) {
 	if flag != "" {
-		e.data[config.APP_NAME_ENV] = flag
+		e.data[option.Config.ReservedEnvs.GetAppNameEnv()] = flag
 	}
 
-	if e.data[config.APP_NAME_ENV] == "" {
-		e.data[config.APP_NAME_ENV] = def
+	if e.data[option.Config.ReservedEnvs.GetAppNameEnv()] == "" {
+		e.data[option.Config.ReservedEnvs.GetAppNameEnv()] = def
 	}
 }
 
 func (e *env) InitAppVersion(def, flag string) {
 	if flag != "" {
-		e.data[config.APP_VERS_ENV] = flag
+		e.data[option.Config.ReservedEnvs.GetAppVersionEnv()] = flag
 	}
 
-	if e.data[config.APP_VERS_ENV] == "" {
-		e.data[config.APP_VERS_ENV] = def
+	if e.data[option.Config.ReservedEnvs.GetAppVersionEnv()] == "" {
+		e.data[option.Config.ReservedEnvs.GetAppVersionEnv()] = def
 	}
 }
 
 func (e *env) InitAppMultiversion(flag string) {
 	if flag != "" {
-		e.data[config.APP_MULTIVERSION_ENV] = flag
+		e.data[option.Config.ReservedEnvs.GetAppMultiversionEnv()] = flag
 	}
 
-	if e.data[config.APP_MULTIVERSION_ENV] == "" {
-		e.data[config.APP_MULTIVERSION_ENV] = "false"
+	if e.data[option.Config.ReservedEnvs.GetAppMultiversionEnv()] == "" {
+		e.data[option.Config.ReservedEnvs.GetAppMultiversionEnv()] = "false"
 	}
 }
 
 func (e *env) InitAppFamily(flag string) {
 	if flag != "" {
-		e.data[config.APP_FAMILY_ENV] = flag
+		e.data[option.Config.ReservedEnvs.GetAppFamilyEnv()] = flag
 	}
 
-	if e.data[config.APP_FAMILY_ENV] == "" {
-		e.data[config.APP_FAMILY_ENV] = e.data[config.APP_NAME_ENV]
+	if e.data[option.Config.ReservedEnvs.GetAppFamilyEnv()] == "" {
+		e.data[option.Config.ReservedEnvs.GetAppFamilyEnv()] = e.data[option.Config.ReservedEnvs.GetAppNameEnv()]
 	}
 }
 
 func (e *env) InitAppTag(repo string) {
 	if repo == "" {
-		e.data[config.APP_TAG_ENV]=e.data[config.APP_NAME_ENV]+":"+e.data[config.APP_VERS_ENV]
+		e.data[option.Config.ReservedEnvs.GetAppTagEnv()]=e.data[option.Config.ReservedEnvs.GetAppNameEnv()]+":"+e.data[option.Config.ReservedEnvs.GetAppVersionEnv()]
 		return
 	}
-	e.data[config.APP_TAG_ENV]=repo+"/"+e.data[config.APP_NAME_ENV]+":"+e.data[config.APP_VERS_ENV]
+	e.data[option.Config.ReservedEnvs.GetAppTagEnv()]=repo+"/"+e.data[option.Config.ReservedEnvs.GetAppNameEnv()]+":"+e.data[option.Config.ReservedEnvs.GetAppVersionEnv()]
 }
 
 func (e *env) InitAppServers(def string) {
-	storage := servers.NewLabel(e.data[config.APP_SERVERS_ENV])
+	storage := servers.NewLabel(e.data[option.Config.ReservedEnvs.GetAppServersEnv()])
 
 	storage.AddRepo(def)
 
@@ -74,7 +74,7 @@ func (e *env) InitAppServers(def string) {
 		logger.Fatal("Failed validating servers label '%s' with error: %s", storage.String(), err)
 	}
 
-	e.data[config.APP_SERVERS_ENV] = storage.String()
+	e.data[option.Config.ReservedEnvs.GetAppServersEnv()] = storage.String()
 }
 
 func (e *env) Envs() map[string]string {
@@ -83,14 +83,14 @@ func (e *env) Envs() map[string]string {
 
 func (e *env) Labels() map[string]string {
 	labels := make(map[string]string)
-	labels[config.APP_FAMILY_ENV] = e.data[config.APP_FAMILY_ENV]
-	labels[config.APP_MULTIVERSION_ENV] = e.data[config.APP_MULTIVERSION_ENV]
-	labels[config.APP_SERVERS_ENV] = e.data[config.APP_SERVERS_ENV]
+	labels[option.Config.ReservedEnvs.GetAppFamilyEnv()] = e.data[option.Config.ReservedEnvs.GetAppFamilyEnv()]
+	labels[option.Config.ReservedEnvs.GetAppMultiversionEnv()] = e.data[option.Config.ReservedEnvs.GetAppMultiversionEnv()]
+	labels[option.Config.ReservedEnvs.GetAppServersEnv()] = e.data[option.Config.ReservedEnvs.GetAppServersEnv()]
 
 	return labels
 }
 
 func (e *env) Tag() string {
-	val, _ := e.data[config.APP_TAG_ENV]
+	val, _ := e.data[option.Config.ReservedEnvs.GetAppTagEnv()]
 	return val
 }

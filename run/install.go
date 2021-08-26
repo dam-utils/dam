@@ -1,7 +1,12 @@
 package run
 
 import (
-	"dam/config"
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
+	"dam/driver/conf/option"
 	"dam/driver/db"
 	"dam/driver/decorate"
 	"dam/driver/engine"
@@ -11,10 +16,6 @@ import (
 	"dam/driver/structures"
 	"dam/run/internal"
 	"dam/run/internal/label/servers"
-	"encoding/json"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
 func InstallApp(appCurrentName string) {
@@ -59,18 +60,18 @@ func InstallApp(appCurrentName string) {
 	createTagImages(tag, serversLabel)
 
 	logger.Debug("Getting meta ...")
-	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+	tmpDir := internal.PrepareTmpMetaPath(option.Config.FileSystem.GetTmpMetaPath())
 	defer fs.Remove(tmpDir)
 
 	containerId := engine.VDriver.ContainerCreate(tag, "")
-	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpDir)
+	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+option.Config.FileSystem.GetMetaDirName(), tmpDir)
 	engine.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Printing description ...")
-	decorate.PrintDescription(filepath.Join(tmpDir, config.META_DIR_NAME, config.DESCRIPTION_FILE_NAME))
+	decorate.PrintDescription(filepath.Join(tmpDir, option.Config.FileSystem.GetMetaDirName(), option.Config.FileSystem.GetDescriptionFileName()))
 
 	logger.Debug("Installing image ...")
-	installMeta := filepath.Join(tmpDir, config.META_DIR_NAME)
+	installMeta := filepath.Join(tmpDir, option.Config.FileSystem.GetMetaDirName())
 	install := getInstall(installMeta)
 	fs.RunFile(install)
 
@@ -163,9 +164,9 @@ func saveAppToDB(tag, familyLabel string) {
 }
 
 func getInstall(meta string) string {
-	inst := filepath.Join(meta, config.INSTALL_FILE_NAME)
+	inst := filepath.Join(meta, option.Config.FileSystem.GetInstallFileName())
 	if !fs.IsExistFile(inst) {
-		logger.Fatal("Not found '%s' file in meta '%s'", config.INSTALL_FILE_NAME, config.META_DIR_NAME)
+		logger.Fatal("Not found '%s' file in meta '%s'", option.Config.FileSystem.GetInstallFileName(), option.Config.FileSystem.GetMetaDirName())
 	}
 	return inst
 }
@@ -177,7 +178,7 @@ func getTagFromArchiveManifest(appCurrentName string) string {
 	tarGzipDir := fs.Untar(gzipFile)
 	defer fs.Remove(tarGzipDir)
 
-	manifestFile := tarGzipDir + string(filepath.Separator) + config.SAVE_MANIFEST_FILE
+	manifestFile := tarGzipDir + string(filepath.Separator) + option.Config.Save.GetManifestFile()
 
 	content, err := os.Open(manifestFile)
 	defer func() {

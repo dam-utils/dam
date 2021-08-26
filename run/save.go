@@ -1,9 +1,9 @@
 package run
 
 import (
+	"dam/driver/conf/option"
 	"os"
 
-	"dam/config"
 	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/filesystem/manifest"
@@ -45,9 +45,9 @@ func Save(appFullName string) {
 		
 		logger.Success("Created '%s' file.", filePath)
 	} else {
-		baseName := fs.GetCurrentDir() + string(os.PathSeparator) + name + config.SAVE_FILE_SEPARATOR + version
-		filePath = baseName + config.SAVE_TMP_FILE_POSTFIX
-		resultPrefixPath = baseName + config.SAVE_OPTIONAL_SEPARATOR
+		baseName := fs.GetCurrentDir() + string(os.PathSeparator) + name + option.Config.Save.GetFileSeparator() + version
+		filePath = baseName + option.Config.Save.GetTmpFilePostfix()
+		resultPrefixPath = baseName + option.Config.Save.GetOptionalSeparator()
 
 		logger.Debug("Saving archive ...")
 		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
@@ -60,7 +60,11 @@ func Save(appFullName string) {
 		modifyManifest(filePath, appFullName)
 
 		logger.Debug("Releasing archive ...")
-		resultPath := resultPrefixPath + fs.HashFileCRC32(filePath) + config.SAVE_FILE_SEPARATOR + fs.FileSize(filePath) + config.SAVE_FILE_POSTFIX
+		resultPath := resultPrefixPath +
+			fs.HashFileCRC32(filePath) +
+			option.Config.Save.GetFileSeparator() +
+			fs.FileSize(filePath) +
+			option.Config.Save.GetFilePostfix()
 		fs.MoveFile(filePath, resultPath)
 
 		logger.Success("Created '%s' file.", resultPath)
@@ -69,7 +73,7 @@ func Save(appFullName string) {
 
 func modifyManifest(filePath, appFullName string) {
 	dir := fs.Untar(filePath)
-	manifestFile := dir + string(os.PathSeparator) + config.SAVE_MANIFEST_FILE
+	manifestFile := dir + string(os.PathSeparator) + option.Config.Save.GetManifestFile()
 
 	manifest.ModifyRepoTags(manifestFile, appFullName)
 	fs.Remove(filePath)

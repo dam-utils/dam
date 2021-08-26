@@ -1,47 +1,48 @@
 package run_test
 
 import (
-	"dam/driver/logger"
 	"log"
 	"os"
 	"testing"
 
 	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/db"
+	"dam/driver/logger"
 )
 
-func init(){
+func init() {
 	log.SetFlags(0)
 	db.Init()
 }
 
 func setDefaultConfig() {
-	switch config.DB_TYPE {
+	switch option.Config.DB.GetType() {
 	case "files":
 		config.DECORATE_MAX_DISPLAY_WIDTH = 100
-		config.FILES_DB_REPOS = "Repos"
-		config.FILES_DB_APPS = "Apps"
+		config.FILES_DB_REPOS_FILENAME = "Repos"
+		config.FILES_DB_APPS_FILENAME = "Apps"
 		config.FILES_DB_TMP = ".db"
 		config.FILES_DB_SEPARATOR = "|"
 	default:
-		logger.Fatal("Cannot supported db '%s'", config.DB_TYPE)
+		logger.Fatal("Cannot supported db '%s'", option.Config.DB.GetType())
 	}
 	config.DECORATE_RAW_SEPARATOR = "|"
 	config.OFFICIAL_REGISTRY_URL = "https://registry-1.docker.io/"
 }
 
 func dropTestDB(t *testing.T) {
-	for _, path := range [...]string{config.FILES_DB_REPOS, config.FILES_DB_REPOS, config.FILES_DB_TMP}{
+	for _, path := range [...]string{config.FILES_DB_REPOS_FILENAME, config.FILES_DB_APPS_FILENAME, config.FILES_DB_TMP} {
 		_, err := os.Stat(path)
 		if err == nil {
 			err = os.Remove(path)
-			if err != nil{
+			if err != nil {
 				t.Fail()
 			} else {
-				t.Log("FilePath '"+path+"' was removed")
+				t.Log("FilePath '" + path + "' was removed")
 			}
 		} else {
-			t.Log("Skip removing '"+path+"' file")
+			t.Log("Skip removing '" + path + "' file")
 		}
 	}
 }
@@ -49,9 +50,9 @@ func dropTestDB(t *testing.T) {
 func printFailInfo(t *testing.T, expResult string, result string) {
 	if result != expResult {
 		t.Log("Expected result:")
-		t.Log("`"+expResult+"`")
+		t.Log("`" + expResult + "`")
 		t.Log("Result:")
-		t.Log("`"+result+"`")
+		t.Log("`" + result + "`")
 		t.Fail()
 	}
 }
