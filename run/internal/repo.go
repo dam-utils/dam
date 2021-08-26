@@ -1,9 +1,9 @@
 package internal
 
 import (
+	"dam/driver/conf/option"
 	"strconv"
 
-	"dam/config"
 	"dam/driver/db"
 	"dam/driver/logger"
 	"dam/driver/structures"
@@ -37,9 +37,9 @@ func PrepareRepo(newRepo string) int {
 }
 
 func generateNewRepoName() string {
-	repoPrefix := config.NEW_REPO_PREFIX
+	repoPrefix := option.Config.DefaultRepo.GetNewRepoPrefix()
 
-	for i:=0; i <= config.NEW_REPO_POSTFIX_LIMIT; i++ {
+	for i:=0; i <= option.Config.DefaultRepo.GetNewRepoPostfixLimit(); i++ {
 		for _, r := range db.RDriver.GetRepos() {
 			newName := repoPrefix+strconv.Itoa(i)
 			if r.Name == newName {

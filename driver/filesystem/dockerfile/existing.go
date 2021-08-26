@@ -2,10 +2,10 @@ package dockerfile
 
 import (
 	"bufio"
+	"dam/driver/conf/option"
 	"os"
 	"regexp"
 
-	"dam/config"
 	"dam/driver/logger"
 )
 
@@ -47,7 +47,7 @@ func IsFamily (path string) bool {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
-		matchFamily, err := regexp.MatchString("LABEL "+config.APP_FAMILY_ENV+"=.* ", line)
+		matchFamily, err := regexp.MatchString("LABEL "+option.Config.ReservedEnvs.GetAppFamilyEnv()+"=.* ", line)
 		if err != nil {
 			if matchFamily {
 				return true

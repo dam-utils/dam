@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 )
@@ -28,14 +28,14 @@ func PrepareExpFiles(metaDir string, envs map[string]string) {
 	}
 
 	for _, file := range files {
-		if strings.HasSuffix(file, config.EXPAND_META_FILE){
+		if strings.HasSuffix(file, option.Config.FileSystem.GetExpandMetaFile()){
 			prepareExpFile(file, envs)
 		}
 	}
 }
 
 func prepareExpFile(path string, envs map[string]string) {
-	newPath := strings.TrimSuffix(path, config.EXPAND_META_FILE)
+	newPath := strings.TrimSuffix(path, option.Config.FileSystem.GetExpandMetaFile())
 
 	f, err := os.Open(path)
 	defer func() {
@@ -86,6 +86,6 @@ func prepareExpString(s string, envs map[string]string) string {
 }
 
 func PrepareExecFiles(meta string) {
-	fs.Chmod777(filepath.Join(meta, config.INSTALL_FILE_NAME))
-	fs.Chmod777(filepath.Join(meta, config.UNINSTALL_FILE_NAME))
+	fs.Chmod777(filepath.Join(meta, option.Config.FileSystem.GetInstallFileName()))
+	fs.Chmod777(filepath.Join(meta, option.Config.FileSystem.GetUninstallFileName()))
 }

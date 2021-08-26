@@ -1,7 +1,7 @@
 package run
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/db"
 	"dam/driver/engine"
 	fs "dam/driver/filesystem"
@@ -41,8 +41,8 @@ func CreateApp(path string) {
 	logger.Debug("Envs: '%v'", envs)
 	envStorage := createEnvs.NewStorage(envs)
 	// Строгая последовательность инициализации
-	envStorage.InitAppName(config.DEF_APP_NAME, CreateAppFlags.Name)
-	envStorage.InitAppVersion(config.DEF_APP_VERS, CreateAppFlags.Version)
+	envStorage.InitAppName(option.Config.ReservedEnvs.GetDefaultAppName(), CreateAppFlags.Name)
+	envStorage.InitAppVersion(option.Config.ReservedEnvs.GetDefaultAppVersion(), CreateAppFlags.Version)
 	envStorage.InitAppFamily(CreateAppFlags.Family)
 	envStorage.InitAppMultiversion(internal.BoolToString(CreateAppFlags.MultiVersion))
 	defRepo := getRepo()
@@ -78,7 +78,7 @@ func getRepo() string {
 //- переменных окружения, начинающихся с config.OS_ENV_PREFIX
 func combineEnvs(envFile string, dockerFile string) map[string]string {
 	dfEnv := env.GetDockerFileEnv(dockerFile)
-	osEnv := env.GetOSEnv(config.OS_ENV_PREFIX)
+	osEnv := env.GetOSEnv(option.Config.ReservedEnvs.GetOSEnvPrefix())
 
 	if envFile == "" {
 		return env.MergeEnvs(osEnv, dfEnv)

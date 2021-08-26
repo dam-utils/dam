@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 )
 
@@ -13,7 +13,7 @@ func PrepareTmpMetaPath(meta string) string {
 
 func BoolToString(b bool) string {
 	if b {
-		return config.MULTIVERSION_TRUE_FLAG
+		return option.Config.Multiversion.GetTrueFlag()
 	}
-	return config.MULTIVERSION_FALSE_FLAG
+	return option.Config.Multiversion.GetFalseFlag()
 }

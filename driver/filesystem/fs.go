@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 
 	"github.com/docker/docker/pkg/system"
@@ -55,6 +55,10 @@ func MkDir(dir string) {
 	if err != nil {
 		logger.Fatal("Cannot create directory '%s/' with error: %s", dir, err)
 	}
+}
+
+func GetDir(filePath string) string {
+	return filepath.Dir(filePath)
 }
 
 func Remove(path string) bool {
@@ -150,7 +154,7 @@ func HashFileCRC32(filePath string) string {
 		logger.Fatal("Cannot open file '%s' with error: %s", filePath, err)
 	}
 
-	tablePolynomial := crc32.MakeTable(config.SAVE_POLYNOMIAL_CKSUM)
+	tablePolynomial := crc32.MakeTable(option.Config.Save.GetPolynomialCksum())
 	hash := crc32.New(tablePolynomial)
 	if _, err := io.Copy(hash, f); err != nil {
 		logger.Fatal("Cannot check hash file '%s' with error: %s", filePath, err)

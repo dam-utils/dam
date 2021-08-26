@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 
@@ -15,7 +15,7 @@ import (
 )
 
 func GetImagesSum() []types.ImageSummary {
-	cli, err := client.NewClientWithOpts(client.WithVersion(config.DOCKER_API_VERSION))
+	cli, err := client.NewClientWithOpts(client.WithVersion(option.Config.Docker.GetAPIVersion()))
 	defer func() {
 		if cli != nil {
 			cli.Close()
@@ -26,7 +26,7 @@ func GetImagesSum() []types.ImageSummary {
 	}
 
 	var opts = types.ImageListOptions{}
-	imageSum, err := cli.ImageList(context.Background(),opts)
+	imageSum, err := cli.ImageList(context.Background(), opts)
 	if err != nil {
 		logger.Fatal("Cannot get images list")
 	}

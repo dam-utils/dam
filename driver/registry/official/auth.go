@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 )
 
 func GetBearerToken(app string) string {
-	url := config.OFFICIAL_REGISTRY_AUTH_URL+ "&scope=repository:"+app+":pull"
+	url := option.Config.OfficialRepo.GetAuthURL() + "&scope=repository:" + app + ":pull"
 	resp, err := http.Get(url)
 	if err != nil {
 		logger.Fatal("Cannot get token from URL '%s' with error: %s", url)
@@ -27,4 +27,3 @@ func GetBearerToken(app string) string {
 	}
 	return body.AccessToken
 }
-

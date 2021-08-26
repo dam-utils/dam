@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"dam/cmd"
-	"dam/driver/config"
+	"dam/driver/conf"
 	"dam/driver/db"
 	"dam/driver/engine"
 )
@@ -17,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}()
 
-	config.Prepare()
+	conf.Prepare()
 	db.Init()
 	engine.Init()
 

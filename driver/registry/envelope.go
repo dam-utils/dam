@@ -5,7 +5,7 @@ import (
 	"dam/driver/structures"
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 	registry_official "dam/driver/registry/official"
 	registry_v2 "dam/driver/registry/v2"
@@ -16,7 +16,7 @@ func CheckRepository(repo *structures.Repo) {
 		return
 	}
 
-	for _, protocol := range config.SEARCH_PROTOCOL_STRATEGY {
+	for _, protocol := range option.Config.Search.GetProtocolStrategy() {
 		err := registry_v2.CheckRepo(repo, protocol)
 		if err != nil {
 			logger.Debug("Cannot connect to default registry '%s' for '%s' protocol with error: %s", repo.Name, protocol, err)

@@ -1,7 +1,7 @@
 package run
 
 import (
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/db"
 	"dam/driver/decorate"
 	"dam/driver/engine"
@@ -22,7 +22,7 @@ func Purge() {
 		}
 	} else {
 		for _, id := range *engine.VDriver.Images() {
-			_, allApps[id] = engine.VDriver.GetImageLabel(id, config.APP_FAMILY_ENV)
+			_, allApps[id] = engine.VDriver.GetImageLabel(id, option.Config.ReservedEnvs.GetAppFamilyEnv())
 		}
 	}
 

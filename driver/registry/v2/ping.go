@@ -1,19 +1,18 @@
 package registry_v2
 
 import (
-	"dam/driver/structures"
 	"net/http"
-	"time"
 
-	"dam/config"
+	"dam/driver/conf/option"
+	"dam/driver/structures"
 )
 
 var SessionURL string
 
 func CheckRepo(repo *structures.Repo, protocol string) error {
 	tr := &http.Transport{
-		MaxIdleConns:    config.SEARCH_MAX_CONNECTS,
-		IdleConnTimeout: time.Duration(config.SEARCH_TIMEOUT_MS) * time.Millisecond,
+		MaxIdleConns:    option.Config.Search.GetMaxConnections(),
+		IdleConnTimeout: option.Config.Search.GetTimeoutMs(),
 	}
 	client := &http.Client{Transport: tr}
 	SessionURL = protocol + "://" + repo.Server + "/"

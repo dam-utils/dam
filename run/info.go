@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	"dam/driver/decorate"
 	"dam/driver/engine"
 	fs "dam/driver/filesystem"
@@ -18,36 +18,36 @@ func InfoApp(tag string) {
 	logger.Debug("Flags validated with success")
 
 	logger.Debug("Getting meta ...")
-	tmpDir := internal.PrepareTmpMetaPath(config.TMP_META_PATH)
+	tmpDir := internal.PrepareTmpMetaPath(option.Config.FileSystem.GetTmpMetaPath())
 	defer fs.Remove(tmpDir)
 
 	containerId := engine.VDriver.ContainerCreate(tag, "")
-	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+config.META_DIR_NAME, tmpDir)
+	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+option.Config.FileSystem.GetMetaDirName(), tmpDir)
 	engine.VDriver.ContainerRemove(containerId)
 
 	logger.Debug("Printing description ...")
 	decorate.Println()
-	decorate.PrintDescription(filepath.Join(tmpDir, config.META_DIR_NAME, config.DESCRIPTION_FILE_NAME))
+	decorate.PrintDescription(filepath.Join(tmpDir, option.Config.FileSystem.GetMetaDirName(), option.Config.FileSystem.GetDescriptionFileName()))
 	decorate.Println()
 
 	logger.Debug("Printing family label ...")
 	family := internal.GetFamily(tag)
-	decorate.PrintLabel(config.APP_FAMILY_ENV, family)
+	decorate.PrintLabel(option.Config.ReservedEnvs.GetAppFamilyEnv(), family)
 
 	logger.Debug("Printing multiversion label ...")
 	imageId := engine.VDriver.GetImageID(tag)
 	if imageId == "" {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
 	}
-	multiVersion, _ := engine.VDriver.GetImageLabel(imageId, config.APP_MULTIVERSION_ENV)
-	if multiVersion != config.MULTIVERSION_TRUE_FLAG {
-		multiVersion = config.MULTIVERSION_FALSE_FLAG
+	multiVersion, _ := engine.VDriver.GetImageLabel(imageId, option.Config.ReservedEnvs.GetAppMultiversionEnv())
+	if multiVersion != option.Config.Multiversion.GetTrueFlag() {
+		multiVersion = option.Config.Multiversion.GetFalseFlag()
 	}
-	decorate.PrintLabel(config.APP_MULTIVERSION_ENV, multiVersion)
+	decorate.PrintLabel(option.Config.ReservedEnvs.GetAppMultiversionEnv(), multiVersion)
 
 	logger.Debug("Printing servers label ...")
 	servers := internal.GetServers(tag)
-	decorate.PrintLabel(config.APP_SERVERS_ENV, servers)
+	decorate.PrintLabel(option.Config.ReservedEnvs.GetAppServersEnv(), servers)
 
 	decorate.Println()
 }

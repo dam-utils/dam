@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"dam/config"
+	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
 	"dam/driver/logger"
 	"dam/driver/structures"
@@ -13,43 +13,43 @@ import (
 )
 
 func SaveApps(apps []*structures.App) {
-	f, err := os.OpenFile(config.FILES_DB_TMP, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, 0644)
 	defer func() {
 		if f != nil {
 			f.Close()
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot open apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot open apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 
 	for _, app := range apps {
 		newLine := app2str(app)
 		_, err := f.WriteString(*newLine)
 		if err != nil {
-			logger.Fatal("Cannot write to apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+			logger.Fatal("Cannot write to apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 		}
 	}
 	err = f.Sync()
 	if err != nil {
-		logger.Fatal("Cannot sync apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 	err = f.Close()
 	if err != nil {
-		logger.Fatal("Cannot close from apps file '%s' with error: %s", config.FILES_DB_TMP, err)
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 
-	logger.Debug("Move '%s' to '%s'", config.FILES_DB_TMP, config.FILES_DB_APPS)
-	fs.MoveFile(config.FILES_DB_TMP, config.FILES_DB_APPS)
+	logger.Debug("Move '%s' to '%s'", option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetAppsFilename())
+	fs.MoveFile(option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetAppsFilename())
 }
 
 func app2str(app *structures.App) *string {
 	var appStr string
-	sep := config.FILES_DB_SEPARATOR
+	sep := option.Config.FilesDB.GetSeparator()
 
 	multiVers := ""
 	if app.MultiVersion {
-		multiVers = config.DECORATE_BOOL_FLAG
+		multiVers = option.Config.Decoration.GetBoolFlagSymbol()
 	}
 
 	fields := []string{
@@ -88,7 +88,7 @@ func GetNewAppID(apps []*structures.App) int {
 
 func Str2app(str string) *structures.App {
 	app := new(structures.App)
-	strArray := strings.Split(str, config.FILES_DB_SEPARATOR)
+	strArray := strings.Split(str, option.Config.FilesDB.GetSeparator())
 
 	if validate.CheckAppID(strArray[0]) != nil {
 		logger.Fatal("Internal error. Cannot parse the app ID in line '%s'", str)
@@ -117,7 +117,7 @@ func Str2app(str string) *structures.App {
 	app.ImageName = strArray[2]
 	app.ImageVersion = strArray[3]
 	app.RepoID, _ = strconv.Atoi(strArray[4])
-	if strArray[5] == config.FILES_DB_BOOL_FLAG {
+	if strArray[5] == option.Config.FilesDB.GetBoolFlagSymbol() {
 		app.MultiVersion = true
 	}
 	app.Family = strArray[6]
