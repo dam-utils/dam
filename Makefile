@@ -24,9 +24,11 @@ build-linux:
 
 test:
 	$(call test_func)
+	echo OK!
 
 lint:
 	$(call lint_func)
+	echo OK!
 
 clean: clean-docker clean-binary
 	rm -rf _build || true
