@@ -1,6 +1,6 @@
 module dam
 
-go 1.14
+go 1.17
 
 replace github.com/docker/docker v1.13.1 => github.com/docker/engine v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 
