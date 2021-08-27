@@ -22,9 +22,7 @@ define test_func
     				--no-cache=${NOT_USE_IMAGE_CACHE} \
     				--build-arg PROJECT_NAME=${PROJECT_NAME} \
     				-f src/make/docker/test.Dockerfile .
-	docker create --name container-${PROJECT_NAME}-test ${PROJECT_NAME}_test:develop
 
-	$(if $(filter $(CLEAR_BUILD_CONTAINER),true),docker rm -f container-${PROJECT_NAME}-test)
 	$(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_test:develop)
 endef
 
@@ -33,7 +31,7 @@ define lint_func
 	                --no-cache=${NOT_USE_IMAGE_CACHE} \
 					--build-arg PROJECT_NAME=${PROJECT_NAME} \
 					-f src/make/docker/linter.Dockerfile .
-	docker rmi -f ${PROJECT_NAME}_lint:develop
+	$(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_lint:develop)
 endef
 
 define clear_func

@@ -6,7 +6,7 @@ CLEAR_BUILD_CONTAINER	:= true
 # Удалить за собой временные образы docker
 CLEAR_BUILD_IMAGE		:= false
 # true - не кэширует промежуточные слои для образов docker
-NOT_USE_IMAGE_CACHE	    := false
+NOT_USE_IMAGE_CACHE     := false
 
 include src/make/Makefile.funcs
 
