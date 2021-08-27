@@ -15,13 +15,13 @@ var (
 	DB_TYPE = "files"
 
 	//FILES DB options. Type: "files"
-	FILES_DB_SEPARATOR          = ";"
+	FILES_DB_SEPARATOR        = ";"
 	FILES_DB_BOOL_FLAG_SYMBOL = "*"
 	// If enabled this FilesDB option DAM will save db files to the user cache directory
 	FILES_DB_USE_USER_CACHE_DIR = true
-	FILES_DB_REPOS_FILENAME   = "dam/Repos"
-	FILES_DB_APPS_FILENAME    = "dam/Apps"
-	FILES_DB_TMP              = "dam/.db"
+	FILES_DB_REPOS_FILENAME     = "dam/Repos"
+	FILES_DB_APPS_FILENAME      = "dam/Apps"
+	FILES_DB_TMP                = "dam/.db"
 
 	//Virtualization type
 	VIRTUALIZATION_TYPE = "docker"
@@ -30,7 +30,7 @@ var (
 	SEARCH_PROTOCOL_STRATEGY        = "https, http" // The order of the protocols is important.
 	SEARCH_MAX_CONNECTIONS          = 1
 	SEARCH_TIMEOUT_MS               = 1000
-	SEARCH_OFFICIAL_REPO_APPS_LIMIT = 100           // [1,100]
+	SEARCH_OFFICIAL_REPO_APPS_LIMIT = 100 // [1,100]
 	SEARCH_INTERNAL_REPO_APPS_LIMIT = 999
 
 	//OfficialRepo
