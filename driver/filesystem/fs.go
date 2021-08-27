@@ -193,7 +193,8 @@ func IsTar(path string) bool {
 	var header [2]byte
 	_, err = io.ReadFull(f, header[:])
 	if err != nil {
-		logger.Fatal("Cannot read two first bytes from file '%s' with error: %s", path, err)
+		logger.Debug("Cannot read two first bytes from file '%s' with error: %s", path, err)
+		return false
 	}
 
 	return  header[0] == 47 && header[1] == 97

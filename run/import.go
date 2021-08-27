@@ -174,6 +174,16 @@ func appsFromFile(path string) []*structures.ImportApp {
 		logger.Fatal("Cannot open file '%s' with error: %s", path, err)
 	}
 
+	fileInfo, err := f.Stat()
+	if err != nil {
+		logger.Fatal("Cannot get stats file '%s' with error: %s", path, err)
+	}
+
+	if fileInfo.Size() == 0 {
+		logger.Debug("File '%s' is empty", path)
+		return result
+	}
+
 	fileScanner := bufio.NewScanner(f)
 	for fileScanner.Scan() {
 		newLine := fileScanner.Text()
