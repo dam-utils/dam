@@ -64,7 +64,7 @@ func Import(arg string) {
 
 	if !ImportFlags.Yes {
 		answer := questionYesNo()
-		if answer == false {
+		if !answer {
 			logger.Success("Stop import.")
 			os.Exit(0)
 		}
@@ -204,7 +204,7 @@ func matchLists(allApps, importApps []*structures.ImportApp) (appDeleteList, app
 				flagExist = true
 			}
 		}
-		if flagExist == false {
+		if !flagExist {
 			appInstallList = append(appInstallList, iApp)
 		}
 	}
@@ -216,7 +216,7 @@ func matchLists(allApps, importApps []*structures.ImportApp) (appDeleteList, app
 				flagExist = true
 			}
 		}
-		if flagExist == false {
+		if !flagExist {
 			appDeleteList = append(appDeleteList, aApp)
 		}
 	}
