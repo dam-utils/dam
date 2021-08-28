@@ -2,6 +2,8 @@ package filesystem
 
 import (
 	"bytes"
+	"dam/driver/conf/option"
+	"dam/driver/logger"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
@@ -9,12 +11,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
-	"time"
-
-	"dam/driver/conf/option"
-	"dam/driver/logger"
-
-	"github.com/docker/docker/pkg/system"
 )
 
 func GetCurrentDir() string {
@@ -170,13 +166,6 @@ func FileSize(filePath string) string {
 	}
 
 	return strconv.FormatInt(fi.Size(), 10)
-}
-
-func EraseDataCreation(path string) {
-	// https://github.com/moby/moby/blob/e9b4655bc98563602d961c72fc62cb20cc143515/image/tarexport/save.go#L187
-	if err := system.Chtimes(path, time.Unix(0, 0), time.Unix(0, 0)); err != nil {
-		logger.Fatal("Cannot erase metadata for manifest file with error: %s", err)
-	}
 }
 
 func IsTar(path string) bool {

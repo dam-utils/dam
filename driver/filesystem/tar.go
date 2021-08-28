@@ -3,11 +3,11 @@ package filesystem
 import (
 	"archive/tar"
 	"compress/gzip"
+	"dam/driver/logger"
 	"io"
 	"os"
 	"path/filepath"
-
-	"dam/driver/logger"
+	"strings"
 )
 
 func Untar(source string) string {
@@ -51,6 +51,11 @@ func Untar(source string) string {
 			}
 		case tar.TypeReg:
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			defer func() {
+				if f != nil {
+					f.Close()
+				}
+			}()
 			if err != nil {
 				logger.Fatal("Cannot open file %s with error: %s", target, err)
 				return dst
@@ -63,11 +68,10 @@ func Untar(source string) string {
 			if err != nil {
 				logger.Fatal("Cannot sync file '%s' with error: %s", target, err)
 			}
-
-			EraseDataCreation(target)
-			err = f.Close()
+		case tar.TypeSymlink:
+			err = os.Symlink(header.Linkname, target)
 			if err != nil {
-				logger.Fatal("Cannot close file '%s' with error: %s", target, err)
+				logger.Fatal("Cannot create symlink '%s' with old name '%s' with error: %s", target, header.Linkname, err)
 			}
 		}
 	}
@@ -151,40 +155,40 @@ func Gzip(source, target string, onlyTar bool) {
 			return err
 		}
 
-		if info.Mode().IsDir() {
-			return nil
+		var link string
+		if info.Mode()&os.ModeSymlink == os.ModeSymlink {
+			if link, err = os.Readlink(path); err != nil {
+				return err
+			}
 		}
 
-		newPath := path[len(source):]
-		if len(newPath) == 0 {
-			return nil
-		}
-		pathFile, err := os.Open(path)
-		defer func() {
-			if pathFile != nil {
-				pathFile.Close()
-			}
-		}()
+		header, err := tar.FileInfoHeader(info, link)
 		if err != nil {
 			return err
 		}
 
-		if h, err := tar.FileInfoHeader(info, newPath); err != nil {
-			logger.Fatal("Cannot create file info header for '%s' with error: %s", newPath, err)
-		} else {
-			h.Name = newPath
-			if err = tw.WriteHeader(h); err != nil {
-				logger.Fatal("Cannot write header for '%s' with error: %s", newPath, err)
-			}
-		}
-		if _, err := io.Copy(tw, pathFile); err != nil {
-			logger.Fatal("Cannot write file '%s' to archive with error: %s", pathFile, err)
+		header.Name = strings.TrimPrefix(path, source)
+		if err = tw.WriteHeader(header); err != nil {
+			return err
 		}
 
+		if !info.Mode().IsRegular() { //nothing more to do for non-regular
+			return nil
+		}
+
+		fh, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer fh.Close()
+
+		if _, err = io.Copy(tw, fh); err != nil {
+			return err
+		}
 		return nil
 	}
 
 	if err = filepath.Walk(source, walkFn); err != nil {
-		logger.Fatal("Cannot create archive")
+		logger.Fatal("Cannot create archive: %v", err)
 	}
 }
