@@ -2,9 +2,10 @@ package run
 
 import (
 	"bufio"
+	"dam/run/internal/archive/app_name"
 	"fmt"
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"dam/driver/conf/option"
@@ -106,15 +107,13 @@ func loadAppsFromArchive(arch string) []*structures.ImportApp {
 	tmpDir := fs.Untar(arch)
 	defer fs.Remove(tmpDir)
 
-	appList := getAppFilesList(tmpDir)
-	for _, a := range appList {
+	filesList := getAppFilesList(tmpDir)
+	for _, a := range filesList {
 		validateCheckSumArch(a)
 		engine.VDriver.LoadImage(a)
 	}
 
-	apps := appsFromFile(tmpDir + string(filepath.Separator) + option.Config.Export.GetAppsFileName())
-
-	return apps
+	return appsFromFile(path.Join(tmpDir, option.Config.Export.GetAppsFileName()))
 }
 
 func getAppFilesList(tmpDir string) []string {
@@ -130,21 +129,20 @@ func getAppFilesList(tmpDir string) []string {
 }
 
 func validateCheckSumArch(appFile string) {
-	hash := fs.HashFileCRC32(appFile)
-	size := fs.FileSize(appFile)
-
-	result1 := strings.TrimRight(appFile, option.Config.Save.GetFilePostfix())
-	arrWithSize := strings.Split(result1, option.Config.Save.GetFileSeparator())
-	fileSize := arrWithSize[len(arrWithSize)-1]
-	if fileSize != size {
-		logger.Fatal("File size '%s' not equal size '%s' in file name '%s'", size, fileSize, appFile)
+	fileInfo := app_name.NewInfo()
+	err := fileInfo.FromString(appFile)
+	if err != nil {
+		logger.Fatal("Cannot validate checksum of archive: parsing archive name '%s' error: %s", appFile, err)
 	}
-	result2 := strings.TrimRight(result1, fileSize)
-	result3 := strings.TrimRight(result2, option.Config.Save.GetFileSeparator())
-	arrWithHash := strings.Split(result3, option.Config.Save.GetOptionalSeparator())
-	fileHash := arrWithHash[len(arrWithHash)-1]
-	if fileHash != hash {
-		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", hash, fileHash, appFile)
+
+	fileSize := fs.FileSize(appFile)
+	if fileInfo.Size() != fileSize {
+		logger.Fatal("File size '%s' not equal size '%s' in file name '%s'", fileSize, fileInfo.Size(), appFile)
+	}
+
+	fileHash := fs.HashFileCRC32(appFile)
+	if fileInfo.Hash() != fileHash {
+		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", fileHash, fileInfo.Hash(), appFile)
 	}
 }
 

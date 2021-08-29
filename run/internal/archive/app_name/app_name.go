@@ -9,18 +9,18 @@ import (
 )
 
 type info struct {
-	AppName    string
-	AppVersion string
-	Hash       string
-	Size       string
+	appName    string
+	appVersion string
+	hash string
+	size string
 }
 
 func NewInfo() *info {
 	return &info{
-		AppName:    option.Config.ReservedEnvs.GetDefaultAppName(),
-		AppVersion: option.Config.ReservedEnvs.GetDefaultAppVersion(),
-		Hash:       "0",
-		Size:       "0",
+		appName:    option.Config.ReservedEnvs.GetDefaultAppName(),
+		appVersion: option.Config.ReservedEnvs.GetDefaultAppVersion(),
+		hash:       "0",
+		size:       "0",
 	}
 }
 
@@ -32,64 +32,72 @@ func (i *info) FromString(str string) error {
 
 	result1 := strings.TrimRight(str, option.Config.Save.GetFilePostfix())
 	arrWithSize := strings.Split(result1, option.Config.Save.GetFileSeparator())
-	i.Size = arrWithSize[len(arrWithSize)-1]
-	if i.Size == "" {
+	i.size = arrWithSize[len(arrWithSize)-1]
+	if i.size == "" {
 		return fmt.Errorf("size is empty")
 	}
-	result2 := strings.TrimRight(result1, i.Size)
+	result2 := strings.TrimRight(result1, i.size)
 	result3 := strings.TrimRight(result2, option.Config.Save.GetFileSeparator())
 	arrWithHash := strings.Split(result3, option.Config.Save.GetOptionalSeparator())
-	i.Hash = arrWithHash[len(arrWithHash)-1]
-	if i.Hash == "" {
+	i.hash = arrWithHash[len(arrWithHash)-1]
+	if i.hash == "" {
 		return fmt.Errorf("hash is empty")
 	}
-	result4 := strings.TrimRight(result3, i.Hash)
+	result4 := strings.TrimRight(result3, i.hash)
 	result5 := strings.TrimRight(result4, option.Config.Save.GetOptionalSeparator())
 	arrWithVersion := strings.Split(result5, option.Config.Save.GetFileSeparator())
-	i.AppVersion = arrWithVersion[len(arrWithVersion)-1]
-	if i.AppVersion == "" {
+	i.appVersion = arrWithVersion[len(arrWithVersion)-1]
+	if i.appVersion == "" {
 		return fmt.Errorf("app version is empty")
 	}
-	result6 := strings.TrimRight(result5, i.AppVersion)
-	i.AppName = strings.TrimRight(result6, option.Config.Save.GetFileSeparator())
-	if i.AppName == "" {
+	result6 := strings.TrimRight(result5, i.appVersion)
+	i.appName = strings.TrimRight(result6, option.Config.Save.GetFileSeparator())
+	if i.appName == "" {
 		return fmt.Errorf("app name is empty")
 	}
 	return nil
 }
 
 func (i *info) FullNameToString() string {
-	return i.AppName +
+	return i.appName +
 		option.Config.Save.GetFileSeparator() +
-		i.AppVersion +
+		i.appVersion +
 		option.Config.Save.GetOptionalSeparator() +
-		i.Hash +
+		i.hash +
 		option.Config.Save.GetFileSeparator() +
-		i.Size +
+		i.size +
 		option.Config.Save.GetFilePostfix()
 }
 
 func (i *info) TempNameToString() string {
-	return i.AppName +
+	return i.appName +
 		option.Config.Save.GetFileSeparator() +
-		i.AppVersion +
+		i.appVersion +
 		option.Config.Save.GetTmpFilePostfix()
 }
 
 func (i *info) SetAppName(str string) {
-	i.AppName = str
+	i.appName = str
 }
 
 func (i *info) SetAppVersion(str string) {
-	i.AppVersion = str
+	i.appVersion = str
 }
 
 func (i *info) SetHash(str string) {
-	i.Hash = str
+	i.hash = str
+}
+
+func (i *info) Hash() string {
+	return i.hash
 }
 
 func (i *info) SetSize(str string) {
-	i.Size = str
+	i.size = str
+}
+
+func (i *info) Size() string {
+	return i.size
 }
 
 func getRegexpMask() string {
