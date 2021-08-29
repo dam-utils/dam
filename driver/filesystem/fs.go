@@ -3,8 +3,6 @@ package filesystem
 import (
 	"archive/tar"
 	"bytes"
-	"dam/driver/conf/option"
-	"dam/driver/logger"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
@@ -12,6 +10,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+
+	"dam/driver/conf/option"
+	"dam/driver/logger"
 )
 
 func GetCurrentDir() string {

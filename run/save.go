@@ -1,17 +1,17 @@
 package run
 
 import (
-	"dam/driver/conf/option"
-	"dam/run/internal/archive/app_name"
 	"os"
 	"path"
 
+	"dam/driver/conf/option"
 	"dam/driver/engine"
 	fs "dam/driver/filesystem"
 	"dam/driver/filesystem/manifest"
 	"dam/driver/flag"
 	"dam/driver/logger"
 	"dam/run/internal"
+	"dam/run/internal/archive/app_name"
 )
 
 type SaveSettings struct {
@@ -36,7 +36,7 @@ func Save(appFullName string) {
 		filePath = SaveFlags.FilePath
 
 		logger.Debug("Saving archive ...")
-		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
+		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo() + appFullName)
 		if imageId == "" {
 			logger.Fatal("Image with tag '%s' not exist in the system", internal.GetPrefixRepo()+appFullName)
 		}
@@ -44,7 +44,7 @@ func Save(appFullName string) {
 
 		logger.Debug("Preparing manifest ...")
 		modifyManifest(filePath, appFullName)
-		
+
 		logger.Success("Created '%s' file.", filePath)
 	} else {
 		nameInfo := app_name.NewInfo()
@@ -54,7 +54,7 @@ func Save(appFullName string) {
 		filePath = path.Join(fs.GetCurrentDir(), nameInfo.TempNameToString())
 
 		logger.Debug("Saving archive ...")
-		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
+		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo() + appFullName)
 		if imageId == "" {
 			logger.Fatal("Image with tag '%s' not exist in the system", internal.GetPrefixRepo()+appFullName)
 		}

@@ -2,7 +2,6 @@ package run
 
 import (
 	"bufio"
-	"dam/run/internal/archive/app_name"
 	"fmt"
 	"os"
 	"path"
@@ -18,6 +17,7 @@ import (
 	"dam/driver/logger/color"
 	"dam/driver/structures"
 	"dam/run/internal"
+	"dam/run/internal/archive/app_name"
 )
 
 type ImportSettings struct {

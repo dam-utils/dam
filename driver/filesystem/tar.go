@@ -3,11 +3,12 @@ package filesystem
 import (
 	"archive/tar"
 	"compress/gzip"
-	"dam/driver/logger"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"dam/driver/logger"
 )
 
 func Untar(source string) string {
