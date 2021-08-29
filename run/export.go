@@ -2,7 +2,9 @@ package run
 
 import (
 	"dam/driver/conf/option"
+	"dam/run/internal/archive/app_name"
 	"os"
+	"path"
 
 	"dam/driver/db"
 	"dam/driver/engine"
@@ -46,7 +48,10 @@ func Export(arg string) {
 
 func exportImagesToDir(tmpDir string) {
 	for _, app := range db.ADriver.GetApps() {
-		tmpFilePath := tmpDir + string(os.PathSeparator) + option.Config.Save.GetTmpFilePostfix()
+		fileInfo := app_name.NewInfo()
+		fileInfo.SetAppName(app.ImageName)
+		fileInfo.SetAppVersion(app.ImageVersion)
+		tmpFilePath := path.Join(tmpDir, fileInfo.TempNameToString())
 		tag := internal.GetPrefixRepo() + app.ImageName + ":" + app.ImageVersion
 		logger.Info("Preparing image %s ...", tag)
 
@@ -57,17 +62,11 @@ func exportImagesToDir(tmpDir string) {
 		engine.VDriver.SaveImage(imageId, tmpFilePath)
 
 		modifyManifest(tmpFilePath, tag)
-		resultPath := tmpDir +
-			string(os.PathSeparator) +
-			app.ImageName +
-			option.Config.Save.GetFileSeparator() +
-			app.ImageVersion +
-			option.Config.Save.GetOptionalSeparator() +
-			fs.HashFileCRC32(tmpFilePath) +
-			option.Config.Save.GetFileSeparator() +
-			fs.FileSize(tmpFilePath) +
-			option.Config.Save.GetFilePostfix()
-		fs.MoveFile(tmpFilePath, resultPath)
+
+		fileInfo.SetHash(fs.HashFileCRC32(tmpFilePath))
+		fileInfo.SetSize(fs.FileSize(tmpFilePath))
+
+		fs.MoveFile(tmpFilePath, path.Join(tmpDir, fileInfo.FullNameToString()) )
 	}
 }
 

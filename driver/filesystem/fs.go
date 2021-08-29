@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"archive/tar"
 	"bytes"
 	"dam/driver/conf/option"
 	"dam/driver/logger"
@@ -179,14 +180,11 @@ func IsTar(path string) bool {
 		logger.Fatal("Cannot open file '%s' with error: %s", path, err)
 	}
 
-	var header [2]byte
-	_, err = io.ReadFull(f, header[:])
+	tr := tar.NewReader(f)
+	_, err = tr.Next()
 	if err != nil {
-		logger.Debug("Cannot read two first bytes from file '%s' with error: %s", path, err)
 		return false
 	}
 
-	return  header[0] == 47 && header[1] == 97
-	// gzip
-	// return  header[0] == 31 && header[1] == 139
+	return true
 }
