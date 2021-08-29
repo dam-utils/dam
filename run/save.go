@@ -2,7 +2,9 @@ package run
 
 import (
 	"dam/driver/conf/option"
+	"dam/run/internal/archive/app_name"
 	"os"
+	"path"
 
 	"dam/driver/engine"
 	fs "dam/driver/filesystem"
@@ -19,7 +21,7 @@ type SaveSettings struct {
 var SaveFlags = new(SaveSettings)
 
 func Save(appFullName string) {
-	var filePath, resultPrefixPath string
+	var filePath string
 
 	flag.ValidateAppPlusVersion(appFullName)
 	logger.Debug("Flags validated with success")
@@ -45,9 +47,11 @@ func Save(appFullName string) {
 		
 		logger.Success("Created '%s' file.", filePath)
 	} else {
-		baseName := fs.GetCurrentDir() + string(os.PathSeparator) + name + option.Config.Save.GetFileSeparator() + version
-		filePath = baseName + option.Config.Save.GetTmpFilePostfix()
-		resultPrefixPath = baseName + option.Config.Save.GetOptionalSeparator()
+		nameInfo := app_name.NewInfo()
+		nameInfo.SetAppName(name)
+		nameInfo.SetAppVersion(version)
+
+		filePath = path.Join(fs.GetCurrentDir(), nameInfo.TempNameToString())
 
 		logger.Debug("Saving archive ...")
 		imageId := engine.VDriver.GetImageID(internal.GetPrefixRepo()+appFullName)
@@ -60,11 +64,10 @@ func Save(appFullName string) {
 		modifyManifest(filePath, appFullName)
 
 		logger.Debug("Releasing archive ...")
-		resultPath := resultPrefixPath +
-			fs.HashFileCRC32(filePath) +
-			option.Config.Save.GetFileSeparator() +
-			fs.FileSize(filePath) +
-			option.Config.Save.GetFilePostfix()
+		nameInfo.SetHash(fs.HashFileCRC32(filePath))
+		nameInfo.SetSize(fs.FileSize(filePath))
+
+		resultPath := path.Join(fs.GetCurrentDir(), nameInfo.FullNameToString())
 		fs.MoveFile(filePath, resultPath)
 
 		logger.Success("Created '%s' file.", resultPath)
