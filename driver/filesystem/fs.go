@@ -182,9 +182,6 @@ func IsTar(path string) bool {
 
 	tr := tar.NewReader(f)
 	_, err = tr.Next()
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }

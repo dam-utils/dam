@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 
 	"dam/driver/conf/option"
@@ -178,7 +179,7 @@ func getTagFromArchiveManifest(appCurrentName string) string {
 	tarGzipDir := fs.Untar(gzipFile)
 	defer fs.Remove(tarGzipDir)
 
-	manifestFile := tarGzipDir + string(filepath.Separator) + option.Config.Save.GetManifestFile()
+	manifestFile := path.Join(tarGzipDir, option.Config.Save.GetManifestFile())
 
 	content, err := os.Open(manifestFile)
 	defer func() {
