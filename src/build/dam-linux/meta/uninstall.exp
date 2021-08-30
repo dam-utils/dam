@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "Skip removing 'dam:${DAM_VERSION}' from '/usr/local/bin/dam'"
+echo "Skip removing 'dam:${DAM_APP_VERSION}' from '/usr/local/bin/dam'"

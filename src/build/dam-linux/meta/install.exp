@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "Starting install 'dam:${DAM_VERSION}'"
-sudo cp dam /usr/local/bin/dam
-echo "Installing 'dam:${DAM_VERSION}' finished with successful"
+echo "Starting install 'dam:${DAM_APP_VERSION}'"
+sudo cp -f dam /usr/local/bin/dam
+echo "Installing 'dam:${DAM_APP_VERSION}' finished with successful"

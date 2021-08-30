@@ -76,7 +76,7 @@ func InstallApp(appCurrentName string) {
 
 	logger.Debug("Saving to DB ...")
 	saveAppToDB(tag, familyLabel)
-	logger.Success("App '%s' was installed.", appCurrentName)
+	logger.Success("App '%s' was installed.", tag)
 }
 
 // Create tags different from the given one
@@ -118,7 +118,7 @@ func prepareImageTag(imageId, tag string) {
 
 func isExistFamily(imageFamily string) {
 	if db.ADriver.ExistFamily(imageFamily) {
-		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' is exist in DB", imageFamily)
+		logger.Fatal("Cannot add the application to DB. App with FAMILY '%s' was installed in the system.", imageFamily)
 	}
 }
 
