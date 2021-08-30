@@ -12,6 +12,8 @@ import (
 	"dam/driver/structures"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/term"
 )
 
 func (p *provider) LoadImage(file string) {
@@ -34,13 +36,13 @@ func (p *provider) LoadImage(file string) {
 			out.Body.Close()
 		}
 	}()
-	if err != nil {
-		logger.Fatal("Cannot pull docker image with error: %s", err)
-	}
 
-	_, err = io.Copy(os.Stdout, out.Body)
-	if err != nil {
-		logger.Fatal("Cannot print docker stdout with error: %s", err)
+	if out.Body != nil && out.JSON {
+		outFd, isTerminalOut := term.GetFdInfo(os.Stdout)
+		err := jsonmessage.DisplayJSONMessagesStream(out.Body, os.Stdout, outFd, isTerminalOut, nil)
+		if err != nil {
+			logger.Fatal("Cannot pull docker image with error: %s", err)
+		}
 	}
 }
 

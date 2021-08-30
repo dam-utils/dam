@@ -20,15 +20,13 @@ import (
 )
 
 func InstallApp(appCurrentName string) {
-	var isInstallingFromFile bool
-
-	if fs.IsExistFile(appCurrentName) {
-		isInstallingFromFile = true
+	isInstallingFromFile := fs.IsExistFile(appCurrentName)
+	if isInstallingFromFile {
 		flag.ValidateFilePath(appCurrentName)
 	} else {
-		isInstallingFromFile = false
 		flag.ValidateAppPlusVersion(appCurrentName)
 	}
+
 	logger.Debug("Flags validated with success")
 	logger.Success("Start '%s' installing to the system.", appCurrentName)
 
@@ -99,12 +97,12 @@ func createTagImages(tag, serversLabel string) {
 	reposList, official := storage.ReposList()
 	for _, repo := range reposList {
 		if repo != defRepo {
-			prepareImageTag(imageId, repo + "/" + name + ":" + version)
+			prepareImageTag(imageId, repo+"/"+name+":"+version)
 		}
 	}
 
 	if official && defRepo != "" {
-		prepareImageTag(imageId, name + ":" + version)
+		prepareImageTag(imageId, name+":"+version)
 	}
 }
 

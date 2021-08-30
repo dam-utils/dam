@@ -108,9 +108,10 @@ func loadAppsFromArchive(arch string) []*structures.ImportApp {
 	defer fs.Remove(tmpDir)
 
 	filesList := getAppFilesList(tmpDir)
-	for _, a := range filesList {
-		validateCheckSumArch(a)
-		engine.VDriver.LoadImage(a)
+	for _, appFile := range filesList {
+		logger.Debug("Validating %s", appFile)
+		validateCheckSumArch(appFile)
+		engine.VDriver.LoadImage(appFile)
 	}
 
 	return appsFromFile(path.Join(tmpDir, option.Config.Export.GetAppsFileName()))
