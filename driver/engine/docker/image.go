@@ -36,12 +36,15 @@ func (p *provider) LoadImage(file string) {
 			out.Body.Close()
 		}
 	}()
+	if err != nil {
+		logger.Fatal("Cannot load image file '%s' with error: %s", file, err)
+	}
 
 	if out.Body != nil && out.JSON {
 		outFd, isTerminalOut := term.GetFdInfo(os.Stdout)
 		err := jsonmessage.DisplayJSONMessagesStream(out.Body, os.Stdout, outFd, isTerminalOut, nil)
 		if err != nil {
-			logger.Fatal("Cannot pull docker image with error: %s", err)
+			logger.Fatal("Cannot load docker image with error: %s", err)
 		}
 	}
 }
