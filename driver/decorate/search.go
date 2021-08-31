@@ -1,9 +1,17 @@
 package decorate
 
-import "fmt"
+import (
+	"dam/driver/conf/option"
+	"dam/driver/logger/color"
+	"fmt"
+)
 
 func PrintSearchedApp(app string) {
-	fmt.Print(app + ":")
+	if option.Config.Decoration.GetColorOn() {
+		fmt.Print(color.Yellow + app + color.Reset + ":")
+	} else {
+		fmt.Print(app + ":")
+	}
 }
 
 func PrintSearchedVersions(list []string){

@@ -22,7 +22,7 @@ func (p *provider) ContainerCreate(image string, name string) string {
 		Cmd:   []string{""},
 		Tty:   true, //TODO check it
 	}
-	resp, err := p.client.ContainerCreate(context.Background(), &conf,  nil, nil, name)
+	resp, err := p.client.ContainerCreate(context.Background(), &conf,  nil, nil, nil, name)
 	if err != nil {
 		logger.Fatal("Cannot create container with error: %s", err)
 	}
