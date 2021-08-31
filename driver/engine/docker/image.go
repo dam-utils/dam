@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"io"
 	"os"
 
 	"dam/driver/engine/docker/internal"
@@ -13,7 +12,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/pkg/jsonmessage"
-	"github.com/docker/docker/pkg/term"
+	"github.com/moby/term"
 )
 
 func (p *provider) LoadImage(file string) {
@@ -78,9 +77,12 @@ func (p *provider) Pull(tag string, repo *structures.Repo) {
 		return
 	}
 
-	_, err = io.Copy(os.Stdout, out)
-	if err != nil {
-		logger.Fatal("Cannot print docker stdout with error: %s", err)
+	if out != nil {
+		outFd, isTerminalOut := term.GetFdInfo(os.Stdout)
+		err := jsonmessage.DisplayJSONMessagesStream(out, os.Stdout, outFd, isTerminalOut, nil)
+		if err != nil {
+			logger.Fatal("Cannot pull docker image to stdout with error: %s", err)
+		}
 	}
 }
 
