@@ -17,7 +17,7 @@ var (
 	//FILES DB options. Type: "files"
 	FILES_DB_SEPARATOR        = ";"
 	FILES_DB_BOOL_FLAG_SYMBOL = "*"
-	FILES_DB_FILES_PERMISSIONS = "0666"
+	FILES_DB_FILES_PERMISSIONS = "0660"
 	// If enabled this FilesDB option DAM will save db files to the user cache directory
 	FILES_DB_USE_USER_CACHE_DIR = true
 	FILES_DB_REPOS_FILENAME     = "dam/Repos"
@@ -49,8 +49,8 @@ var (
 	DOCKER_API_VERSION = "1.40"
 
 	//Sort
-	SORT_APP_TYPE     = "alphabetic"       // TODO create new sorting
-	SORT_VERSION_TYPE = "semantic_version" // TODO create new sorting
+	SORT_APP_TYPE     = "alphabetic"
+	SORT_VERSION_TYPE = "semantic_version"
 
 	//FileSystem
 	FS_META_DIR_NAME         = "meta"
