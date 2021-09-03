@@ -1,9 +1,10 @@
 package option
 
 import (
-	"dam/config"
 	"os"
 	"path/filepath"
+
+	"dam/config"
 )
 
 type FilesDB struct {}
