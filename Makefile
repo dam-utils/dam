@@ -5,7 +5,7 @@ PROJECT_VERSION := $(shell grep 'PROJECT_VERSION' config/sys.config.go | awk -F 
 CLEAR_BUILD_CONTAINER	:= true
 # Удалить за собой временные образы docker
 CLEAR_BUILD_IMAGE		:= false
-# true - не кэширует промежуточные слои для образов docker
+# true - не берет из кэша промежуточные слои для образов docker
 NOT_USE_IMAGE_CACHE     := false
 
 include src/make/Makefile.funcs
@@ -13,10 +13,10 @@ include src/make/Makefile.funcs
 build: build-windows build-linux
 
 build-windows:
-	$(call build_func,windows,amd64)
+	$(call build_func,windows,amd64,.exe)
 
 build-linux:
-	$(call build_func,linux,amd64)
+	$(call build_func,linux,amd64,)
 
 test:
 	$(call test_func)

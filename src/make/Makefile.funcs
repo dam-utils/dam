@@ -1,6 +1,7 @@
 define build_func
 	# GOOS :=	$(1)
 	# GOARCH :=	$(2)
+	# EXTEND_FILE := $(3)
 	mkdir -p _build/$(1)
 
 	docker build 	-t ${PROJECT_NAME}_$(1):develop \
@@ -8,9 +9,10 @@ define build_func
 					--build-arg PROJECT_NAME=${PROJECT_NAME} \
 					--build-arg GOOS=$(1) \
 					--build-arg GOARCH=$(2) \
+					--build-arg EXTEND_FILE=$(3) \
 					-f src/make/docker/build.Dockerfile .
 	docker create --name container-${PROJECT_NAME}-$(1) ${PROJECT_NAME}_$(1):develop
-    docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${PROJECT_NAME} _build/$(1)/
+    docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${PROJECT_NAME}$(3) _build/$(1)/
 
 	$(if $(filter $(CLEAR_BUILD_CONTAINER),true), docker rm -f container-${PROJECT_NAME}-$(1))
     $(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_$(1):develop)
