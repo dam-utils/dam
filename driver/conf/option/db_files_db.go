@@ -3,6 +3,7 @@ package option
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"dam/config"
 )
@@ -15,6 +16,14 @@ func (o *FilesDB) GetSeparator() string {
 
 func (o *FilesDB) GetBoolFlagSymbol() string {
 	return config.FILES_DB_BOOL_FLAG_SYMBOL
+}
+
+func (o *FilesDB) GetFilesPermissions() os.FileMode {
+	u64, err := strconv.ParseUint(config.FILES_DB_FILES_PERMISSIONS, 10, 32)
+	if err != nil {
+		printFatal("Config option 'FILES_DB_FILES_PERMISSIONS' is not valid for permission file mask: %s", err)
+	}
+	return os.FileMode(u64)
 }
 
 func (o *FilesDB) GetReposFilename() string {

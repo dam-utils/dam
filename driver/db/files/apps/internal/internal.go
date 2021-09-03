@@ -13,7 +13,7 @@ import (
 )
 
 func SaveApps(apps []*structures.App) {
-	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, option.Config.FilesDB.GetFilesPermissions())
 	defer func() {
 		if f != nil {
 			f.Close()

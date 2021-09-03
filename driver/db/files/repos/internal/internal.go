@@ -72,7 +72,7 @@ func repo2str(repo *structures.Repo) *string {
 func SaveRepos(repos []*structures.Repo) {
 	newRepos := preparePasswordRepos(repos)
 
-	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, option.Config.FilesDB.GetFilesPermissions())
 	defer func() {
 		if f != nil {
 			f.Close()
