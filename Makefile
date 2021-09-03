@@ -39,6 +39,6 @@ clean-docker:
 	$(call clear_func,windows)
 	$(call clear_func,linux)
 
-linux-app: clean-binary	build-linux
+app-linux: clean-binary	build-linux
 	cp -f _build/linux/${PROJECT_NAME} src/build/dam-linux/${PROJECT_NAME}
 	src/build/dam-linux/${PROJECT_NAME} -x create src/build/dam-linux/ --name ${PROJECT_NAME} --version ${PROJECT_VERSION}
