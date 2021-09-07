@@ -15,8 +15,8 @@ var (
 	DB_TYPE = "files"
 
 	//FILES DB options. Type: "files"
-	FILES_DB_SEPARATOR        = ";"
-	FILES_DB_BOOL_FLAG_SYMBOL = "*"
+	FILES_DB_SEPARATOR         = ";"
+	FILES_DB_BOOL_FLAG_SYMBOL  = "*"
 	FILES_DB_FILES_PERMISSIONS = "0660"
 	// If enabled this FilesDB option DAM will save db files to the user cache directory
 	FILES_DB_USE_USER_CACHE_DIR = true
@@ -41,6 +41,7 @@ var (
 
 	//DefaultRepo
 	UNKNOWN_REPO_NAME      = "~unknown~"
+	UNKNOWN_REPO_ID        = 0
 	NEW_REPO_PREFIX        = "auto"
 	NEW_REPO_POSTFIX_LIMIT = 999
 	LABEL_REPOS_SEPARATOR  = ","

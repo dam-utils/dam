@@ -1,6 +1,7 @@
 package run
 
 import (
+	"dam/driver/conf/option"
 	"strconv"
 
 	"dam/driver/db"
@@ -36,6 +37,7 @@ func RemoveRepo(arg string) {
 
 	logger.Debug("Removing from DB ...")
 	db.RDriver.RemoveRepoById(repoId)
+	db.ADriver.ChangeRepoID(repoId, option.Config.DefaultRepo.GetUnknownRepoID())
 }
 
 func isRepoID(id string) bool {

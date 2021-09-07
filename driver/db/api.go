@@ -40,4 +40,6 @@ type AProvider interface {
 	GetAppById(id int) *structures.App
 	ExistFamily(family string) bool
 	RemoveAppById(id int)
+	ChangeRepoID(oldID, newID int)
+	ClearApps()
 }

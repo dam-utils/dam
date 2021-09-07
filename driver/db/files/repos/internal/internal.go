@@ -98,6 +98,7 @@ func SaveRepos(repos []*structures.Repo) {
 		logger.Fatal("Cannot close from repo file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
 	}
 
+	logger.Debug("Move '%s' to '%s'", option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetReposFilename())
 	fs.MoveFile(option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetReposFilename())
 }
 
@@ -116,10 +117,10 @@ func PrepareDefaultInRepos(repos []*structures.Repo) []*structures.Repo {
 }
 
 func GetNewRepoID(repos []*structures.Repo) int {
-	Res := 0
+	Res := option.Config.DefaultRepo.GetUnknownRepoID()
 
 	if len(repos) == 0 {
-		return 0
+		return Res
 	}
 	for _, repo := range repos {
 		if repo.Id >= Res {

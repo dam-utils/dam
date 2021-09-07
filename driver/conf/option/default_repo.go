@@ -8,6 +8,10 @@ func (o *DefaultRepo) GetUnknownRepoName() string {
 	return config.UNKNOWN_REPO_NAME
 }
 
+func (o *DefaultRepo) GetUnknownRepoID() int {
+	return config.UNKNOWN_REPO_ID
+}
+
 func (o *DefaultRepo) GetNewRepoPrefix() string {
 	return config.NEW_REPO_PREFIX
 }

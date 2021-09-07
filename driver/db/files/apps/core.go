@@ -65,3 +65,17 @@ func (p *provider) RemoveAppById(id int) {
 		logger.Fatal("Not found Id of the App in DB")
 	}
 }
+
+func (p *provider) ChangeRepoID(oldID, newID int) {
+	apps := p.GetApps()
+	for _, a := range apps {
+		if a.RepoID == oldID {
+			a.RepoID = newID
+		}
+	}
+	internal.SaveApps(apps)
+}
+
+func (p *provider) ClearApps() {
+	internal.ClearApps()
+}
