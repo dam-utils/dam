@@ -51,7 +51,7 @@ func GetMultiVersion(tag string) bool {
 	return imageMultiVersion == option.Config.Multiversion.GetTrueFlag()
 }
 
-func GetServers(tag string) string {
+func GetServersByTag(tag string) string {
 	imageId := engine.VDriver.GetImageID(tag)
 	if imageId == "" {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
@@ -60,7 +60,7 @@ func GetServers(tag string) string {
 	servers, ok := engine.VDriver.GetImageLabel(imageId, option.Config.ReservedEnvs.GetAppServersEnv())
 
 	if !ok {
-		logger.Warn("Label APP_SERVERS")
+		logger.Warn("Label APP_SERVERS is empty")
 		servers = ""
 	}
 

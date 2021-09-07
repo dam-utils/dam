@@ -39,6 +39,11 @@ func InstallApp(appCurrentName string) {
 		tag = dockerPull(appCurrentName)
 	}
 
+	logger.Debug("Preparing servers label ...")
+	serversLabel := internal.GetServersByTag(tag)
+	logger.Debug("Servers labels '%v' for tag '%s'", serversLabel, tag)
+	createTagImages(tag, serversLabel)
+
 	logger.Debug("Validate existing the image in the docker cache...")
 	imageId := engine.VDriver.GetImageID(tag)
 	if imageId == "" {
@@ -53,10 +58,6 @@ func InstallApp(appCurrentName string) {
 		logger.Warn("Not set multiversion flag for this app")
 		isExistFamily(familyLabel)
 	}
-
-	logger.Debug("Preparing servers label ...")
-	serversLabel := internal.GetServers(tag)
-	createTagImages(tag, serversLabel)
 
 	logger.Debug("Getting meta ...")
 	tmpDir := internal.PrepareTmpMetaPath(option.Config.FileSystem.GetTmpMetaPath())
@@ -108,12 +109,10 @@ func createTagImages(tag, serversLabel string) {
 
 func prepareImageTag(imageId, tag string) {
 	newId := engine.VDriver.GetImageID(tag)
-	if newId != "" {
-		if !engine.VDriver.ImageRemove(newId) {
-			logger.Fatal("Cannot create and remove images tag '%s'. This tag already is existing in the system", tag)
-		}
+	if newId == "" {
+		logger.Debug("Create tag '%s' for image id '%s'", tag, imageId)
+		engine.VDriver.CreateTag(imageId, tag)
 	}
-	engine.VDriver.CreateTag(imageId, tag)
 }
 
 func isExistFamily(imageFamily string) {

@@ -59,9 +59,13 @@ func Import(arg string) {
 		appDeleteList, appInstallList, appSkipList = matchLists(appAllList, appImportList)
 	}
 
-	decorate.PrintAppList("Skip apps:\n", appSkipList, color.Yellow)
-	decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
-	decorate.PrintAppList("Delete apps:\n", appDeleteList, color.Red)
+	if emptyAppLists(appSkipList, appInstallList, appDeleteList) {
+		logger.Info("App list is empty.")
+	} else {
+		decorate.PrintAppList("Skip apps:\n", appSkipList, color.Yellow)
+		decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
+		decorate.PrintAppList("Delete apps:\n", appDeleteList, color.Red)
+	}
 
 	if !ImportFlags.Yes {
 		answer := questionYesNo()
@@ -111,7 +115,14 @@ func loadAppsFromArchive(arch string) []*structures.ImportApp {
 	for _, appFile := range filesList {
 		logger.Debug("Validating %s", appFile)
 		validateCheckSumArch(appFile)
+
 		engine.VDriver.LoadImage(appFile)
+
+		logger.Debug("Preparing servers label ...")
+		tag := getTagFromArchiveManifest(appFile)
+		serversLabel := internal.GetServersByTag(tag)
+		logger.Debug("Servers labels '%v' for tag '%s'", serversLabel, tag)
+		createTagImages(tag, serversLabel)
 	}
 
 	return appsFromFile(path.Join(tmpDir, option.Config.Export.GetAppsFileName()))
@@ -254,4 +265,12 @@ func questionYesNo() bool {
 	}
 
 	return false
+}
+
+func emptyAppLists(appSkipList, appInstallList, appDeleteList []*structures.ImportApp) bool {
+	result := make([]*structures.ImportApp, 0)
+	result = append(result, appSkipList...)
+	result = append(result, appInstallList...)
+	result = append(result, appDeleteList...)
+	return len(result) == 0
 }
