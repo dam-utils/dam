@@ -7,7 +7,7 @@ import (
 )
 
 var installAppCmd = &cobra.Command{
-	Use:   "install [<app>:<version> | <archive path>]",
+	Use:   "install [<repos>/]<app>:<version> | <archive path>",
 	Aliases: []string{"in"},
 	Short: "Install docker application from a docker registry or a specific file archive.",
 	Long:  ``,
