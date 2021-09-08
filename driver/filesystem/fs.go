@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 
 	"dam/driver/conf/option"
 	"dam/driver/logger"
@@ -159,15 +158,6 @@ func HashFileCRC32(filePath string) string {
 	}
 	hashInBytes := hash.Sum(nil)[:]
 	return hex.EncodeToString(hashInBytes)
-}
-
-func FileSize(filePath string) string {
-	fi, err := os.Stat(filePath)
-	if err != nil {
-		logger.Fatal("Cannot check file '%s' with error: %s", filePath, err)
-	}
-
-	return strconv.FormatInt(fi.Size(), 10)
 }
 
 func IsTar(path string) bool {

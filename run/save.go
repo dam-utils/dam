@@ -80,7 +80,6 @@ func Save(arg string) {
 
 		logger.Debug("Releasing archive ...")
 		nameInfo.SetHash(fs.HashFileCRC32(filePath))
-		nameInfo.SetSize(fs.FileSize(filePath))
 
 		resultPath := path.Join(fs.GetCurrentDir(), nameInfo.FullNameToString())
 		fs.MoveFile(filePath, resultPath)

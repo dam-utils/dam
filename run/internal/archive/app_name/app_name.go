@@ -1,6 +1,7 @@
 package app_name
 
 import (
+	"dam/driver/logger"
 	"fmt"
 	"regexp"
 	"strings"
@@ -11,8 +12,7 @@ import (
 type info struct {
 	appName    string
 	appVersion string
-	hash string
-	size string
+	hash       string
 }
 
 func NewInfo() *info {
@@ -20,38 +20,41 @@ func NewInfo() *info {
 		appName:    option.Config.ReservedEnvs.GetDefaultAppName(),
 		appVersion: option.Config.ReservedEnvs.GetDefaultAppVersion(),
 		hash:       "0",
-		size:       "0",
 	}
 }
 
 func (i *info) FromString(str string) error {
+	err := checkDoubleSymbol(str, option.Config.Save.GetOptionalSeparator())
+	if err != nil {
+		return err
+	}
+
+	err = checkDoubleSymbol(str, option.Config.Save.GetFileSeparator())
+	if err != nil {
+		return err
+	}
+
 	re := regexp.MustCompile(getRegexpMask())
 	if !re.MatchString(str) {
 		return fmt.Errorf("cannot match string by mask '%s'", getRegexpMask())
 	}
 
 	result1 := strings.TrimRight(str, option.Config.Save.GetFilePostfix())
-	arrWithSize := strings.Split(result1, option.Config.Save.GetFileSeparator())
-	i.size = arrWithSize[len(arrWithSize)-1]
-	if i.size == "" {
-		return fmt.Errorf("size is empty")
-	}
-	result2 := strings.TrimRight(result1, i.size)
-	result3 := strings.TrimRight(result2, option.Config.Save.GetFileSeparator())
-	arrWithHash := strings.Split(result3, option.Config.Save.GetOptionalSeparator())
+	arrWithHash := strings.Split(result1, option.Config.Save.GetOptionalSeparator())
 	i.hash = arrWithHash[len(arrWithHash)-1]
+	logger.Debug("Split prefix filename with hash: '%s' and hash '%s'\n", arrWithHash, i.hash)
 	if i.hash == "" {
 		return fmt.Errorf("hash is empty")
 	}
-	result4 := strings.TrimRight(result3, i.hash)
-	result5 := strings.TrimRight(result4, option.Config.Save.GetOptionalSeparator())
-	arrWithVersion := strings.Split(result5, option.Config.Save.GetFileSeparator())
+	result3 := strings.TrimRight(result1, i.hash)
+	result4 := strings.TrimRight(result3, option.Config.Save.GetOptionalSeparator())
+	arrWithVersion := strings.Split(result4, option.Config.Save.GetFileSeparator())
 	i.appVersion = arrWithVersion[len(arrWithVersion)-1]
 	if i.appVersion == "" {
 		return fmt.Errorf("app version is empty")
 	}
-	result6 := strings.TrimRight(result5, i.appVersion)
-	i.appName = strings.TrimRight(result6, option.Config.Save.GetFileSeparator())
+	result5 := strings.TrimRight(result4, i.appVersion)
+	i.appName = strings.TrimRight(result5, option.Config.Save.GetFileSeparator())
 	if i.appName == "" {
 		return fmt.Errorf("app name is empty")
 	}
@@ -64,8 +67,6 @@ func (i *info) FullNameToString() string {
 		i.appVersion +
 		option.Config.Save.GetOptionalSeparator() +
 		i.hash +
-		option.Config.Save.GetFileSeparator() +
-		i.size +
 		option.Config.Save.GetFilePostfix()
 }
 
@@ -92,22 +93,21 @@ func (i *info) Hash() string {
 	return i.hash
 }
 
-func (i *info) SetSize(str string) {
-	i.size = str
-}
-
-func (i *info) Size() string {
-	return i.size
-}
-
 func getRegexpMask() string {
 	return ".*" +
 		option.Config.Save.GetFileSeparator() +
 		".*" +
 		option.Config.Save.GetOptionalSeparator() +
 		".*" +
-		option.Config.Save.GetFileSeparator() +
-		".*" +
 		option.Config.Save.GetFilePostfix() +
 		"\\b"
+}
+
+func checkDoubleSymbol(str, symbol string) error {
+	logger.Debug("Check filename for double symbol '%s'", symbol)
+	re := regexp.MustCompile("\\" +	symbol + "\\" +	symbol)
+	if re.MatchString(str) {
+		return fmt.Errorf("string has two consecutive '%s'", symbol)
+	}
+	return nil
 }

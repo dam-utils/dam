@@ -64,7 +64,6 @@ func exportImagesToDir(tmpDir string) {
 		modifyManifest(tmpFilePath, tag)
 
 		fileInfo.SetHash(fs.HashFileCRC32(tmpFilePath))
-		fileInfo.SetSize(fs.FileSize(tmpFilePath))
 
 		fs.MoveFile(tmpFilePath, path.Join(tmpDir, fileInfo.FullNameToString()) )
 	}

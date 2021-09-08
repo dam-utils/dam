@@ -147,11 +147,6 @@ func validateCheckSumArch(appFile string) {
 		logger.Fatal("Cannot validate checksum of archive: parsing archive name '%s' error: %s", appFile, err)
 	}
 
-	fileSize := fs.FileSize(appFile)
-	if fileInfo.Size() != fileSize {
-		logger.Fatal("File size '%s' not equal size '%s' in file name '%s'", fileSize, fileInfo.Size(), appFile)
-	}
-
 	fileHash := fs.HashFileCRC32(appFile)
 	if fileInfo.Hash() != fileHash {
 		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", fileHash, fileInfo.Hash(), appFile)
