@@ -19,51 +19,51 @@ import (
 	"dam/run/internal/label/servers"
 )
 
-func InstallApp(appCurrentName string) {
-	isInstallingFromFile := fs.IsExistFile(appCurrentName)
-	if isInstallingFromFile {
-		flag.ValidateFilePath(appCurrentName)
-	} else {
-		flag.ValidateAppPlusVersion(appCurrentName)
-	}
+type installArgType int
+const (
+	unknownInstall installArgType = iota
+	fileInstall
+	appInstall
+	tagInstall
+)
 
+func InstallApp(arg string) {
+	installType := getInstallTypeByArg(arg)
+
+	logger.Debug("Validating docker image with type '%v' ...", installType)
+	validateInstallArg(arg, installType)
 	logger.Debug("Flags validated with success")
-	logger.Success("Start '%s' installing to the system.", appCurrentName)
+	logger.Success("Start '%s' installing to the system.", arg)
 
 	logger.Debug("Preparing docker image ...")
-	var tag string
-	if isInstallingFromFile {
-		tag = getTagFromArchiveManifest(appCurrentName)
-		engine.VDriver.LoadImage(appCurrentName)
-	} else {
-		tag = dockerPull(appCurrentName)
+	var imageTag string
+	switch installType {
+	case fileInstall:
+		imageTag = getTagFromArchiveManifest(arg)
+		engine.VDriver.LoadImage(arg)
+	case appInstall:
+		imageTag = dockerPull(arg)
+	case tagInstall:
+		repo, _, _ := internal.SplitTag(arg)
+		internal.PrepareRepo(repo)
+		imageTag = arg
+	default:
+		logger.Fatal("Internal error. Not supported type of the install argument")
 	}
-
-	logger.Debug("Preparing servers label ...")
-	serversLabel := internal.GetServersByTag(tag)
-	logger.Debug("Servers labels '%v' for tag '%s'", serversLabel, tag)
-	createTagImages(tag, serversLabel)
 
 	logger.Debug("Validate existing the image in the docker cache...")
-	imageId := engine.VDriver.GetImageID(tag)
+	imageId := engine.VDriver.GetImageID(imageTag)
 	if imageId == "" {
-		logger.Fatal("Stop installing image with tag '%s'. Cannot find image in the docker cache.", tag)
+		logger.Fatal("Stop installing image with tag '%s'. Cannot find image in the docker cache.", imageTag)
 	}
 
-	logger.Debug("Preparing family label ...")
-	familyLabel := internal.GetFamily(tag)
-
-	logger.Debug("Preparing multiversion label ...")
-	if !internal.GetMultiVersion(tag) {
-		logger.Warn("Not set multiversion flag for this app")
-		isExistFamily(familyLabel)
-	}
+	familyLabel := prepareLabelsWithFamily(imageTag)
 
 	logger.Debug("Getting meta ...")
 	tmpDir := internal.PrepareTmpMetaPath(option.Config.FileSystem.GetTmpMetaPath())
 	defer fs.Remove(tmpDir)
 
-	containerId := engine.VDriver.ContainerCreate(tag, "")
+	containerId := engine.VDriver.ContainerCreate(imageTag, "")
 	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+option.Config.FileSystem.GetMetaDirName(), tmpDir)
 	engine.VDriver.ContainerRemove(containerId)
 
@@ -76,8 +76,56 @@ func InstallApp(appCurrentName string) {
 	fs.RunFile(install)
 
 	logger.Debug("Saving to DB ...")
-	saveAppToDB(tag, familyLabel)
-	logger.Success("App '%s' was installed.", tag)
+	saveAppToDB(imageTag, familyLabel)
+	logger.Success("App '%s' was installed.", imageTag)
+}
+
+func getInstallTypeByArg(arg string) installArgType {
+	if fs.IsExistFile(arg) {
+		return fileInstall
+	}
+
+	repo, name, version := internal.SplitTag(arg)
+	logger.Debug("Split tag '%s' as Repo='%s', Name='%s' and Version='%s'", arg, repo, name, version)
+	if repo != "" && name != "" && version != "" {
+		return tagInstall
+	}
+
+	if name != "" && version != "" {
+		return appInstall
+	}
+
+	return unknownInstall
+}
+
+func validateInstallArg(arg string, installType installArgType) {
+	switch installType {
+	case fileInstall:
+		flag.ValidateFilePath(arg)
+	case appInstall:
+		flag.ValidateAppPlusVersion(arg)
+	case tagInstall:
+		flag.ValidateTag(arg)
+	default:
+		logger.Fatal("Unknown argument '%s' for command 'install'. See '%s help install'", arg, option.Config.Global.GetProjectName())
+	}
+}
+
+func prepareLabelsWithFamily(imageTag string) string {
+	logger.Debug("Preparing servers label ...")
+	serversLabel := internal.GetServersByTag(imageTag)
+	logger.Debug("Servers labels '%v' for tag '%s'", serversLabel, imageTag)
+	createTagImages(imageTag, serversLabel)
+
+	logger.Debug("Preparing family label ...")
+	familyLabel := internal.GetFamily(imageTag)
+
+	logger.Debug("Preparing multiversion label ...")
+	if !internal.GetMultiVersion(imageTag) {
+		logger.Warn("Not set multiversion flag for this app")
+		isExistFamily(familyLabel)
+	}
+	return familyLabel
 }
 
 // Create tags different from the given one
@@ -203,9 +251,9 @@ func getTagFromArchiveManifest(appCurrentName string) string {
 		logger.Fatal("Cannot unmarshal manifest file with error: %s", err)
 	}
 
+	logger.Debug("Parsed manifest file '%v'", result)
 	if len(result) > 0 {
 		if len(result[0].RepoTags) > 0 {
-			flag.ValidateAppPlusVersion(result[0].RepoTags[0])
 			return result[0].RepoTags[0]
 		}
 	}

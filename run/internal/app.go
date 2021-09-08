@@ -14,7 +14,11 @@ func SplitTag(tag string) (string, string, string) {
 	server := strings.Join(n[:len(n)-1], "/")
 
 	v := strings.Split(nameWithVersion, ":")
-	version := v[len(v)-1]
+	if len(v) != 2 {
+		logger.Debug("Cannot found one name and one version app in string '%s'", v)
+		return "", "", ""
+	}
+	version := v[1]
 	name := v[0]
 
 	return server, name, version
