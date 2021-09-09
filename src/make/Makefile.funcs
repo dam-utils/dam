@@ -1,23 +1,18 @@
-NO_BUILD_CACHE := $([$NO_DOCKER_IMAGE_CACHE == true] && $(echo "--no-cache"))
-VENDOR_DIR := vendor
-
 define build_func
 	# GOOS :=	$(1)
 	# GOARCH :=	$(2)
+	# EXTEND_FILE := $(3)
 	mkdir -p _build/$(1)
-	mkdir -p ${VENDOR_DIR}
 
 	docker build 	-t ${PROJECT_NAME}_$(1):develop \
-					${NO_BUILD_CACHE} \
+					--no-cache=${NOT_USE_IMAGE_CACHE} \
 					--build-arg PROJECT_NAME=${PROJECT_NAME} \
 					--build-arg GOOS=$(1) \
 					--build-arg GOARCH=$(2) \
+					--build-arg EXTEND_FILE=$(3) \
 					-f src/make/docker/build.Dockerfile .
 	docker create --name container-${PROJECT_NAME}-$(1) ${PROJECT_NAME}_$(1):develop
-    docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${PROJECT_NAME} _build/$(1)/
-
-	$(if $(filter $(USE_GO_GET_CACHE),true),rm -rf ${VENDOR_DIR})
-    $(if $(filter $(USE_GO_GET_CACHE),true),docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${VENDOR_DIR} ${VENDOR_DIR})
+    docker cp container-${PROJECT_NAME}-$(1):/go/src/${PROJECT_NAME}/${PROJECT_NAME}$(3) _build/$(1)/
 
 	$(if $(filter $(CLEAR_BUILD_CONTAINER),true), docker rm -f container-${PROJECT_NAME}-$(1))
     $(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_$(1):develop)
@@ -25,27 +20,20 @@ endef
 
 define test_func
 	@echo "run test_func"
-	mkdir -p ${VENDOR_DIR}
 	docker build 	-t ${PROJECT_NAME}_test:develop \
-    				${NO_BUILD_CACHE} \
+    				--no-cache=${NOT_USE_IMAGE_CACHE} \
     				--build-arg PROJECT_NAME=${PROJECT_NAME} \
     				-f src/make/docker/test.Dockerfile .
-	docker create --name container-${PROJECT_NAME}-test ${PROJECT_NAME}_test:develop
 
-	$(if $(filter $(USE_GO_GET_CACHE),true),rm -rf ${VENDOR_DIR})
-	$(if $(filter $(USE_GO_GET_CACHE),true),docker cp container-${PROJECT_NAME}-test:/go/src/${PROJECT_NAME}/${VENDOR_DIR} ${VENDOR_DIR})
-
-	$(if $(filter $(CLEAR_BUILD_CONTAINER),true),docker rm -f container-${PROJECT_NAME}-test)
 	$(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_test:develop)
 endef
 
 define lint_func
-	mkdir -p ${VENDOR_DIR}
 	docker build	-t ${PROJECT_NAME}_lint:develop \
-    				${NO_BUILD_CACHE} \
+	                --no-cache=${NOT_USE_IMAGE_CACHE} \
 					--build-arg PROJECT_NAME=${PROJECT_NAME} \
 					-f src/make/docker/linter.Dockerfile .
-	docker rmi -f ${PROJECT_NAME}_lint:develop
+	$(if $(filter $(CLEAR_BUILD_IMAGE),true),docker rmi -f ${PROJECT_NAME}_lint:develop)
 endef
 
 define clear_func

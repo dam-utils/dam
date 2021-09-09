@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"dam/driver/conf/option"
@@ -17,6 +17,7 @@ import (
 	"dam/driver/logger/color"
 	"dam/driver/structures"
 	"dam/run/internal"
+	"dam/run/internal/archive/app_name"
 )
 
 type ImportSettings struct {
@@ -58,13 +59,17 @@ func Import(arg string) {
 		appDeleteList, appInstallList, appSkipList = matchLists(appAllList, appImportList)
 	}
 
-	decorate.PrintAppList("Skip apps:\n", appSkipList, color.Yellow)
-	decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
-	decorate.PrintAppList("Delete apps:\n", appDeleteList, color.Red)
+	if emptyAppLists(appSkipList, appInstallList, appDeleteList) {
+		logger.Info("App list is empty.")
+	} else {
+		decorate.PrintAppList("Skip apps:\n", appSkipList, color.Yellow)
+		decorate.PrintAppList("Install apps:\n", appInstallList, color.Green)
+		decorate.PrintAppList("Delete apps:\n", appDeleteList, color.Red)
+	}
 
 	if !ImportFlags.Yes {
 		answer := questionYesNo()
-		if answer == false {
+		if !answer {
 			logger.Success("Stop import.")
 			os.Exit(0)
 		}
@@ -106,15 +111,21 @@ func loadAppsFromArchive(arch string) []*structures.ImportApp {
 	tmpDir := fs.Untar(arch)
 	defer fs.Remove(tmpDir)
 
-	appList := getAppFilesList(tmpDir)
-	for _, a := range appList {
-		validateCheckSumArch(a)
-		engine.VDriver.LoadImage(a)
+	filesList := getAppFilesList(tmpDir)
+	for _, appFile := range filesList {
+		logger.Debug("Validating %s", appFile)
+		validateCheckSumArch(appFile)
+
+		engine.VDriver.LoadImage(appFile)
+
+		logger.Debug("Preparing servers label ...")
+		tag := getTagFromArchiveManifest(appFile)
+		serversLabel := internal.GetServersByTag(tag)
+		logger.Debug("Servers labels '%v' for tag '%s'", serversLabel, tag)
+		createTagImages(tag, serversLabel)
 	}
 
-	apps := appsFromFile(tmpDir + string(filepath.Separator) + option.Config.Export.GetAppsFileName())
-
-	return apps
+	return appsFromFile(path.Join(tmpDir, option.Config.Export.GetAppsFileName()))
 }
 
 func getAppFilesList(tmpDir string) []string {
@@ -130,21 +141,15 @@ func getAppFilesList(tmpDir string) []string {
 }
 
 func validateCheckSumArch(appFile string) {
-	hash := fs.HashFileCRC32(appFile)
-	size := fs.FileSize(appFile)
-
-	result1 := strings.TrimRight(appFile, option.Config.Save.GetFilePostfix())
-	arrWithSize := strings.Split(result1, option.Config.Save.GetFileSeparator())
-	fileSize := arrWithSize[len(arrWithSize)-1]
-	if fileSize != size {
-		logger.Fatal("File size '%s' not equal size '%s' in file name '%s'", size, fileSize, appFile)
+	fileInfo := app_name.NewInfo()
+	err := fileInfo.FromString(appFile)
+	if err != nil {
+		logger.Fatal("Cannot validate checksum of archive: parsing archive name '%s' error: %s", appFile, err)
 	}
-	result2 := strings.TrimRight(result1, fileSize)
-	result3 := strings.TrimRight(result2, option.Config.Save.GetFileSeparator())
-	arrWithHash := strings.Split(result3, option.Config.Save.GetOptionalSeparator())
-	fileHash := arrWithHash[len(arrWithHash)-1]
-	if fileHash != hash {
-		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", hash, fileHash, appFile)
+
+	fileHash := fs.HashFileCRC32(appFile)
+	if fileInfo.Hash() != fileHash {
+		logger.Fatal("File hash '%s' not equal hash '%s' file name '%s'", fileHash, fileInfo.Hash(), appFile)
 	}
 }
 
@@ -172,6 +177,16 @@ func appsFromFile(path string) []*structures.ImportApp {
 	}()
 	if err != nil {
 		logger.Fatal("Cannot open file '%s' with error: %s", path, err)
+	}
+
+	fileInfo, err := f.Stat()
+	if err != nil {
+		logger.Fatal("Cannot get stats file '%s' with error: %s", path, err)
+	}
+
+	if fileInfo.Size() == 0 {
+		logger.Debug("File '%s' is empty", path)
+		return result
 	}
 
 	fileScanner := bufio.NewScanner(f)
@@ -204,7 +219,7 @@ func matchLists(allApps, importApps []*structures.ImportApp) (appDeleteList, app
 				flagExist = true
 			}
 		}
-		if flagExist == false {
+		if !flagExist {
 			appInstallList = append(appInstallList, iApp)
 		}
 	}
@@ -216,7 +231,7 @@ func matchLists(allApps, importApps []*structures.ImportApp) (appDeleteList, app
 				flagExist = true
 			}
 		}
-		if flagExist == false {
+		if !flagExist {
 			appDeleteList = append(appDeleteList, aApp)
 		}
 	}
@@ -245,4 +260,12 @@ func questionYesNo() bool {
 	}
 
 	return false
+}
+
+func emptyAppLists(appSkipList, appInstallList, appDeleteList []*structures.ImportApp) bool {
+	result := make([]*structures.ImportApp, 0)
+	result = append(result, appSkipList...)
+	result = append(result, appInstallList...)
+	result = append(result, appDeleteList...)
+	return len(result) == 0
 }

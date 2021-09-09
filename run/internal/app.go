@@ -14,7 +14,11 @@ func SplitTag(tag string) (string, string, string) {
 	server := strings.Join(n[:len(n)-1], "/")
 
 	v := strings.Split(nameWithVersion, ":")
-	version := v[len(v)-1]
+	if len(v) != 2 {
+		logger.Debug("Cannot found one name and one version app in string '%s'", v)
+		return "", "", ""
+	}
+	version := v[1]
 	name := v[0]
 
 	return server, name, version
@@ -51,7 +55,7 @@ func GetMultiVersion(tag string) bool {
 	return imageMultiVersion == option.Config.Multiversion.GetTrueFlag()
 }
 
-func GetServers(tag string) string {
+func GetServersByTag(tag string) string {
 	imageId := engine.VDriver.GetImageID(tag)
 	if imageId == "" {
 		logger.Fatal("Image with tag '%s' not exist in the system", tag)
@@ -60,7 +64,7 @@ func GetServers(tag string) string {
 	servers, ok := engine.VDriver.GetImageLabel(imageId, option.Config.ReservedEnvs.GetAppServersEnv())
 
 	if !ok {
-		logger.Warn("Label APP_SERVERS")
+		logger.Warn("Label APP_SERVERS is empty")
 		servers = ""
 	}
 

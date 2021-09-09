@@ -1,5 +1,3 @@
 #!/bin/bash
 
-echo "Start removing dam:${DAM_VERSION}"
-sudo rm -f /usr/local/bin/dam
-echo "Removing 'dam:${DAM_VERSION}' finished with successful"
+echo "Skip removing 'dam:${DAM_APP_VERSION}' from '/usr/local/bin/dam'"

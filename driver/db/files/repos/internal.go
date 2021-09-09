@@ -1,9 +1,10 @@
 package repos
 
 import (
+	"os"
+
 	"dam/driver/conf/option"
 	"dam/driver/logger"
-	"os"
 )
 
 func (p *provider) connect() {

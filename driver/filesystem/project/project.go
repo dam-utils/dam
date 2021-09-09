@@ -1,7 +1,7 @@
 package project
 
 import (
-	"os"
+	"path"
 
 	"dam/driver/conf/option"
 	fs "dam/driver/filesystem"
@@ -9,25 +9,25 @@ import (
 	"dam/driver/logger"
 )
 
-func Prepare(path string) (string, string, string) {
-	meta := path + string(os.PathSeparator) + option.Config.FileSystem.GetMetaDirName()
+func Prepare(projectDir string) (string, string, string) {
+	meta := path.Join(projectDir, option.Config.FileSystem.GetMetaDirName())
 	if !fs.IsExistDir(meta) {
-		logger.Fatal("Cannot find '%s' for path '%s'", option.Config.FileSystem.GetMetaDirName(), meta)
+		logger.Fatal("Cannot find '%s' for meta directory '%s'", option.Config.FileSystem.GetMetaDirName(), meta)
 	}
 
-	dockerFile := path + string(os.PathSeparator) + option.Config.FileSystem.GetDockerfileName()
+	dockerFile := path.Join(projectDir, option.Config.FileSystem.GetDockerfileName())
 	if !fs.IsExistFile(dockerFile) {
-		logger.Fatal("Cannot find '%s' for path '%s'", option.Config.FileSystem.GetDockerfileName(), dockerFile)
+		logger.Fatal("Cannot find '%s' for meta directory '%s'", option.Config.FileSystem.GetDockerfileName(), dockerFile)
 	}
 
-	install := meta + string(os.PathSeparator) + option.Config.FileSystem.GetInstallFileName()
+	install := path.Join(meta, option.Config.FileSystem.GetInstallFileName())
 	if !fs.IsExistFile(install) {
 		if !fs.IsExistFile(install + option.Config.FileSystem.GetExpandMetaFile()) {
 			logger.Fatal("Cannot find  '%s' or '%s%s' files in meta directory", install, install, option.Config.FileSystem.GetExpandMetaFile())
 		}
 	}
 
-	uninstall := meta + string(os.PathSeparator) + option.Config.FileSystem.GetUninstallFileName()
+	uninstall := path.Join(meta, option.Config.FileSystem.GetUninstallFileName())
 	if !fs.IsExistFile(uninstall) {
 		if !fs.IsExistFile(uninstall + option.Config.FileSystem.GetExpandMetaFile()) {
 			logger.Fatal("Cannot find '%s' or '%s%s' files in meta directory", uninstall, uninstall, option.Config.FileSystem.GetExpandMetaFile())
@@ -42,5 +42,5 @@ func Prepare(path string) (string, string, string) {
 		logger.Warn("Not found label 'FAMILY' in Dockerfile '%s'", dockerFile)
 	}
 
-	return meta, dockerFile, path + string(os.PathSeparator) + option.Config.FileSystem.GetEnvFileName()
+	return meta, dockerFile, path.Join(projectDir, option.Config.FileSystem.GetEnvFileName())
 }

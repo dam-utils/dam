@@ -3,7 +3,6 @@ package run
 import (
 	"os"
 	"path/filepath"
-	"strings"
 
 	"dam/driver/conf/option"
 	"dam/driver/db"
@@ -23,15 +22,12 @@ var RemoveAppFlags = new(RemoveAppSettings)
 
 func RemoveApp(arg string) {
 	var app *structures.App
-	var tag string
 
 	if validate.CheckApp(arg) == nil {
 		app = getAppIdByTag(arg)
-		tag = arg
 	} else {
 		if validate.CheckAppName(arg) == nil {
 			app = getAppIdByName(arg)
-			tag = getTagFormApp(app)
 		} else {
 			logger.Fatal("Cannot parse the command argument. It is not a tag or an app name.")
 		}
@@ -52,7 +48,7 @@ func RemoveApp(arg string) {
 	defer fs.Remove(tmpMeta)
 
 	logger.Debug("tmpMeta: '%v'", tmpMeta)
-	containerId := engine.VDriver.ContainerCreate(tag, "")
+	containerId := engine.VDriver.ContainerCreate(app.DockerID, "")
 	engine.VDriver.CopyFromContainer(containerId, string(os.PathSeparator)+option.Config.FileSystem.GetMetaDirName(), tmpMeta)
 	engine.VDriver.ContainerRemove(containerId)
 
@@ -126,28 +122,10 @@ func getAppIdByTag(tag string) *structures.App {
 	return app
 }
 
-func getTagFormApp(app *structures.App) string {
-	var tag strings.Builder
-
-	if app.RepoID != structures.OfficialRepo.Id {
-		repo := db.RDriver.GetRepoById(app.RepoID)
-		if repo == nil {
-			logger.Fatal("Internal error. Cannot get repo for ID '%v'", app.RepoID)
-		}
-		tag.WriteString(repo.Server)
-		tag.WriteString("/")
-	}
-	tag.WriteString(app.ImageName)
-	tag.WriteString(":")
-	tag.WriteString(app.ImageVersion)
-
-	return tag.String()
-}
-
 func getUninstall(meta string) string {
-	uninst := filepath.Join(meta, option.Config.FileSystem.GetUninstallFileName())
-	if !fs.IsExistFile(uninst) {
+	uninstall := filepath.Join(meta, option.Config.FileSystem.GetUninstallFileName())
+	if !fs.IsExistFile(uninstall) {
 		logger.Fatal("Not found '%s' file in meta '%s'", option.Config.FileSystem.GetUninstallFileName(), option.Config.FileSystem.GetMetaDirName())
 	}
-	return uninst
+	return uninstall
 }

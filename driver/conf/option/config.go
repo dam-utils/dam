@@ -32,7 +32,7 @@ func printFatal(message string, args ...interface{}) {
 	debug.SetTraceback("")
 
 	message = "CONFIG ERROR: " + message
-	if Config.Decoration.GetColorOn() == true {
+	if Config.Decoration.GetColorOn() {
 		message = color.Red + message + color.Reset
 	}
 

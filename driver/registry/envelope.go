@@ -1,18 +1,18 @@
 package registry
 
 import (
-	"dam/driver/engine"
-	"dam/driver/structures"
 	"strings"
 
 	"dam/driver/conf/option"
+	"dam/driver/engine"
 	"dam/driver/logger"
 	registry_official "dam/driver/registry/official"
 	registry_v2 "dam/driver/registry/v2"
+	"dam/driver/structures"
 )
 
 func CheckRepository(repo *structures.Repo) {
-	if repo.Id ==1 {
+	if repo.Id == 1 {
 		return
 	}
 

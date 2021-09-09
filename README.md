@@ -7,7 +7,7 @@ the search for docker images and their versions (branch 1.x.x).
 
 ## System requirements
 ### Building
-- Go v1.14.2 or GNU Make 4.1
+- Go v1.17.0 or GNU Make 4.1
 ### Using
 - OS Linux (Ubuntu 18.04.4 LTS)
 - Docker Engine API version v1.40

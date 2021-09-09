@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"io"
 	"os"
 
 	"dam/driver/engine/docker/internal"
@@ -12,6 +11,8 @@ import (
 	"dam/driver/structures"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/moby/term"
 )
 
 func (p *provider) LoadImage(file string) {
@@ -35,12 +36,15 @@ func (p *provider) LoadImage(file string) {
 		}
 	}()
 	if err != nil {
-		logger.Fatal("Cannot pull docker image with error: %s", err)
+		logger.Fatal("Cannot load image file '%s' with error: %s", file, err)
 	}
 
-	_, err = io.Copy(os.Stdout, out.Body)
-	if err != nil {
-		logger.Fatal("Cannot print docker stdout with error: %s", err)
+	if out.Body != nil && out.JSON {
+		outFd, isTerminalOut := term.GetFdInfo(os.Stdout)
+		err := jsonmessage.DisplayJSONMessagesStream(out.Body, os.Stdout, outFd, isTerminalOut, nil)
+		if err != nil {
+			logger.Fatal("Cannot load docker image with error: %s", err)
+		}
 	}
 }
 
@@ -73,9 +77,12 @@ func (p *provider) Pull(tag string, repo *structures.Repo) {
 		return
 	}
 
-	_, err = io.Copy(os.Stdout, out)
-	if err != nil {
-		logger.Fatal("Cannot print docker stdout with error: %s", err)
+	if out != nil {
+		outFd, isTerminalOut := term.GetFdInfo(os.Stdout)
+		err := jsonmessage.DisplayJSONMessagesStream(out, os.Stdout, outFd, isTerminalOut, nil)
+		if err != nil {
+			logger.Fatal("Cannot pull docker image to stdout with error: %s", err)
+		}
 	}
 }
 
@@ -107,17 +114,18 @@ func (p *provider) Images() *[]string {
 	return &preparedResult
 }
 
-// TODO refactoring
+// GetImageLabel return a value label for the name=%s and the image with id=%s.
+//In the second result It is boolean value for existing image in docker
 func (p *provider) GetImageLabel(id, labelName string) (string, bool) {
 	p.connect()
 	defer p.close()
 
 	var opts = types.ImageListOptions{}
-	imageSum, err := p.client.ImageList(context.Background(), opts)
+	imageList, err := p.client.ImageList(context.Background(), opts)
 	if err != nil {
 		logger.Fatal("Cannot get images list")
 	}
-	for _, img := range imageSum {
+	for _, img := range imageList {
 		if internal.PrepareImageID(img.ID) == id {
 			for key, value := range img.Labels {
 				if key == labelName {
@@ -161,7 +169,7 @@ func (p *provider) ImageRemove(imageID string) bool {
 	// response: ([]types.ImageDeleteResponseItem, error)
 	_, err := p.client.ImageRemove(context.Background(), imageID, opts)
 	if err != nil {
-		logger.Warn("Cannot remove image with id '%s' with error: '%s'", imageID, err)
+		logger.Error("Cannot remove image with id '%s' with error: '%s'", imageID, err)
 		return false
 	}
 	return true

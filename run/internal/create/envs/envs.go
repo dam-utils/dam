@@ -91,6 +91,10 @@ func (e *env) Labels() map[string]string {
 }
 
 func (e *env) Tag() string {
-	val, _ := e.data[option.Config.ReservedEnvs.GetAppTagEnv()]
+	val, ok := e.data[option.Config.ReservedEnvs.GetAppTagEnv()]
+	if !ok {
+		logger.Fatal("Internal error.Tag variable %v is empty.")
+	}
+
 	return val
 }

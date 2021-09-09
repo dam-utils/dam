@@ -7,7 +7,7 @@ import (
 )
 
 var saveAppCmd = &cobra.Command{
-	Use:   "save <app>:<version>",
+	Use:   "save [<repos>/]<app>:<version>",
 	Short: "Save app to an archive.",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 1),

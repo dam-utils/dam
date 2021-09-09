@@ -39,7 +39,7 @@ func (l *label) AddRepo(repo string) {
 }
 
 func (l *label) ValidateRepos() error {
-	for repo, _ := range l.repos {
+	for repo := range l.repos {
 		err := validate.CheckServer(repo)
 		if err != nil {
 			return err
@@ -74,7 +74,7 @@ func (l *label) String() string {
 func map2slice(m map[string]bool) []string {
 	result := make([]string, 0)
 
-	for key, _ := range m {
+	for key := range m {
 		result = append(result, key)
 	}
 

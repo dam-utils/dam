@@ -13,7 +13,7 @@ import (
 )
 
 func SaveApps(apps []*structures.App) {
-	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, option.Config.FilesDB.GetFilesPermissions())
 	defer func() {
 		if f != nil {
 			f.Close()
@@ -122,4 +122,33 @@ func Str2app(str string) *structures.App {
 	}
 	app.Family = strArray[6]
 	return app
+}
+
+func ClearApps() {
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, option.Config.FilesDB.GetFilesPermissions())
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	if err != nil {
+		logger.Fatal("Cannot open apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
+	}
+
+	_, err = f.WriteString("")
+	if err != nil {
+		logger.Fatal("Cannot write to apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
+	}
+
+	err = f.Sync()
+	if err != nil {
+		logger.Fatal("Cannot sync apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
+	}
+	err = f.Close()
+	if err != nil {
+		logger.Fatal("Cannot close from apps file '%s' with error: %s", option.Config.FilesDB.GetTmp(), err)
+	}
+
+	logger.Debug("Move '%s' to '%s'", option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetAppsFilename())
+	fs.MoveFile(option.Config.FilesDB.GetTmp(), option.Config.FilesDB.GetAppsFilename())
 }

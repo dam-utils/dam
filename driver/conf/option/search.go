@@ -10,7 +10,7 @@ import (
 type Search struct {}
 
 func (o *Search) GetProtocolStrategy() []string {
-	result := strings.Split(config.SEARCH_PROTOCOL_STRATEGY, ",")
+	result := strings.Split(config.SEARCH_PROTOCOL_STRATEGY, ", ")
 	if len(result) == 0 {
 		printFatal("Not correct config option SEARCH_PROTOCOL_STRATEGY. Example: SEARCH_PROTOCOL_STRATEGY=\"https, http\"")
 	}

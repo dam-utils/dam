@@ -34,15 +34,15 @@ func GetImagesSum() []types.ImageSummary {
 	return imageSum
 }
 
-// From https://www.dotnetperls.com/duplicates-go
 func RemoveDuplicates(elements []string) []string {
-	encountered := map[string]bool{}
+	encountered := make(map[string]struct{})
 	result := make([]string, 0)
 
-	for v := range elements {
-		if encountered[elements[v]] != true {
-			encountered[elements[v]] = true
-			result = append(result, elements[v])
+	for _, element := range elements {
+		_, ok := encountered[element]
+		if !ok {
+			encountered[element] = struct{}{}
+			result = append(result, element)
 		}
 	}
 
