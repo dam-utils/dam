@@ -114,17 +114,18 @@ func (p *provider) Images() *[]string {
 	return &preparedResult
 }
 
-// TODO refactoring
+// GetImageLabel return a value label for the name=%s and the image with id=%s.
+//In the second result It is boolean value for existing image in docker
 func (p *provider) GetImageLabel(id, labelName string) (string, bool) {
 	p.connect()
 	defer p.close()
 
 	var opts = types.ImageListOptions{}
-	imageSum, err := p.client.ImageList(context.Background(), opts)
+	imageList, err := p.client.ImageList(context.Background(), opts)
 	if err != nil {
 		logger.Fatal("Cannot get images list")
 	}
-	for _, img := range imageSum {
+	for _, img := range imageList {
 		if internal.PrepareImageID(img.ID) == id {
 			for key, value := range img.Labels {
 				if key == labelName {
@@ -168,7 +169,7 @@ func (p *provider) ImageRemove(imageID string) bool {
 	// response: ([]types.ImageDeleteResponseItem, error)
 	_, err := p.client.ImageRemove(context.Background(), imageID, opts)
 	if err != nil {
-		logger.Warn("Cannot remove image with id '%s' with error: '%s'", imageID, err)
+		logger.Error("Cannot remove image with id '%s' with error: '%s'", imageID, err)
 		return false
 	}
 	return true

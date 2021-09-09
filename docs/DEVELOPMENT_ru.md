@@ -94,4 +94,3 @@
 2|sd78216a9d61|mongodb|3.4.2_1|1||mongodb
 3|1d78216a9d61|influxdb|last|1||influxdb-local
 `
-
