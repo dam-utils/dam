@@ -13,6 +13,7 @@ import (
 
 func init() {
 	log.SetFlags(0)
+	logger.DebugMode = false
 	db.Init()
 }
 
@@ -20,6 +21,7 @@ func setDefaultConfig() {
 	switch option.Config.DB.GetType() {
 	case "files":
 		config.DECORATE_MAX_DISPLAY_WIDTH = 100
+		config.FILES_DB_USE_USER_CACHE_DIR = false
 		config.FILES_DB_REPOS_FILENAME = "Repos"
 		config.FILES_DB_APPS_FILENAME = "Apps"
 		config.FILES_DB_TMP = ".db"

@@ -59,13 +59,9 @@ func CheckPassword(pass string) error {
 }
 
 func CheckRepoID(id string) error {
-	id32, err := strconv.ParseInt(id, 10, 32)
+	_, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {
 		return fmt.Errorf("ID '%s' is bad. It must be a number (ID)", id)
-	}
-
-	if id32 == 0 {
-		return fmt.Errorf("ID '%s' is bad. It cannot be '0'", id)
 	}
 
 	return nil
@@ -135,6 +131,22 @@ func CheckApp(app string) error {
 	}
 	if CheckVersion(arr[1]) != nil {
 		return fmt.Errorf("'%s' is not <version> in <app>:<version> option", app)
+	}
+
+	return nil
+}
+
+func CheckTag(app string) error {
+	arr := strings.Split(app, "/")
+	if len(arr) < 2 {
+		return fmt.Errorf("'%s' is not <repo>/<app and version>. It must be one symbol '/'", app)
+	}
+	err := CheckApp(arr[len(arr)-1])
+	if err != nil {
+		return fmt.Errorf("'%s' is not <app name and version> in <repo>/<app and version> option: %v", app, err)
+	}
+	if strings.Join(arr[:len(arr)-1], "/") == "" {
+		return fmt.Errorf("repo in <repo>/<app and version> is empty")
 	}
 
 	return nil

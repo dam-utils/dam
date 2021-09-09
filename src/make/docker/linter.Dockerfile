@@ -1,4 +1,4 @@
-FROM golangci/golangci-lint:v1.27
+FROM golangci/golangci-lint:v1.42
 
 ARG PROJECT_NAME
 

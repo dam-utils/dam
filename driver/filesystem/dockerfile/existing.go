@@ -2,10 +2,10 @@ package dockerfile
 
 import (
 	"bufio"
-	"dam/driver/conf/option"
 	"os"
 	"regexp"
 
+	"dam/driver/conf/option"
 	"dam/driver/logger"
 )
 
@@ -33,7 +33,7 @@ func IsCopyMeta(path string) bool {
 	return false
 }
 
-func IsFamily (path string) bool {
+func IsFamily(path string) bool {
 	f, err := os.Open(path)
 	defer func() {
 		if f != nil {

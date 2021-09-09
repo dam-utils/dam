@@ -2,6 +2,7 @@ package apps
 
 import (
 	"bufio"
+
 	"dam/driver/db/files/apps/internal"
 	"dam/driver/logger"
 	"dam/driver/structures"
@@ -63,4 +64,18 @@ func (p *provider) RemoveAppById(id int) {
 	} else {
 		logger.Fatal("Not found Id of the App in DB")
 	}
+}
+
+func (p *provider) ChangeRepoID(oldID, newID int) {
+	apps := p.GetApps()
+	for _, a := range apps {
+		if a.RepoID == oldID {
+			a.RepoID = newID
+		}
+	}
+	internal.SaveApps(apps)
+}
+
+func (p *provider) ClearApps() {
+	internal.ClearApps()
 }

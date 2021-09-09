@@ -78,12 +78,15 @@ func getRepo() string {
 //- переменных окружения, начинающихся с config.OS_ENV_PREFIX
 func combineEnvs(envFile string, dockerFile string) map[string]string {
 	dfEnv := env.GetDockerFileEnv(dockerFile)
+	logger.Debug("Find Dockerfile envs: %v", dfEnv)
 	osEnv := env.GetOSEnv(option.Config.ReservedEnvs.GetOSEnvPrefix())
+	logger.Debug("Find OS envs: %v", osEnv)
 
 	if envFile == "" {
 		return env.MergeEnvs(osEnv, dfEnv)
 	}
 
 	fEnv := env.GetFileEnv(envFile)
+	logger.Debug("Find Environment file envs: %v", fEnv)
 	return env.MergeEnvs(env.MergeEnvs(osEnv, dfEnv), fEnv)
 }

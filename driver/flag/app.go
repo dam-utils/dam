@@ -29,6 +29,14 @@ func ValidateAppPlusVersion(s string) {
 	}
 }
 
+func ValidateTag(s string) {
+	err := validate.CheckTag(s)
+	if err != nil {
+		logger.Error(err.Error())
+		logger.Fatal("<repo>/<app>:<version> flag is not valid.")
+	}
+}
+
 func ValidateFamily(s string) {
 	err := validate.CheckLabel(s)
 	if err != nil {

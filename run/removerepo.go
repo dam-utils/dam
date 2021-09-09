@@ -1,6 +1,7 @@
 package run
 
 import (
+	"dam/driver/conf/option"
 	"strconv"
 
 	"dam/driver/db"
@@ -31,11 +32,12 @@ func RemoveRepo(arg string) {
 		logger.Fatal("Internal error. Not found default repo")
 	}
 	if !RemoveRepoFlags.Force && repoId == defRepo.Id {
-		logger.Fatal("Repository with Id '%v' is default. Use '--skip' flag for removing", repoId)
+		logger.Fatal("Repository with Id '%v' is default. Use '--force' flag for removing", repoId)
 	}
 
 	logger.Debug("Removing from DB ...")
 	db.RDriver.RemoveRepoById(repoId)
+	db.ADriver.ChangeRepoID(repoId, option.Config.DefaultRepo.GetUnknownRepoID())
 }
 
 func isRepoID(id string) bool {

@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"archive/tar"
 	"bytes"
 	"encoding/hex"
 	"hash/crc32"
@@ -8,13 +9,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
-	"time"
 
 	"dam/driver/conf/option"
 	"dam/driver/logger"
-
-	"github.com/docker/docker/pkg/system"
 )
 
 func GetCurrentDir() string {
@@ -163,22 +160,6 @@ func HashFileCRC32(filePath string) string {
 	return hex.EncodeToString(hashInBytes)
 }
 
-func FileSize(filePath string) string {
-	fi, err := os.Stat(filePath)
-	if err != nil {
-		logger.Fatal("Cannot check file '%s' with error: %s", filePath, err)
-	}
-
-	return strconv.FormatInt(fi.Size(), 10)
-}
-
-func EraseDataCreation(path string) {
-	// https://github.com/moby/moby/blob/e9b4655bc98563602d961c72fc62cb20cc143515/image/tarexport/save.go#L187
-	if err := system.Chtimes(path, time.Unix(0, 0), time.Unix(0, 0)); err != nil {
-		logger.Fatal("Cannot erase metadata for manifest file with error: %s", err)
-	}
-}
-
 func IsTar(path string) bool {
 	f, err := os.Open(path)
 	defer func() {
@@ -190,13 +171,8 @@ func IsTar(path string) bool {
 		logger.Fatal("Cannot open file '%s' with error: %s", path, err)
 	}
 
-	var header [2]byte
-	_, err = io.ReadFull(f, header[:])
-	if err != nil {
-		logger.Fatal("Cannot read two first bytes from file '%s' with error: %s", path, err)
-	}
+	tr := tar.NewReader(f)
+	_, err = tr.Next()
 
-	return  header[0] == 47 && header[1] == 97
-	// gzip
-	// return  header[0] == 31 && header[1] == 139
+	return err == nil
 }

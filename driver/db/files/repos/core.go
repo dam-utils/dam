@@ -13,7 +13,6 @@ import (
 
 func (p *provider) NewRepo(repo *structures.Repo) int {
 	repos := p.GetRepos()
-	//preparedRepo := preparePassword(repo)
 	repo.Id = internal.GetNewRepoID(repos)
 	if len(repos) == 0 {
 		repo.Default = true
@@ -71,7 +70,7 @@ func (p *provider) ModifyRepo(mRepo *structures.Repo) {
 }
 
 func (p *provider) ClearRepos() {
-	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(option.Config.FilesDB.GetTmp(), os.O_WRONLY|os.O_CREATE, option.Config.FilesDB.GetFilesPermissions())
 	defer func() {
 		if f != nil {
 			f.Close()

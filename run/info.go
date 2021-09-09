@@ -46,7 +46,7 @@ func InfoApp(tag string) {
 	decorate.PrintLabel(option.Config.ReservedEnvs.GetAppMultiversionEnv(), multiVersion)
 
 	logger.Debug("Printing servers label ...")
-	servers := internal.GetServers(tag)
+	servers := internal.GetServersByTag(tag)
 	decorate.PrintLabel(option.Config.ReservedEnvs.GetAppServersEnv(), servers)
 
 	decorate.Println()
