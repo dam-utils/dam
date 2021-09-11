@@ -39,22 +39,24 @@ func (i *info) FromString(str string) error {
 		return fmt.Errorf("cannot match string by mask '%s'", getRegexpMask())
 	}
 
-	result1 := strings.TrimRight(str, option.Config.Save.GetFilePostfix())
+	logger.Debug("Preparing file name string: '%v'", str)
+	result1 := strings.TrimSuffix(str, option.Config.Save.GetFilePostfix())
+	logger.Debug("Trim file postfix with result: '%v'", result1)
 	arrWithHash := strings.Split(result1, option.Config.Save.GetOptionalSeparator())
 	i.hash = arrWithHash[len(arrWithHash)-1]
-	logger.Debug("Split prefix filename with hash: '%s' and hash '%s'\n", arrWithHash, i.hash)
+	logger.Debug("Split prefix filename with hash: '%s' and hash '%s'", arrWithHash, i.hash)
 	if i.hash == "" {
 		return fmt.Errorf("hash is empty")
 	}
-	result3 := strings.TrimRight(result1, i.hash)
-	result4 := strings.TrimRight(result3, option.Config.Save.GetOptionalSeparator())
+	result3 := strings.TrimSuffix(result1, i.hash)
+	result4 := strings.TrimSuffix(result3, option.Config.Save.GetOptionalSeparator())
 	arrWithVersion := strings.Split(result4, option.Config.Save.GetFileSeparator())
 	i.appVersion = arrWithVersion[len(arrWithVersion)-1]
 	if i.appVersion == "" {
 		return fmt.Errorf("app version is empty")
 	}
-	result5 := strings.TrimRight(result4, i.appVersion)
-	i.appName = strings.TrimRight(result5, option.Config.Save.GetFileSeparator())
+	result5 := strings.TrimSuffix(result4, i.appVersion)
+	i.appName = strings.TrimSuffix(result5, option.Config.Save.GetFileSeparator())
 	if i.appName == "" {
 		return fmt.Errorf("app name is empty")
 	}

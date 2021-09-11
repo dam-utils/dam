@@ -3,12 +3,14 @@ package app_name
 import (
 	"dam/config"
 	"dam/driver/conf/option"
+	"dam/driver/logger"
 	"fmt"
 	"reflect"
 	"testing"
 )
 
 func TestName(t *testing.T) {
+	logger.DebugMode = false
 	config.DEF_APP_NAME = "def_app_name"
 	config.DEF_APP_VERS = "1.2.3"
 
@@ -53,6 +55,12 @@ func TestName(t *testing.T) {
 			str:  "def--app-name-1.2.3.0.dam",
 			want: "",
 			err:  fmt.Errorf("string has two consecutive '%s'", option.Config.Save.GetFileSeparator()),
+		},
+		{
+			name: "Bug for parsing hash in string",
+			str:  "my-app-1.0.0.639533ca.dam",
+			want: "my-app-1.0.0.639533ca.dam",
+			err:  nil,
 		},
 	}
 
