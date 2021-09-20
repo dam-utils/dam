@@ -1,8 +1,12 @@
 # Docker Applications Manager
-Docker Applications Manager (DAM) предоставляет пользователю управлять docker образами в системе,
+Docker Applications Manager (DAM) предоставляет возможность управлять docker образами в системе,
 как apt управляет deb пакетами в Ubuntu.   
-Это поиск приложения в репозитории, его создание, установка, группировка приложений в продукты,
-чистка системы от старых приложений. 
+Утилита может:
+- искать приложения в docker registry
+- создавать
+- устанавливать их
+- группировать приложения в продукты
+- чистить систему от старых приложений 
 
 ## Требования к системе
 ### Сборка
@@ -49,17 +53,18 @@ test@home-pc ~/go/src/dam $ ./dam 1 official --default
 
 Более подробно по командам см. хелп:
 ```
-test@home-pc ~/go/src/dam $ ./dam --help
+test@home-pc ~/go/src/dam $ dam help
 Docker Application Manager
 
 Version:
-  1.1.1
+  1.2.0
 
 Usage:
   dam [command]
 
 Available Commands:
   addrepo     Add an app registry to the system.
+  completion  generate the autocompletion script for the specified shell
   create      Create docker application.
   export      Export apps to file.
   help        Help about any command
