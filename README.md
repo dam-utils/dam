@@ -10,11 +10,11 @@ Docker Applications Manager (DAM) предоставляет возможнос�
 
 ## Требования к системе
 ### Сборка
-- Go v1.17.0
+- Go v1.17.05
 - GNU Make 4.1
 - Docker
 ### Linter
-- golangci-lint v1.42
+- golangci-lint v1.43
 ### Использование
 - Дистрибутив Linux (Ubuntu 18.04.4 LTS)
 - Docker Engine API version v1.40
