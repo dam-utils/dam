@@ -1,4 +1,4 @@
-FROM golang:1.17.0
+FROM golang:1.17.5
 
 ARG GOOS
 ARG GOARCH
