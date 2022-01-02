@@ -10,13 +10,16 @@ NOT_USE_IMAGE_CACHE     := false
 
 include src/make/Makefile.funcs
 
-build: build-windows build-linux
+build: build-windows build-linux build-darwin
 
 build-windows:
 	$(call build_func,windows,amd64,.exe)
 
 build-linux:
 	$(call build_func,linux,amd64,)
+
+build-darwin:
+	$(call build_func,darwin,arm64,)
 
 test:
 	$(call test_func)
